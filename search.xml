@@ -4,6 +4,258 @@
   
     
     <entry>
+      <title><![CDATA[J2SE网络编程]]></title>
+      <url>http://chaooo.github.io/2019/07/12/J2SE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.html</url>
+      <content type="html"><![CDATA[<h2 id="九、Java网络编程"><a href="#九、Java网络编程" class="headerlink" title="九、Java网络编程"></a>九、Java网络编程</h2><ol>
+<li><a href="#id1">网络编程常识</a></li>
+<li><a href="#id2">基于tcp协议的编程模型</a></li>
+<li><a href="#id3">基于udp协议的编程模型</a></li>
+</ol>
+<p><span id="id1"><span></span></span></p>
+<h3 id="1-网络编程常识"><a href="#1-网络编程常识" class="headerlink" title="1. 网络编程常识"></a>1. 网络编程常识</h3><h4 id="1-1-七层网络模型"><a href="#1-1-七层网络模型" class="headerlink" title="1.1 七层网络模型"></a>1.1 七层网络模型</h4><p>为了保证数据传输的可靠和安全，ISO(国际标准委员会组织)将数据的传递从逻辑上划分为以下7层：<br><br>应用层、表示层、会话层、传输层、网络层、数据链路层、物理层</p>
+<ul>
+<li>当发送数据时，需要按照上述七层模型从上到下层层加包再发送出去；</li>
+<li>当接收数据时，需要按照上述七层模型从下到上层层拆包再显示出来；</li>
+</ul>
+<h4 id="1-2-IP地址"><a href="#1-2-IP地址" class="headerlink" title="1.2 IP地址"></a>1.2 IP地址</h4><ul>
+<li>IP地址：是互联网中的唯一地址标识，也就是根据IP地址可以定位到具体某一台设备，IP地址本质上是32位二进制组成的整数叫做IPv4，当然也有128位二进制组成的整数叫做IPv6，目前主流的还是IPv4。</li>
+<li>日常生活中采用<strong>点分十进制</strong>表示法进行IP地址的描述，也就是将每个字节的二进制转换为一个十进制整数，不同的十进制整数之间采用小数点隔开。如：192.168.1.1</li>
+</ul>
+<h4 id="1-3-端口号"><a href="#1-3-端口号" class="headerlink" title="1.3 端口号"></a>1.3 端口号</h4><ul>
+<li>根据IP地址可以定位到具体某一台设备，而该设备中启动的进程可能很多，此时可以使用端口号来定位该设备中的具体某一个进程。</li>
+<li>网络编程需要提供：IP地址 和 端口号</li>
+<li>端口号是16位二进制组成的整数，表示范围是：0 ~ 65535，其中0 ~ 1024之间通常被系统占用，因此网络编程需要从1025开始使用。</li>
+</ul>
+<h4 id="1-4-tcp协议与udp协议"><a href="#1-4-tcp协议与udp协议" class="headerlink" title="1.4 tcp协议与udp协议"></a>1.4 tcp协议与udp协议</h4><ul>
+<li>TCP（Transmission Control Protocol，传输控制协议） 是面向连接的协议，也就是说，在收发数据前，必须和对方建立可靠的连接。一个TCP连接必须要经过三次“握手”才能建立起来。</li>
+<li>UDP（User Data Protocol，用户数据报协议） 是一个非连接的协议，传输数据之前源端和终端不建立连接，当它想传送时就简单地去抓取来自应用程序的数据，并尽可能快地把它扔到网络上。在发送端，UDP传送数据的速度仅仅是受应用程序生成数据的速度、计算机的能力和传输带宽的限制；在接收端，UDP把每个消息段放在队列中，应用程序每次从队列中读一个消息段。</li>
+<li>tcp协议与udp协议比较：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>tcp协议</th>
+<th>udp协议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>传输控制协议，面向连接</td>
+<td>用户数据报协议，非面向连接</td>
+</tr>
+<tr>
+<td>通信过程全程保持连接</td>
+<td>通信过程不需要全程连接</td>
+</tr>
+<tr>
+<td>保证了数据传输的可靠性和有序性</td>
+<td>不保证数据传输的可靠性和有序性</td>
+</tr>
+<tr>
+<td>全双工的字节流的通信方式</td>
+<td>全双工的数据报的通信方式</td>
+</tr>
+<tr>
+<td>服务器的资源消耗多，压力大，效率低</td>
+<td>服务器资源消耗少，压力小，效率高</td>
+</tr>
+</tbody></table>
+<p><span id="id2"><span></span></span></p>
+<h3 id="2-基于tcp协议的编程模型"><a href="#2-基于tcp协议的编程模型" class="headerlink" title="2. 基于tcp协议的编程模型"></a>2. 基于tcp协议的编程模型</h3><h4 id="2-1-编程模型"><a href="#2-1-编程模型" class="headerlink" title="2.1 编程模型"></a>2.1 编程模型</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">服务器端                         客户端</span><br><span class="line"></span><br><span class="line">创建监听服务</span><br><span class="line">等待连接    &lt;----建立连接------  连接服务器           </span><br><span class="line">进行通讯    &lt;----进行通讯-----&gt;  进行通讯</span><br><span class="line">关闭连接                        关闭连接</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>服务器：<ol>
+<li>创建ServerSocket类型的对象并提供端口号；</li>
+<li>等待客户端的连接请求，调用accept方法；</li>
+<li>使用输入输出流进行通信；</li>
+<li>关闭Socket；</li>
+</ol>
+</li>
+<li>客户端：<ol>
+<li>创建Socket类型的对象并提供服务器的通信地址和端口号；</li>
+<li>使用输入输出流进行通信；</li>
+<li>关闭Socket；</li>
+</ol>
+</li>
+</ul>
+<h4 id="2-2-ServerSocket类和Socket类"><a href="#2-2-ServerSocket类和Socket类" class="headerlink" title="2.2 ServerSocket类和Socket类"></a>2.2 ServerSocket类和Socket类</h4><ul>
+<li>java.net.ServerSocket类主要用于描述服务器套接字信息。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>常用方法</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ServerSocket(int port)</td>
+<td>根据参数指定的端口号来构造对象</td>
+</tr>
+<tr>
+<td>Socket accept()</td>
+<td>监听并接收到此套接字的连接请求</td>
+</tr>
+<tr>
+<td>void close()</td>
+<td>用于关闭套接字</td>
+</tr>
+</tbody></table>
+<ul>
+<li>java.net.Socket类主要用于描述客户端套接字，是两台机器间通信的端点。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>常用方法</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Socket(String host, int port)</td>
+<td>根据指定主机名和端口号来构造对象</td>
+</tr>
+<tr>
+<td>InputStream getInputStream()</td>
+<td>用于获取当前套接字的输入流</td>
+</tr>
+<tr>
+<td>OutputStream getOutputStream()</td>
+<td>用于获取当前套接字的输出流</td>
+</tr>
+<tr>
+<td>void close()</td>
+<td>用于关闭套接字</td>
+</tr>
+</tbody></table>
+<p>客户端与服务端通信演示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">//服务端线程</span><br><span class="line">public class ServerThread extends Thread &#123;</span><br><span class="line">	private Socket s;</span><br><span class="line">	public ServerThread(Socket s) &#123;</span><br><span class="line">		this.s = s;</span><br><span class="line">	&#125;</span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			// 3.使用输入输出流进行通信</span><br><span class="line">			BufferedReader br = new BufferedReader(</span><br><span class="line">					new InputStreamReader(s.getInputStream()));</span><br><span class="line">			PrintStream ps = new PrintStream(s.getOutputStream());</span><br><span class="line">			while(true) &#123;</span><br><span class="line">				// 实现服务器接收到字符串内容后打印出来</span><br><span class="line">				// 当客户端没有发送数据时，服务器会在这里阻塞</span><br><span class="line">				String str = br.readLine();</span><br><span class="line">				//System.out.println(&quot;服务器接收到的数据是：&quot; + str);</span><br><span class="line">				// 当服务器接收到&quot;bye&quot;后，则聊天结束</span><br><span class="line">				if(&quot;bye&quot;.equalsIgnoreCase(str)) &#123;</span><br><span class="line">					System.out.println(&quot;客户端&quot; + s.getInetAddress() + &quot;已下线！&quot;);</span><br><span class="line">					break;</span><br><span class="line">				&#125;</span><br><span class="line">				System.out.println(&quot;客户端&quot; + s.getInetAddress() </span><br><span class="line">					+ &quot;发来的消息是：&quot; + str);  </span><br><span class="line">				// 当服务器接收到客户端发来的消息后，向客户端回发消息&quot;I received!&quot;</span><br><span class="line">				ps.println(&quot;I received!&quot;);</span><br><span class="line">				//System.out.println(&quot;服务器发送数据成功！&quot;);</span><br><span class="line">			&#125; </span><br><span class="line">			// 4.关闭Socket</span><br><span class="line">			ps.close();</span><br><span class="line">			br.close();</span><br><span class="line">			s.close();</span><br><span class="line">		&#125; catch(Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">//服务端测试</span><br><span class="line">public class ServerStringTest &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			// 1.创建ServerSocket类型的对象并提供端口号</span><br><span class="line">			ServerSocket ss = new ServerSocket(8888);</span><br><span class="line">			// 2.等待客户端的连接请求，调用accept方法</span><br><span class="line">			while(true) &#123;</span><br><span class="line">				System.out.println(&quot;等待客户端的连接请求...&quot;);</span><br><span class="line">				// 当没有客户端连接时，阻塞在accept方法的调用这里</span><br><span class="line">				Socket s = ss.accept();</span><br><span class="line">				// 获取连接成功的客户端通信地址</span><br><span class="line">				System.out.println(&quot;客户端&quot; + s.getInetAddress() + &quot;连接成功！&quot;);</span><br><span class="line">				// 当有客户端连接成功后，则启动一个新的线程为之服务</span><br><span class="line">				new ServerThread(s).start();</span><br><span class="line">			&#125;</span><br><span class="line">			//ss.close();</span><br><span class="line">		&#125; catch(Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">//客户端测试</span><br><span class="line">public class ClientStringTest &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			// 1.创建Socket类型的对象并提供服务器的通信地址和端口号</span><br><span class="line">			Socket s = new Socket(&quot;XDL-20170621QCO&quot;, 8888);</span><br><span class="line">			System.out.println(&quot;连接服务器成功！&quot;);</span><br><span class="line">			// 2.使用输入输出流进行通信</span><br><span class="line">			Scanner sc = new Scanner(System.in);</span><br><span class="line">			PrintStream ps = new PrintStream(s.getOutputStream());</span><br><span class="line">			BufferedReader br = new BufferedReader(</span><br><span class="line">					new InputStreamReader(s.getInputStream()));</span><br><span class="line">			while(true) &#123;</span><br><span class="line">				// 希望客户端连接服务器成功后睡眠10秒再发送数据，测试服务器是否阻塞</span><br><span class="line">				//Thread.sleep(10000);</span><br><span class="line">				// 练习：实现客户端向服务器发送的内容由用户从键盘输入</span><br><span class="line">				System.out.println(&quot;请输入要发送的内容：&quot;);</span><br><span class="line">				//String msg = sc.next(); // 读取字符串内容时，遇到空格停止</span><br><span class="line">				String msg = sc.nextLine();</span><br><span class="line">				// 实现客户端向服务器发送字符串内容&quot;hello&quot;</span><br><span class="line">				//ps.println(&quot;hello&quot;);</span><br><span class="line">				ps.println(msg);</span><br><span class="line">				System.out.println(&quot;客户端发送数据成功！&quot;);</span><br><span class="line">				// 判断客户端发送的内容是否为&quot;bye&quot;，若是则聊天结束</span><br><span class="line">				if(&quot;bye&quot;.equalsIgnoreCase(msg)) &#123;</span><br><span class="line">					System.out.println(&quot;聊天结束！&quot;);</span><br><span class="line">					break;</span><br><span class="line">				&#125;</span><br><span class="line">				// 实现服务器回发消息的接收</span><br><span class="line">				// 当客户端没有发送数据时，服务器会在这里阻塞</span><br><span class="line">				String str = br.readLine();</span><br><span class="line">				System.out.println(&quot;客户端接收到的数据是：&quot; + str);</span><br><span class="line">			&#125;</span><br><span class="line">			// 3.关闭Socket</span><br><span class="line">			br.close();</span><br><span class="line">			sc.close();</span><br><span class="line">			ps.close();</span><br><span class="line">			s.close();</span><br><span class="line">		&#125; catch(Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><span id="id3"><span></span></span></p>
+<h3 id="3-基于udp协议的编程模型"><a href="#3-基于udp协议的编程模型" class="headerlink" title="3. 基于udp协议的编程模型"></a>3. 基于udp协议的编程模型</h3><h4 id="3-1-编程模型"><a href="#3-1-编程模型" class="headerlink" title="3.1 编程模型"></a>3.1 编程模型</h4><ul>
+<li>主机A(接收方):<ol>
+<li>创建DatagramSocket类型的对象，并提供端口号；</li>
+<li>创建DatagramPacket类型的对象，用于接收发来的数据；</li>
+<li>从Socket中接收数据，调用<strong>receive()</strong>方法；</li>
+<li>关闭Socket并释放有关的资源；</li>
+</ol>
+</li>
+<li>主机B(发送方)<ol>
+<li>创建DatagramSocket类型的对象；</li>
+<li>创建DatagramPacket类型的对象，并提供接收方的IP地址和端口号；</li>
+<li>通过Socket发送数据，调用<strong>send()</strong>方法；</li>
+<li>关闭Socket并释放有关的资源；</li>
+</ol>
+</li>
+</ul>
+<h4 id="3-2-DatagramSocket类"><a href="#3-2-DatagramSocket类" class="headerlink" title="3.2 DatagramSocket类"></a>3.2 DatagramSocket类</h4><ul>
+<li>java.net.DatagramSocket类用于描述发送或接受数据报的套接字(邮局点);</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>常用方法</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DatagramSocket()</td>
+<td>无参的方式构造对象。</td>
+</tr>
+<tr>
+<td>DatagramSocket(int port)</td>
+<td>根据参数指定的端口号来构造对象。</td>
+</tr>
+<tr>
+<td>void receive(DatagramPacket p)</td>
+<td>用于接收数据并存放到参数指定的变量中。</td>
+</tr>
+<tr>
+<td>void send(DatagramPacket p)</td>
+<td>用于将参数指定的数据发送出去。</td>
+</tr>
+<tr>
+<td>void close()</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="3-3-DatagramPacket类"><a href="#3-3-DatagramPacket类" class="headerlink" title="3.3 DatagramPacket类"></a>3.3 DatagramPacket类</h4><ul>
+<li>java.net.DatagramPacket类用于描述数据报信息(信件)；</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>常用方法</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DatagramPacket(byte[] buf, int length)</td>
+<td>用于接收数据包并记录到参数变量中；</td>
+</tr>
+<tr>
+<td>DatagramPacket(byte[] buf, int length, InetAddress address, int port)</td>
+<td>用于将参数指定的数据发送到参数指定的位置</td>
+</tr>
+<tr>
+<td>InetAddress getAddress()</td>
+<td>用于获取发送方或接收方的通信地址信息。</td>
+</tr>
+<tr>
+<td>int getPort()</td>
+<td>用于获取发送方或接收方的端口信息。</td>
+</tr>
+<tr>
+<td>int getLength()</td>
+<td>用于获取发送或接收数据的长度。</td>
+</tr>
+</tbody></table>
+<h4 id="3-4-InetAddress类"><a href="#3-4-InetAddress类" class="headerlink" title="3.4 InetAddress类"></a>3.4 InetAddress类</h4><ul>
+<li>java.net.InetAddress类用于描述互联网协议地址。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>常用方法</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>static InetAddress getLocalHost()</td>
+<td>用于获取本地主机的通信地址信息。</td>
+</tr>
+<tr>
+<td>static InetAddress getByName(String host)</td>
+<td>根据参数指定的主机名来获取通信地址。</td>
+</tr>
+<tr>
+<td>String getHostName()</td>
+<td>用于获取通信地址中的主机名信息。</td>
+</tr>
+<tr>
+<td>String getHostAddress()</td>
+<td>用于获取通信地址中的IP地址信息。</td>
+</tr>
+</tbody></table>
+]]></content>
+      
+        <categories>
+            
+            <category> javaSE知识梳理 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> javaSE </tag>
+            
+            <tag> 后端开发 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[谈谈开源]]></title>
       <url>http://chaooo.github.io/2019/07/11/%E8%B0%88%E8%B0%88%E5%BC%80%E6%BA%90.html</url>
       <content type="html"><![CDATA[<h3 id="什么是开源"><a href="#什么是开源" class="headerlink" title="什么是开源"></a>什么是开源</h3><p>所谓的「开源」，原本指的是开放其设计让所有使用者自由修改的一项机制。</p>
@@ -55,7 +307,6 @@
 <li><a href="#id5">Method类</a></li>
 <li><a href="#id6">原始方式与反射方式构造对象实例</a></li>
 <li><a href="#id7">注解(Annotation)</a></li>
-<li><a href="#id8">Properties类的使用</a></li>
 </ol>
 <p><span id="id1"><span></span></span></p>
 <h3 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1. 基本概念"></a>1. 基本概念</h3><p>JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性；这种动态获取信息以及动态调用对象方法的功能称为java语言的反射机制。</p>
@@ -211,7 +462,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">//1.使用获取到的Class对象来构造Person对象并打印</span></span><br><span class="line">Class c1 = Class.forName(<span class="string">"myproject.Person"</span>);<span class="comment">//不可省略包名</span></span><br><span class="line">System.out.println(c1.newInstance());<span class="comment">//null 0</span></span><br><span class="line">	<span class="comment">//2.使用有参方式来构造对象</span></span><br><span class="line">Class c2 = Class.forName(<span class="string">"myproject.Person"</span>);</span><br><span class="line">Constructor ct2 = c2.getConstructor(String.class, <span class="keyword">int</span>.class);</span><br><span class="line">Object obj = ct2.newInstance(<span class="string">"zhangfei"</span>, <span class="number">30</span>);</span><br><span class="line">System.out.println(obj);<span class="comment">//zhangfei 30</span></span><br><span class="line">	<span class="comment">//3.修改与获取属性(成员变量)</span></span><br><span class="line">Field f2 = c2.getDeclaredField(<span class="string">"name"</span>);</span><br><span class="line">f2.setAccessible(<span class="keyword">true</span>);<span class="comment">//暴力反射，设置使用权</span></span><br><span class="line">f2.set(obj, <span class="string">"guanyu"</span>);</span><br><span class="line">System.out.println(<span class="string">"修改后的姓名是："</span> + f2.get(obj)); <span class="comment">//guanyu</span></span><br><span class="line">	<span class="comment">//4.获取成员方法getName，使用获取到的成员方法来获取姓名并打印出来</span></span><br><span class="line">Method m1 = c2.getMethod(<span class="string">"getName"</span>);</span><br><span class="line">System.out.println(<span class="string">"获取到的姓名是："</span> + m1.invoke(obj)); <span class="comment">//zhangfei</span></span><br><span class="line">	<span class="comment">//5.成员方法setName，调用getMethod方法来修改姓名并打印出来</span></span><br><span class="line">Method m2 = c2.getMethod(<span class="string">"setName"</span>, String.class);</span><br><span class="line">Object res = m2.invoke(obj, <span class="string">"guanyu"</span>);</span><br><span class="line">System.out.println(<span class="string">"方法调用的返回值是："</span> + res); <span class="comment">//null</span></span><br><span class="line">System.out.println(<span class="string">"修改后的姓名是："</span> + m1.invoke(obj)); <span class="comment">//guanyu</span></span><br></pre></td></tr></table></figure>
 
 <p><span id="id7"><span></span></span></p>
-<h3 id="7-注解-Annotation"><a href="#7-注解-Annotation" class="headerlink" title="7. 注解(Annotation)"></a>7. 注解(Annotation)</h3><ul>
+<h3 id="7-注解-Annotation"><a href="#7-注解-Annotation" class="headerlink" title="7. 注解(Annotation)"></a>7. 注解(Annotation)</h3><h4 id="7-1-注解相关概念"><a href="#7-1-注解相关概念" class="headerlink" title="7.1 注解相关概念"></a>7.1 注解相关概念</h4><ul>
 <li>注释<ul>
 <li>单行注释：<code>//</code></li>
 <li>多行注释：<code>/*   */</code></li>
@@ -254,54 +505,68 @@
 <li>数组类型[]，数组的内部需要是如上的四种类型</li>
 </ol>
 </li>
-</ul>
-<h4 id="7-1-自己描述一个注解类型"><a href="#7-1-自己描述一个注解类型" class="headerlink" title="7.1 自己描述一个注解类型"></a>7.1 自己描述一个注解类型</h4><ol>
-<li>通过@interface 定义一个新的注解类型</li>
-<li>发现写法与接口非常相似(可以利用接口的特点来记忆注解)<ul>
-<li>可以描述public static final的属性，比较少见</li>
-<li>可以描述public abstract的方法，方法要求返回值必须有，返回值类型是如上那些</li>
-</ul>
-</li>
-<li>我们自己定义的注解如果想要拿来使用<ul>
-<li>光定义还不够，还需要做很多细致的说明(需要利用Java提供好的注解来说明)</li>
-<li>元注解(也是注解，不是拿来使用的，是用来说明注解)<ul>
-<li>@Target：描述当前的这个注解可以放置在哪里写的</li>
-<li>@Retention：描述当前的这个注解存在什么作用域中的(SOURCE，CLASS，RUNTIME)，源代码文件(SOURCE)—&gt;编译—&gt;字节码文件(CLASS)—&gt;加载—&gt;内存执行(RUNTIME)</li>
-<li>@Inherited：描述当前这个注解是否能被子类对象继承</li>
-<li>@Document：描述这个注解是否能被文档所记录</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>自己使用自己描述的注解<ul>
-<li>问题1：在注解里面描述了一个方法，方法没有参数，方法是有返回值String[]<ul>
-<li>使用注解的时候   让我们传递参数</li>
-<li>理解为  注解的方法做事   将我们传递给他的参数  搬运走了  给了别人</li>
-</ul>
-</li>
-<li>问题2：使用别人写好的注解不用写方法名  我们自己定义的方法必须写名字<ul>
-<li>如果我们自己定义的注解  只有一个方法  方法名字叫value，在使用的时候就可以省略方法名    </li>
-<li>如果传递的信息是一个数组   数组内只有一个元素  可以省略{}</li>
-<li>如果方法是两个以上  每一个方法必须写名字</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<p><span id="id8"><span></span></span></p>
-<h3 id="8-Properties类的使用"><a href="#8-Properties类的使用" class="headerlink" title="8. Properties类的使用"></a>8. Properties类的使用</h3><ul>
-<li>Java.util.Properties，主要用于读取Java的配置文件。</li>
-<li>Properties类继承自Hashtable</li>
-<li>配置文件：在Java中，其配置文件常为.properties文件，格式为文本文件，文件的内容的格式是“键=值”的格式，文本注释信息可以用”#”来注释。</li>
-<li>Properties类的主要方法：<ol>
-<li>getProperty ( String key)，用指定的键在此属性列表中搜索属性。也就是通过参数 key ，得到 key 所对应的 value。</li>
-<li>load ( InputStream inStream)，从输入流中读取属性列表（键和元素对）。通过对指定的文件（比如说上面的 test.properties 文件）进行装载来获取该文件中的所有键 - 值对。以供 getProperty ( String key) 来搜索。</li>
-<li>setProperty ( String key, String value) ，调用 Hashtable 的方法 put 。他通过调用基类的put方法来设置 键 - 值对。</li>
-<li>store ( OutputStream out, String comments)，以适合使用 load 方法加载到 Properties 表中的格式，将此 Properties 表中的属性列表（键和元素对）写入输出流。与 load 方法相反，该方法将键 - 值对写入到指定的文件中去。</li>
-<li>clear ()，清除所有装载的 键 - 值对。该方法在基类中提供。</li>
+<li>注解的分类<ol>
+<li>按运行机制分：源码注解，编译时注解，运行时注解</li>
+<li>按照来源分：来自JDK的注解，来自第三方的注解，自定义注解</li>
 </ol>
 </li>
 </ul>
+<h4 id="7-2-自定义注解类型的语法要求："><a href="#7-2-自定义注解类型的语法要求：" class="headerlink" title="7.2 自定义注解类型的语法要求："></a>7.2 自定义注解类型的语法要求：</h4><ol>
+<li>使用@interface关键字定义注解</li>
+<li>成员以<strong>无参无异常</strong>方式声明</li>
+<li>可以用default为成员指定一个默认值</li>
+<li>成员类型是受限的，合法类型包括原始类型及String,Class,Annotation,Enumeration</li>
+<li>如果注解只有一个成员，则成员名必须取名<strong>value()</strong>,在使用时可以忽略成员名和赋值号(=)</li>
+<li>注解类可以没有成员，没有成员的注解称为标识注解</li>
+<li>需要元注解来描述说明<ul>
+<li>@Target：当前注解的放置(CONSTRUCTOR，FIELD，LOCAL_VARIABLE，METHOD，PACKAGE，PARAMETER，TYPE)</li>
+<li>@Retention：当前注解的生命周期作用域(SOURCE，CLASS，RUNTIME)，源代码文件(SOURCE)—&gt;编译—&gt;字节码文件(CLASS)—&gt;加载—&gt;内存执行(RUNTIME)</li>
+<li>@Inherited：允许子类继承</li>
+<li>@Document：当前注解是否能被文档(javadoc)所记录</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Description&#123;</span><br><span class="line">	<span class="function">String <span class="title">desc</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function">String <span class="title">author</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">age</span><span class="params">()</span> <span class="keyword">default</span> 18</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-3-使用自定义注解："><a href="#7-3-使用自定义注解：" class="headerlink" title="7.3 使用自定义注解："></a>7.3 使用自定义注解：</h4><ul>
+<li>@&lt;注解名&gt;(&lt;成员名1&gt;=&lt;成员值1&gt;,&lt;成员名2&gt;=&lt;成员值2&gt;,…)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Description</span>(desc=<span class="string">"I am eyeColor"</span>, author=<span class="string">"Chao"</span>, age=<span class="number">18</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">eyeColor</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"red"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果自定义注解只有一个value成员，在使用的时候就可以省略方法名，如果方法是两个以上，每一个方法必须写名字</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Description</span>(<span class="string">"I am class annotation"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Child</span> <span class="keyword">implements</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="meta">@Description</span>(<span class="string">"I am method annotation"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">age</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>&#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-4-解析注解"><a href="#7-4-解析注解" class="headerlink" title="7.4 解析注解"></a>7.4 解析注解</h4><p>通过反射获取类、函数或成员上的运行时注解信息，从而实现动态控制程序运行的逻辑。</p>
+<ol>
+<li>使用类加载器加载类<ul>
+<li><code>Class c=Class.forName（&quot;com.ann.test.Child&quot;)</code></li>
+</ul>
+</li>
+<li>找到类上面的注解<ul>
+<li><code>isAnnotationPresent（类类型）</code>：Class对象的方法，判断当前类类型是否存在某个类类型的注解，返回类型为boolean。</li>
+</ul>
+</li>
+<li>拿到注解实例，需要强制类型转换。<ul>
+<li><code>Description d=（Description）c.getAnnotation(Description.class);</code></li>
+</ul>
+</li>
+<li>找到方法上的注解，首先，遍历所有方法，通过方法对象的isAnnotation查看是否有自定义注解。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ParseAnn</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[])</span></span>&#123;</span><br><span class="line">		<span class="keyword">try</span>&#123;<span class="comment">//1. 使用类加载器加载类</span></span><br><span class="line">			Class c=Class.forName（<span class="string">"com.ann.test.Child"</span>)</span><br><span class="line">			<span class="comment">//2. 找到类上面的注解</span></span><br><span class="line">			<span class="keyword">boolean</span> isExist = c.isAnnotationPresent(Description.class);</span><br><span class="line">			<span class="keyword">if</span>(isExist)&#123;</span><br><span class="line">				<span class="comment">//3. 拿到注解实例</span></span><br><span class="line">				Description d=（Description）c.getAnnotation(Description.class);</span><br><span class="line">				System.out.println(d.value());</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//4.找到方法上的注解</span></span><br><span class="line">			Method[] ms = c.getMethods();</span><br><span class="line">			<span class="keyword">for</span>(Method m:ms)&#123;</span><br><span class="line">				<span class="keyword">boolean</span> isMExist = m.isAnnotationPresent(Description.class);</span><br><span class="line">				<span class="keyword">if</span>(isMExist)&#123;</span><br><span class="line">					Description md=（Description）c.getAnnotation(Description.class);</span><br><span class="line">					System.out.println(md.value());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;<span class="keyword">catch</span>(ClassNotFoundException e)&#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>另一种解析方法上的注解:<ul>
+<li>获取这个方法的所有注解，<code>Annotation [] as=m.getAnnotations();</code>然后遍历该注解，如果遍历的注解是Description类型，则把遍历的注解强转为Description类型，并进行输出value()信息。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(Method m:ms)&#123;</span><br><span class="line">	Annotation [] as=m.getAnnotations();</span><br><span class="line">	<span class="keyword">for</span>(Annotation a:as)&#123;</span><br><span class="line">		<span class="keyword">if</span>(a <span class="keyword">instanceof</span> Description)&#123;</span><br><span class="line">			Description md = (Description)a;</span><br><span class="line">			System.out.println(md.value());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>@Inherited:当自定义注解上使用了该注解，如果在父类上标识该注解，解析一个子类，子类也可以获取该注解的信息。 </p>
+</blockquote>
 ]]></content>
       
         <categories>
@@ -663,6 +928,7 @@
 <li><a href="#id7">转换流</a></li>
 <li><a href="#id8">对象流</a></li>
 <li><a href="#id9">打印流(PrintStream类)</a></li>
+<li><a href="#id10">Properties类的使用</a></li>
 </ol>
 <p><span id="id1"><span></span></span></p>
 <h3 id="1-File类"><a href="#1-File类" class="headerlink" title="1. File类"></a>1. File类</h3><ul>
@@ -1013,6 +1279,20 @@
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PrintDemo</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">		<span class="comment">// 调用系统的打印流,控制台直接输出97</span></span><br><span class="line">		System.out.println(<span class="number">97</span>);</span><br><span class="line">		<span class="comment">// 创建打印流,指定文件的名称</span></span><br><span class="line">		PrintStream ps = <span class="keyword">new</span> PrintStream(<span class="string">"ps.txt"</span>);</span><br><span class="line">		<span class="comment">// 设置系统的打印流流向,输出到ps.txt</span></span><br><span class="line">		System.setOut(ps);</span><br><span class="line">		<span class="comment">// 调用系统的打印流,ps.txt中输出97</span></span><br><span class="line">		System.out.println(<span class="number">97</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p><span id="id10"><span></span></span></p>
+<h3 id="10-Properties类的使用"><a href="#10-Properties类的使用" class="headerlink" title="10. Properties类的使用"></a>10. Properties类的使用</h3><ul>
+<li>Java.util.Properties，主要用于读取Java的配置文件。</li>
+<li>Properties类继承自Hashtable</li>
+<li>配置文件：在Java中，其配置文件常为.properties文件，格式为文本文件，文件的内容的格式是“键=值”的格式，文本注释信息可以用”#”来注释。</li>
+<li>Properties类的主要方法：<ol>
+<li>getProperty ( String key)，用指定的键在此属性列表中搜索属性。也就是通过参数 key ，得到 key 所对应的 value。</li>
+<li>load ( InputStream inStream)，从输入流中读取属性列表（键和元素对）。通过对指定的文件（比如说上面的 test.properties 文件）进行装载来获取该文件中的所有键 - 值对。以供 getProperty ( String key) 来搜索。</li>
+<li>setProperty ( String key, String value) ，调用 Hashtable 的方法 put 。他通过调用基类的put方法来设置 键 - 值对。</li>
+<li>store ( OutputStream out, String comments)，以适合使用 load 方法加载到 Properties 表中的格式，将此 Properties 表中的属性列表（键和元素对）写入输出流。与 load 方法相反，该方法将键 - 值对写入到指定的文件中去。</li>
+<li>clear ()，清除所有装载的 键 - 值对。该方法在基类中提供。</li>
+</ol>
+</li>
+</ul>
 ]]></content>
       
         <categories>
