@@ -25,10 +25,11 @@
 </li>
 <li>按数据的存储结构分为：顺序存储结构和链式存储结构<ol>
 <li>顺序存储结构:用数据元素在存储器中的相对位置来表示数据元素之间的逻辑关系。 </li>
-<li>链式存储结构：在每一个数据元素中增加一个存放地址的指针，用此指针来表示数据元素之间的逻辑关系。<h4 id="1-2-1-线性数据结构"><a href="#1-2-1-线性数据结构" class="headerlink" title="1.2.1 线性数据结构"></a>1.2.1 线性数据结构</h4>常见的线性数据结构有：一维数组，线性表，栈，队列，双队列，串。</li>
+<li>链式存储结构：在每一个数据元素中增加一个存放地址的指针，用此指针来表示数据元素之间的逻辑关系。</li>
 </ol>
 </li>
 </ul>
+<h4 id="1-2-1-线性数据结构"><a href="#1-2-1-线性数据结构" class="headerlink" title="1.2.1 线性数据结构"></a>1.2.1 线性数据结构</h4><p>常见的线性数据结构有：一维数组，线性表，栈，队列，双队列，串。</p>
 <ol>
 <li>一维数组<ul>
 <li>在Java里面常用的util有：String [],int [],ArrayList,Vector,CopyOnWriteArrayList等。</li>
@@ -2198,24 +2199,38 @@
 </ol>
 <p><span id="id11"><span></span></span></p>
 <h3 id="11-TreeSet类"><a href="#11-TreeSet类" class="headerlink" title="11. TreeSet类"></a>11. TreeSet类</h3><ol>
-<li>TreeSet类，无序无重复，java.util包。(底层TreeMap 二叉树 利用Node(left item right))</li>
-<li>创建对象： 无参数构造方法 ，带Collection构造方法</li>
-<li>基本常用方法：add(E e)，iterator()，remove(E e)，没有修改，size()</li>
-<li>二叉树主要指每个节点最多只有两个子节点的树形结构。</li>
-<li>满足以下三个特征的二叉树叫做<strong>有序二叉树</strong>：<ul>
+<li><p>TreeSet类，无序无重复，java.util包。(底层TreeMap 二叉树 利用Node(left item right))</p>
+</li>
+<li><p>创建对象： 无参数构造方法 ，带Collection构造方法</p>
+</li>
+<li><p>基本常用方法：add(E e)，iterator()，remove(E e)，没有修改，size()</p>
+</li>
+<li><p>二叉树主要指每个节点最多只有两个子节点的树形结构。</p>
+</li>
+<li><p>满足以下三个特征的二叉树叫做<strong>有序二叉树</strong>：</p>
+<ul>
 <li>左子树中的任意节点元素都小于根节点元素；</li>
 <li>右子树中的任意节点元素都大于根节点元素；</li>
 <li>左子树和右子树内部也遵守上述规则；</li>
 </ul>
 </li>
-<li>无序无重复：treeSet集合本身有顺序，我们指的无序存入的和取出来的不一致。</li>
+<li><p>无序无重复：treeSet集合本身有顺序，我们指的无序存入的和取出来的不一致。</p>
+</li>
+<li><p>元素放入TreeSet集合过程：</p>
+<ul>
+<li>由于TreeSet集合底层采用<strong>有序二叉树</strong>进行数据的管理，当有新元素插入到TreeSet集合时，需要使用新元素与集合中已有的元素依次比较来确定存放合理位置，而比较元素大小规则有两种方式：<ol>
+<li>使用元素的<strong>自然排序</strong>规则进行比较并排序，让元素类型实现java.lang.Comparable接口；</li>
+<li>使用<strong>比较器规则</strong>进行比较并排序，构造TreeSet集合时传入java.util.Comparable接口；<blockquote>
+<p>注意：</p>
+</blockquote>
+</li>
+<li>自然排序的规则比较单一，而比较强的规则比较多元化，而且比较器优先于自然排序；</li>
+<li>可以使用Collections工具类对集合中的元素进行操作；</li>
 </ol>
-<blockquote>
-<p>元素放入TreeSet集合过程：</p>
-<blockquote>
-<p>由于TreeSet集合底层采用<strong>有序二叉树</strong>进行数据的管理，当有新元素插入到TreeSet集合时，需要使用新元素与集合中已有的元素依次比较来确定存放合理位置，而比较元素大小规则有两种方式：<br>    1. 使用元素的<strong>自然排序</strong>规则进行比较并排序，让元素类型实现java.lang.Comparable接口；<br>    2. 使用<strong>比较器规则</strong>进行比较并排序，构造TreeSet集合时传入java.util.Comparable接口；<br>注意：<br>    1. 自然排序的规则比较单一，而比较强的规则比较多元化，而且比较器优先于自然排序；<br>    2. 可以使用Collections工具类对集合中的元素进行操作；</p>
-</blockquote>
-</blockquote>
+</li>
+</ul>
+</li>
+</ol>
 <p><span id="id12"><span></span></span></p>
 <h3 id="12-Map集合"><a href="#12-Map集合" class="headerlink" title="12. Map集合"></a>12. Map集合</h3><ul>
 <li>java.util.Map&lt;K, V&gt;集合存取元素的基本单位是：单对元素（键值对key-value）。</li>
@@ -3111,7 +3126,18 @@
 </blockquote>
 <h4 id="1-4-引用"><a href="#1-4-引用" class="headerlink" title="1.4 引用"></a>1.4 引用</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">类名 引用变量名;</span><br><span class="line">Person p = <span class="keyword">new</span> Person(); <span class="comment">//声明person类型的引用p指向Person类型对象</span></span><br></pre></td></tr></table></figure>
 
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">引用变量名.成员变量名;</span><br><span class="line">p.name = <span class="string">'zhangsan'</span>;</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">&gt;- 在JAVA中，使用引用数据类型声明的变量叫做引用变量，简称‘引用’。</span><br><span class="line">&gt;- 使用引用可以记录对象在堆区中存放的内存地址信息，便于下次访问。</span><br><span class="line"></span><br><span class="line">- 除八种基本类型之外，用类名（接口，数组）声明的变量称为引用类型变量，引用类型变量存的某个对象的地址信息，引用的功能在于访问对象。</span><br><span class="line"></span><br><span class="line">#### 1.5 成员方法</span><br><span class="line">``` java</span><br><span class="line"><span class="class"><span class="keyword">class</span> 类名 </span>&#123;</span><br><span class="line">    返回值类型 成员方法名(形参列表)&#123;方法体;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">引用变量名.成员变量名;</span><br><span class="line">p.name = <span class="string">'zhangsan'</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>在JAVA中，使用引用数据类型声明的变量叫做引用变量，简称‘引用’。</li>
+<li>使用引用可以记录对象在堆区中存放的内存地址信息，便于下次访问。</li>
+</ul>
+</blockquote>
+<ul>
+<li>除八种基本类型之外，用类名（接口，数组）声明的变量称为引用类型变量，引用类型变量存的某个对象的地址信息，引用的功能在于访问对象。</li>
+</ul>
+<h4 id="1-5-成员方法"><a href="#1-5-成员方法" class="headerlink" title="1.5 成员方法"></a>1.5 成员方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> 类名 </span>&#123;</span><br><span class="line">    返回值类型 成员方法名(形参列表)&#123;方法体;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>返回值类型：可以是基本数据类型，也可以是引用，当方法不需要返回数据用void</li>
