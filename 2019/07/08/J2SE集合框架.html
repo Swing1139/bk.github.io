@@ -346,7 +346,7 @@
 </li>
 <li><p>无序无重复：treeSet集合本身有顺序，我们指的无序存入的和取出来的不一致。</p>
 </li>
-<li><p>元素放入TreeSet集合过程：<br><br>由于TreeSet集合底层采用<strong>有序二叉树</strong>进行数据的管理，当有新元素插入到TreeSet集合时，需要使用新元素与集合中已有的元素依次比较来确定存放合理位置，而比较元素大小规则有两种方式：</p>
+<li><p>元素放入TreeSet集合过程：<br>由于TreeSet集合底层采用<strong>有序二叉树</strong>进行数据的管理，当有新元素插入到TreeSet集合时，需要使用新元素与集合中已有的元素依次比较来确定存放合理位置，而比较元素大小规则有两种方式：</p>
 <ol>
 <li>使用元素的<strong>自然排序</strong>规则进行比较并排序，让元素类型实现java.lang.Comparable接口；</li>
 <li>使用<strong>比较器规则</strong>进行比较并排序，构造TreeSet集合时传入java.util.Comparable接口；</li>

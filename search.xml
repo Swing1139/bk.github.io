@@ -613,10 +613,10 @@
 <p>如前面所说，开源也是有License的，违反License的行为就是对开源的盗版。<br>在反盗版问题上，所有类型软件的立场应该是一致的。</p>
 <p>开源的观念并不只限于软件的开发与使用，而是希望能够抱着<strong>开放的心态</strong>，<strong>分享与合作的精神</strong>，将失败与BUG视为进步的一部分，<strong>当它被分享的时候它会变得更好</strong>。</p>
 <blockquote>
-<p>参考文章及连接：</p>
+<p>参考连接：</p>
 <ul>
-<li>我对开源的理解(happmaoo)：<a href="https://blog.csdn.net/happmaoo/article/details/83201544" target="_blank" rel="noopener">https://blog.csdn.net/happmaoo/article/details/83201544</a></li>
-<li>开源是一种态度!(oschina)：<a href="https://www.oschina.net/news/58921/what-is-open-source" target="_blank" rel="noopener">https://www.oschina.net/news/58921/what-is-open-source</a></li>
+<li><a href="https://blog.csdn.net/happmaoo/article/details/83201544" target="_blank" rel="noopener">https://blog.csdn.net/happmaoo/article/details/83201544</a></li>
+<li><a href="https://www.oschina.net/news/58921/what-is-open-source" target="_blank" rel="noopener">https://www.oschina.net/news/58921/what-is-open-source</a></li>
 </ul>
 </blockquote>
 ]]></content>
@@ -2216,7 +2216,7 @@
 </li>
 <li><p>无序无重复：treeSet集合本身有顺序，我们指的无序存入的和取出来的不一致。</p>
 </li>
-<li><p>元素放入TreeSet集合过程：<br><br>由于TreeSet集合底层采用<strong>有序二叉树</strong>进行数据的管理，当有新元素插入到TreeSet集合时，需要使用新元素与集合中已有的元素依次比较来确定存放合理位置，而比较元素大小规则有两种方式：</p>
+<li><p>元素放入TreeSet集合过程：<br>由于TreeSet集合底层采用<strong>有序二叉树</strong>进行数据的管理，当有新元素插入到TreeSet集合时，需要使用新元素与集合中已有的元素依次比较来确定存放合理位置，而比较元素大小规则有两种方式：</p>
 <ol>
 <li>使用元素的<strong>自然排序</strong>规则进行比较并排序，让元素类型实现java.lang.Comparable接口；</li>
 <li>使用<strong>比较器规则</strong>进行比较并排序，构造TreeSet集合时传入java.util.Comparable接口；</li>
