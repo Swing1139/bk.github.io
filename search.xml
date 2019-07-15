@@ -2216,21 +2216,16 @@
 </li>
 <li><p>无序无重复：treeSet集合本身有顺序，我们指的无序存入的和取出来的不一致。</p>
 </li>
-<li><p>元素放入TreeSet集合过程：</p>
-<ul>
-<li>由于TreeSet集合底层采用<strong>有序二叉树</strong>进行数据的管理，当有新元素插入到TreeSet集合时，需要使用新元素与集合中已有的元素依次比较来确定存放合理位置，而比较元素大小规则有两种方式：<ol>
+<li><p>元素放入TreeSet集合过程：<br><br>由于TreeSet集合底层采用<strong>有序二叉树</strong>进行数据的管理，当有新元素插入到TreeSet集合时，需要使用新元素与集合中已有的元素依次比较来确定存放合理位置，而比较元素大小规则有两种方式：</p>
+<ol>
 <li>使用元素的<strong>自然排序</strong>规则进行比较并排序，让元素类型实现java.lang.Comparable接口；</li>
-<li>使用<strong>比较器规则</strong>进行比较并排序，构造TreeSet集合时传入java.util.Comparable接口；<blockquote>
-<p>注意：</p>
+<li>使用<strong>比较器规则</strong>进行比较并排序，构造TreeSet集合时传入java.util.Comparable接口；</li>
+</ol>
+</li>
+</ol>
+<blockquote>
+<p>注意：<br>    1. 自然排序的规则比较单一，而比较强的规则比较多元化，而且比较器优先于自然排序；<br>    2. 可以使用Collections工具类对集合中的元素进行操作；</p>
 </blockquote>
-</li>
-<li>自然排序的规则比较单一，而比较强的规则比较多元化，而且比较器优先于自然排序；</li>
-<li>可以使用Collections工具类对集合中的元素进行操作；</li>
-</ol>
-</li>
-</ul>
-</li>
-</ol>
 <p><span id="id12"><span></span></span></p>
 <h3 id="12-Map集合"><a href="#12-Map集合" class="headerlink" title="12. Map集合"></a>12. Map集合</h3><ul>
 <li>java.util.Map&lt;K, V&gt;集合存取元素的基本单位是：单对元素（键值对key-value）。</li>
