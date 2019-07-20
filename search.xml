@@ -101,38 +101,31 @@
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">  request.setCharacterEncoding(<span class="string">"UTF-8"</span>);</span><br><span class="line">  response.setContentType(<span class="string">"text/html;charset=utf-8"</span>);</span><br><span class="line">  <span class="comment">//1.接收</span></span><br><span class="line">  String username = request.getParameter(<span class="string">"username"</span>);</span><br><span class="line">  String[] password = request.getParameterValues(<span class="string">"password"</span>);</span><br><span class="line">  <span class="comment">//2.打印</span></span><br><span class="line">  System.out.println(<span class="string">"username:"</span> + username);</span><br><span class="line">  System.out.println(<span class="string">"password:"</span> + password[<span class="number">0</span>]);</span><br><span class="line">  System.out.println(<span class="string">"password2:"</span> + password[<span class="number">1</span>]);</span><br><span class="line">  <span class="comment">//3.浏览器输出</span></span><br><span class="line">  response.getWriter().append(<span class="string">"&lt;div&gt;很遗憾注册失败，点击&lt;a href=\"demo1.html\"&gt;重新注册&lt;/a&gt;&lt;/div&gt;"</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="2-6-乱码处理"><a href="#2-6-乱码处理" class="headerlink" title="2.6 乱码处理"></a>2.6 乱码处理</h4><ol>
-<li><p>乱码情况：</p>
-<ul>
+<h4 id="2-6-乱码处理"><a href="#2-6-乱码处理" class="headerlink" title="2.6 乱码处理"></a>2.6 乱码处理</h4><h4 id="2-6-1-乱码情况："><a href="#2-6-1-乱码情况：" class="headerlink" title="2.6.1 乱码情况："></a>2.6.1 乱码情况：</h4><ul>
 <li>浏览器提交表单时，会对中文参数值进行自动编码。Tomcat服务器接收到的浏览器请求后，默认使用iso-8859-1去解码，当编码与解码方式不一致时，就会乱码。</li>
 <li>tomcat8版本之前(不包含tomcat8版本), GET请求乱码</li>
 <li>任何版本, POST请求乱码</li>
 </ul>
-</li>
-<li><p>请求乱码处理：</p>
-<ul>
-<li><p>适用于所有乱码问题：(Tomcat8之后get无乱码)</p>
-<ol>
+<h4 id="2-6-2-请求乱码处理："><a href="#2-6-2-请求乱码处理：" class="headerlink" title="2.6.2 请求乱码处理："></a>2.6.2 请求乱码处理：</h4><ul>
+<li>适用于所有乱码问题：(Tomcat8之后get无乱码)<ol>
 <li>指定浏览器打开页面的编码<code>&lt;meta charset=&quot;UTF-8&quot;&gt;</code>;</li>
-<li>将接收到的中文乱码重新编码：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String name = request.getParameter(<span class="string">"userName"</span>);</span><br><span class="line">String userName = <span class="keyword">new</span> String( name.getByte(<span class="string">"ISO-8859-1"</span>),<span class="string">"utf-8"</span>);</span><br></pre></td></tr></table></figure>
-</li>
+<li>将接收到的中文乱码重新编码：</li>
 </ol>
 </li>
-<li><p>仅适用于POST请求：</p>
-<ol>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String name = request.getParameter(<span class="string">"userName"</span>);</span><br><span class="line">String userName = <span class="keyword">new</span> String( name.getByte(<span class="string">"ISO-8859-1"</span>),<span class="string">"utf-8"</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>仅适用于POST请求：<ol>
 <li>指定浏览器打开页面的编码<code>&lt;meta charset=&quot;UTF-8&quot;&gt;</code>;</li>
 <li>Servlet接收之前设置解码（需在调用request.getParameter(“key”)之前设置）<code>request.setCharacterEncoding(&quot;utf-8&quot;)</code>;</li>
 </ol>
 </li>
 </ul>
-</li>
-<li><p>响应乱码的处理：</p>
-<ul>
+<h4 id="2-6-3-响应乱码的处理："><a href="#2-6-3-响应乱码的处理：" class="headerlink" title="2.6.3 响应乱码的处理："></a>2.6.3 响应乱码的处理：</h4><ul>
 <li>方式一：设置响应的内容类型, 以及编码格式:<code>response.setContentType(&quot;text/html;charset=utf-8&quot;)</code>;</li>
 <li>方式二：进设置编码格式, 不设置响应内容类型:<code>response.setCharacterEncoding(&quot;UTF-8&quot;)</code>(常用于客户端不是浏览器的情况, 如果在浏览器的环境下设置, 有部分浏览器无法识别, 依然会乱码);</li>
 </ul>
-</li>
-</ol>
 <h4 id="2-7-Servlet的创建时机"><a href="#2-7-Servlet的创建时机" class="headerlink" title="2.7 Servlet的创建时机"></a>2.7 Servlet的创建时机</h4><ul>
 <li>通过web.xml配置Servlet, 可以修改Servlet加载的时机。</li>
 <li>可以给Servlet节点，添加<code>&lt;load-on-startup&gt;</code>节点来制定servlet启动顺序。</li>
