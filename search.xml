@@ -4,9 +4,12 @@
   
     
     <entry>
-      <title><![CDATA[JavaWeb编程基础]]></title>
+      <title><![CDATA[十二、JavaWeb编程基础]]></title>
       <url>http://chaooo.github.io/2019/07/20/12_JavaWeb%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.html</url>
-      <content type="html"><![CDATA[<h2 id="十二、JavaWeb编程基础"><a href="#十二、JavaWeb编程基础" class="headerlink" title="十二、JavaWeb编程基础"></a>十二、JavaWeb编程基础</h2><ol>
+      <content type="html"><![CDATA[<p>JavaWeb是用Java技术来解决相关web互联网领域的技术总和。Java提供了技术方案可以解决客户端和服务器端的实现，特别是服务器的应用，比如Servlet，JSP和第三方框架等等。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">http协议</a></li>
 <li><a href="#id2">Servlet</a></li>
 <li><a href="#id3">get和post区别</a></li>
@@ -419,9 +422,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE数据结构与算法入门]]></title>
+      <title><![CDATA[十一、JavaSE数据结构与算法入门]]></title>
       <url>http://chaooo.github.io/2019/07/15/11_JavaSE%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%85%A5%E9%97%A8.html</url>
-      <content type="html"><![CDATA[<h2 id="十一、JavaSE数据结构与算法入门"><a href="#十一、JavaSE数据结构与算法入门" class="headerlink" title="十一、JavaSE数据结构与算法入门"></a>十一、JavaSE数据结构与算法入门</h2><ol>
+      <content type="html"><![CDATA[<p>数据结构，它是储存数据的一种结构体，在此结构中储存一些数据，而这些数据之间有一定的关系。<br>算法（Algorithm）是对特定问题求解步骤的一种描述，它是指令的有限序列，其中每一条指令表示一个或者多个操作。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">Java数据结构</a></li>
 <li><a href="#id2">时间复杂度与空间复杂度</a></li>
 <li><a href="#id3">算法的基本概念</a></li>
@@ -621,9 +627,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE常用设计模式]]></title>
+      <title><![CDATA[十、JavaSE常用设计模式]]></title>
       <url>http://chaooo.github.io/2019/07/15/10_JavaSE%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.html</url>
-      <content type="html"><![CDATA[<h2 id="十、JavaSE设计模式"><a href="#十、JavaSE设计模式" class="headerlink" title="十、JavaSE设计模式"></a>十、JavaSE设计模式</h2><ol>
+      <content type="html"><![CDATA[<p>设计模式（Design pattern）是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了可重用代码、让代码更容易被他人理解、保证代码可靠性。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">常用的设计原则</a></li>
 <li><a href="#id2">设计模式分类</a></li>
 <li><a href="#id3">单例模式</a></li>
@@ -759,9 +768,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE网络编程]]></title>
+      <title><![CDATA[九、JavaSE网络编程]]></title>
       <url>http://chaooo.github.io/2019/07/12/09_JavaSE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.html</url>
-      <content type="html"><![CDATA[<h2 id="九、JavaSE网络编程"><a href="#九、JavaSE网络编程" class="headerlink" title="九、JavaSE网络编程"></a>九、JavaSE网络编程</h2><ol>
+      <content type="html"><![CDATA[<p>网络编程是指编写运行在多个设备（计算机）的程序，这些设备都通过网络连接起来。<br>java.net 包中的类和接口，它们提供低层次的通信细节。你可以直接使用这些类和接口，来专注于解决问题，而不用关注通信细节。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">网络编程常识</a></li>
 <li><a href="#id2">基于tcp协议的编程模型</a></li>
 <li><a href="#id3">基于udp协议的编程模型</a></li>
@@ -882,11 +894,11 @@
 <td>用于关闭套接字</td>
 </tr>
 </tbody></table>
-<p>客户端与服务端通信演示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//服务端线程</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> Socket s;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">ServerThread</span><span class="params">(Socket s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.s = s;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 3.使用输入输出流进行通信</span></span><br><span class="line">      BufferedReader br = <span class="keyword">new</span> BufferedReader(</span><br><span class="line">          <span class="keyword">new</span> InputStreamReader(s.getInputStream()));</span><br><span class="line">      PrintStream ps = <span class="keyword">new</span> PrintStream(s.getOutputStream());</span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 实现服务器接收到字符串内容后打印出来</span></span><br><span class="line">        <span class="comment">// 当客户端没有发送数据时，服务器会在这里阻塞</span></span><br><span class="line">        String str = br.readLine();</span><br><span class="line">        <span class="comment">//System.out.println("服务器接收到的数据是：" + str);</span></span><br><span class="line">        <span class="comment">// 当服务器接收到"bye"后，则聊天结束</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"bye"</span>.equalsIgnoreCase(str)) &#123;</span><br><span class="line">          System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() + <span class="string">"已下线！"</span>);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() </span><br><span class="line">          + <span class="string">"发来的消息是："</span> + str);  </span><br><span class="line">        <span class="comment">// 当服务器接收到客户端发来的消息后，向客户端回发消息"I received!"</span></span><br><span class="line">        ps.println(<span class="string">"I received!"</span>);</span><br><span class="line">        <span class="comment">//System.out.println("服务器发送数据成功！");</span></span><br><span class="line">      &#125; </span><br><span class="line">      <span class="comment">// 4.关闭Socket</span></span><br><span class="line">      ps.close();</span><br><span class="line">      br.close();</span><br><span class="line">      s.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//服务端测试</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerStringTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 1.创建ServerSocket类型的对象并提供端口号</span></span><br><span class="line">      ServerSocket ss = <span class="keyword">new</span> ServerSocket(<span class="number">8888</span>);</span><br><span class="line">      <span class="comment">// 2.等待客户端的连接请求，调用accept方法</span></span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">"等待客户端的连接请求..."</span>);</span><br><span class="line">        <span class="comment">// 当没有客户端连接时，阻塞在accept方法的调用这里</span></span><br><span class="line">        Socket s = ss.accept();</span><br><span class="line">        <span class="comment">// 获取连接成功的客户端通信地址</span></span><br><span class="line">        System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() + <span class="string">"连接成功！"</span>);</span><br><span class="line">        <span class="comment">// 当有客户端连接成功后，则启动一个新的线程为之服务</span></span><br><span class="line">        <span class="keyword">new</span> ServerThread(s).start();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//ss.close();</span></span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//客户端测试</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientStringTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 1.创建Socket类型的对象并提供服务器的通信地址和端口号</span></span><br><span class="line">      Socket s = <span class="keyword">new</span> Socket(<span class="string">"XDL-20170621QCO"</span>, <span class="number">8888</span>);</span><br><span class="line">      System.out.println(<span class="string">"连接服务器成功！"</span>);</span><br><span class="line">      <span class="comment">// 2.使用输入输出流进行通信</span></span><br><span class="line">      Scanner sc = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">      PrintStream ps = <span class="keyword">new</span> PrintStream(s.getOutputStream());</span><br><span class="line">      BufferedReader br = <span class="keyword">new</span> BufferedReader(</span><br><span class="line">          <span class="keyword">new</span> InputStreamReader(s.getInputStream()));</span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 希望客户端连接服务器成功后睡眠10秒再发送数据，测试服务器是否阻塞</span></span><br><span class="line">        <span class="comment">//Thread.sleep(10000);</span></span><br><span class="line">        <span class="comment">// 练习：实现客户端向服务器发送的内容由用户从键盘输入</span></span><br><span class="line">        System.out.println(<span class="string">"请输入要发送的内容："</span>);</span><br><span class="line">        <span class="comment">//String msg = sc.next(); // 读取字符串内容时，遇到空格停止</span></span><br><span class="line">        String msg = sc.nextLine();</span><br><span class="line">        <span class="comment">// 实现客户端向服务器发送字符串内容"hello"</span></span><br><span class="line">        <span class="comment">//ps.println("hello");</span></span><br><span class="line">        ps.println(msg);</span><br><span class="line">        System.out.println(<span class="string">"客户端发送数据成功！"</span>);</span><br><span class="line">        <span class="comment">// 判断客户端发送的内容是否为"bye"，若是则聊天结束</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"bye"</span>.equalsIgnoreCase(msg)) &#123;</span><br><span class="line">          System.out.println(<span class="string">"聊天结束！"</span>);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 实现服务器回发消息的接收</span></span><br><span class="line">        <span class="comment">// 当客户端没有发送数据时，服务器会在这里阻塞</span></span><br><span class="line">        String str = br.readLine();</span><br><span class="line">        System.out.println(<span class="string">"客户端接收到的数据是："</span> + str);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 3.关闭Socket</span></span><br><span class="line">      br.close();</span><br><span class="line">      sc.close();</span><br><span class="line">      ps.close();</span><br><span class="line">      s.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p><span id="id3"><span></span></span></p>
-<h3 id="3-基于udp协议的编程模型"><a href="#3-基于udp协议的编程模型" class="headerlink" title="3. 基于udp协议的编程模型"></a>3. 基于udp协议的编程模型</h3><h4 id="3-1-编程模型"><a href="#3-1-编程模型" class="headerlink" title="3.1 编程模型"></a>3.1 编程模型</h4><ul>
+<h3 id="3-客户端与服务端通信演示："><a href="#3-客户端与服务端通信演示：" class="headerlink" title="3.客户端与服务端通信演示："></a>3.客户端与服务端通信演示：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//服务端线程</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> Socket s;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">ServerThread</span><span class="params">(Socket s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.s = s;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 3.使用输入输出流进行通信</span></span><br><span class="line">      BufferedReader br = <span class="keyword">new</span> BufferedReader(</span><br><span class="line">          <span class="keyword">new</span> InputStreamReader(s.getInputStream()));</span><br><span class="line">      PrintStream ps = <span class="keyword">new</span> PrintStream(s.getOutputStream());</span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 实现服务器接收到字符串内容后打印出来</span></span><br><span class="line">        <span class="comment">// 当客户端没有发送数据时，服务器会在这里阻塞</span></span><br><span class="line">        String str = br.readLine();</span><br><span class="line">        <span class="comment">//System.out.println("服务器接收到的数据是：" + str);</span></span><br><span class="line">        <span class="comment">// 当服务器接收到"bye"后，则聊天结束</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"bye"</span>.equalsIgnoreCase(str)) &#123;</span><br><span class="line">          System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() + <span class="string">"已下线！"</span>);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() </span><br><span class="line">          + <span class="string">"发来的消息是："</span> + str);  </span><br><span class="line">        <span class="comment">// 当服务器接收到客户端发来的消息后，向客户端回发消息"I received!"</span></span><br><span class="line">        ps.println(<span class="string">"I received!"</span>);</span><br><span class="line">        <span class="comment">//System.out.println("服务器发送数据成功！");</span></span><br><span class="line">      &#125; </span><br><span class="line">      <span class="comment">// 4.关闭Socket</span></span><br><span class="line">      ps.close();</span><br><span class="line">      br.close();</span><br><span class="line">      s.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//服务端测试</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerStringTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 1.创建ServerSocket类型的对象并提供端口号</span></span><br><span class="line">      ServerSocket ss = <span class="keyword">new</span> ServerSocket(<span class="number">8888</span>);</span><br><span class="line">      <span class="comment">// 2.等待客户端的连接请求，调用accept方法</span></span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">"等待客户端的连接请求..."</span>);</span><br><span class="line">        <span class="comment">// 当没有客户端连接时，阻塞在accept方法的调用这里</span></span><br><span class="line">        Socket s = ss.accept();</span><br><span class="line">        <span class="comment">// 获取连接成功的客户端通信地址</span></span><br><span class="line">        System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() + <span class="string">"连接成功！"</span>);</span><br><span class="line">        <span class="comment">// 当有客户端连接成功后，则启动一个新的线程为之服务</span></span><br><span class="line">        <span class="keyword">new</span> ServerThread(s).start();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//ss.close();</span></span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//客户端测试</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientStringTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 1.创建Socket类型的对象并提供服务器的通信地址和端口号</span></span><br><span class="line">      Socket s = <span class="keyword">new</span> Socket(<span class="string">"XDL-20170621QCO"</span>, <span class="number">8888</span>);</span><br><span class="line">      System.out.println(<span class="string">"连接服务器成功！"</span>);</span><br><span class="line">      <span class="comment">// 2.使用输入输出流进行通信</span></span><br><span class="line">      Scanner sc = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">      PrintStream ps = <span class="keyword">new</span> PrintStream(s.getOutputStream());</span><br><span class="line">      BufferedReader br = <span class="keyword">new</span> BufferedReader(</span><br><span class="line">          <span class="keyword">new</span> InputStreamReader(s.getInputStream()));</span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 希望客户端连接服务器成功后睡眠10秒再发送数据，测试服务器是否阻塞</span></span><br><span class="line">        <span class="comment">//Thread.sleep(10000);</span></span><br><span class="line">        <span class="comment">// 练习：实现客户端向服务器发送的内容由用户从键盘输入</span></span><br><span class="line">        System.out.println(<span class="string">"请输入要发送的内容："</span>);</span><br><span class="line">        <span class="comment">//String msg = sc.next(); // 读取字符串内容时，遇到空格停止</span></span><br><span class="line">        String msg = sc.nextLine();</span><br><span class="line">        <span class="comment">// 实现客户端向服务器发送字符串内容"hello"</span></span><br><span class="line">        <span class="comment">//ps.println("hello");</span></span><br><span class="line">        ps.println(msg);</span><br><span class="line">        System.out.println(<span class="string">"客户端发送数据成功！"</span>);</span><br><span class="line">        <span class="comment">// 判断客户端发送的内容是否为"bye"，若是则聊天结束</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"bye"</span>.equalsIgnoreCase(msg)) &#123;</span><br><span class="line">          System.out.println(<span class="string">"聊天结束！"</span>);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 实现服务器回发消息的接收</span></span><br><span class="line">        <span class="comment">// 当客户端没有发送数据时，服务器会在这里阻塞</span></span><br><span class="line">        String str = br.readLine();</span><br><span class="line">        System.out.println(<span class="string">"客户端接收到的数据是："</span> + str);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 3.关闭Socket</span></span><br><span class="line">      br.close();</span><br><span class="line">      sc.close();</span><br><span class="line">      ps.close();</span><br><span class="line">      s.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><span id="id4"><span></span></span></p>
+<h3 id="4-基于udp协议的编程模型"><a href="#4-基于udp协议的编程模型" class="headerlink" title="4. 基于udp协议的编程模型"></a>4. 基于udp协议的编程模型</h3><h4 id="4-1-编程模型"><a href="#4-1-编程模型" class="headerlink" title="4.1 编程模型"></a>4.1 编程模型</h4><ul>
 <li>主机A(接收方):<ol>
 <li>创建DatagramSocket类型的对象，并提供端口号；</li>
 <li>创建DatagramPacket类型的对象，用于接收发来的数据；</li>
@@ -902,7 +914,7 @@
 </ol>
 </li>
 </ul>
-<h4 id="3-2-DatagramSocket类"><a href="#3-2-DatagramSocket类" class="headerlink" title="3.2 DatagramSocket类"></a>3.2 DatagramSocket类</h4><ul>
+<h4 id="4-2-DatagramSocket类"><a href="#4-2-DatagramSocket类" class="headerlink" title="4.2 DatagramSocket类"></a>4.2 DatagramSocket类</h4><ul>
 <li>java.net.DatagramSocket类用于描述发送或接受数据报的套接字(邮局点);</li>
 </ul>
 <table>
@@ -933,7 +945,7 @@
 <td></td>
 </tr>
 </tbody></table>
-<h4 id="3-3-DatagramPacket类"><a href="#3-3-DatagramPacket类" class="headerlink" title="3.3 DatagramPacket类"></a>3.3 DatagramPacket类</h4><ul>
+<h4 id="4-3-DatagramPacket类"><a href="#4-3-DatagramPacket类" class="headerlink" title="4.3 DatagramPacket类"></a>4.3 DatagramPacket类</h4><ul>
 <li>java.net.DatagramPacket类用于描述数据报信息(信件)；</li>
 </ul>
 <table>
@@ -964,7 +976,7 @@
 <td>用于获取发送或接收数据的长度。</td>
 </tr>
 </tbody></table>
-<h4 id="3-4-InetAddress类"><a href="#3-4-InetAddress类" class="headerlink" title="3.4 InetAddress类"></a>3.4 InetAddress类</h4><ul>
+<h4 id="4-4-InetAddress类"><a href="#4-4-InetAddress类" class="headerlink" title="4.4 InetAddress类"></a>4.4 InetAddress类</h4><ul>
 <li>java.net.InetAddress类用于描述互联网协议地址。</li>
 </ul>
 <table>
@@ -1014,10 +1026,11 @@
       <title><![CDATA[谈谈开源]]></title>
       <url>http://chaooo.github.io/2019/07/11/%E8%B0%88%E8%B0%88%E5%BC%80%E6%BA%90.html</url>
       <content type="html"><![CDATA[<h3 id="什么是开源"><a href="#什么是开源" class="headerlink" title="什么是开源"></a>什么是开源</h3><p>所谓的「开源」，原本指的是开放其设计让所有使用者自由修改的一项机制。</p>
+<p>在IT领域来说的话，字面意思就是<strong>开放源代码</strong>，开源软件的源代码任何人都可以审查、修改和增强。</p>
+<a id="more"></a>
 <p>虽然大多被用于软件开发过程中，但这项机制已逐渐演变为泛指在产品、计划与专案方面，透过开放大众的参与、讨论与修改，进而加速其发展、增加透明度及大众福利的方式。</p>
-<p>在IT领域来说的话，字面意思就是<strong>源码开放</strong>，开源软件的源代码任何人都可以审查、修改和增强。</p>
-<h3 id="开源是否等于免费"><a href="#开源是否等于免费" class="headerlink" title="开源是否等于免费"></a>开源是否等于免费</h3><p>商业软件（Business Software）、自由软件（Free Software）和开源软件（Open Source Software，此处为狭义的开源）。它们之间的根本区别并不是在是否收费上——这是对开源的最大误解。</p>
-<p>其实这三者的根本区别在于<strong>License</strong>（许可协议）。</p>
+<h3 id="开源是否等于免费"><a href="#开源是否等于免费" class="headerlink" title="开源是否等于免费"></a>开源是否等于免费</h3><p>开源等于免费是对开源的最大误解。</p>
+<p>商业软件（Business Software）、自由软件（Free Software）和开源软件（Open Source Software，此处为狭义的开源）。它们之间的根本区别并不是在是否收费上，而是在于<strong>License</strong>（许可协议）。</p>
 <p>商业软件用的是商业License，以保障软件商的利益为第一位，基本没有考虑用户的利益。</p>
 <p>开源软件既然源码都是开放的，所以直接拿来免费使用基本都是没有问题的，但是这并不意味着使用开源软件是完全没限制的。每个开源软件都受License(开源协议)的<strong>约束和保护</strong>。</p>
 <p>目前使用最广泛的一种开源协议便是<strong>MIT License</strong>，MIT允许别人用作者的代码做任何事情，但必须保证作者的所有权，并且作者无须承担代码使用产生的风险。比如Vue.js、React、Element、Bootstrap都是用的MIT协议。</p>
@@ -1025,8 +1038,8 @@
 <p>对于程序员来说，我们不但可以以开源软件为基础，根据自己的需要进行开发；也可以通过分享、观摩他人的源代码，进一步<strong>相互切磋与学习</strong>。</p>
 <p>开源这件事情，不论对用户还是开发者来说，都只是一种选择。商业是商业，开源是开源，没有谁比谁了不起。</p>
 <h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>最后还要说一点：不要把开源软件与盗版混为一谈。</p>
-<p>如前面所说，开源也是有License的，违反License的行为就是对开源的盗版。<br>在反盗版问题上，所有类型软件的立场应该是一致的。</p>
-<p>开源的观念并不只限于软件的开发与使用，而是希望能够抱着<strong>开放的心态</strong>，<strong>分享与合作的精神</strong>，将失败与BUG视为进步的一部分，<strong>当它被分享的时候它会变得更好</strong>。</p>
+<p>如前面所说，开源也是有License的，违反License的行为就是对开源的盗版。在反盗版问题上，所有类型软件的立场应该是一致的。</p>
+<p>开源的观念并不只限于软件的开发与使用，而是希望能够抱着<strong>开放的心态</strong>，<strong>分享与合作的精神</strong>，<strong>相互切磋与学习</strong>，<strong>当你的代码被分享时它会变得更好</strong>。</p>
 <blockquote>
 <p>参考连接：</p>
 <ul>
@@ -1052,9 +1065,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE反射机制]]></title>
+      <title><![CDATA[八、JavaSE反射机制]]></title>
       <url>http://chaooo.github.io/2019/07/10/08_JavaSE%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6.html</url>
-      <content type="html"><![CDATA[<h2 id="八、JavaSE反射机制"><a href="#八、JavaSE反射机制" class="headerlink" title="八、JavaSE反射机制"></a>八、JavaSE反射机制</h2><ol>
+      <content type="html"><![CDATA[<p>反射(Reflection)是Java 程序开发语言的特征之一，它允许运行中的 Java 程序获取自身的信息，并且可以操作类或对象的内部属性。<br>多数情况下反射是为了提高程序的灵活性，运行时动态加载需要加载的对象。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">基本概念</a></li>
 <li><a href="#id2">Class类</a></li>
 <li><a href="#id3">Constructor类</a></li>
@@ -1342,9 +1358,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE多线程]]></title>
+      <title><![CDATA[七、JavaSE多线程]]></title>
       <url>http://chaooo.github.io/2019/07/09/07_JavaSE%E5%A4%9A%E7%BA%BF%E7%A8%8B.html</url>
-      <content type="html"><![CDATA[<h2 id="七、JavaSE多线程"><a href="#七、JavaSE多线程" class="headerlink" title="七、JavaSE多线程"></a>七、JavaSE多线程</h2><ol>
+      <content type="html"><![CDATA[<p>多线程的存在，不是提高程序的执行速度。其实是为了提高应用程序的使用率。<br>程序的执行其实都是在抢CPU的资源，CPU的执行权。<br>多个进程是在抢这个资源，而其中的某一个进程如果执行路径(线程)比较多，就会有更高的几率抢到CPU的执行权。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">基本概念</a></li>
 <li><a href="#id2">实现线程的过程</a></li>
 <li><a href="#id3">线程常用方法</a></li>
@@ -1677,9 +1696,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE输入输出(IO)]]></title>
+      <title><![CDATA[六、JavaSE输入输出(IO)]]></title>
       <url>http://chaooo.github.io/2019/07/09/06_JavaSE%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA-IO.html</url>
-      <content type="html"><![CDATA[<h2 id="六、JavaSE输入输出流（IO流）"><a href="#六、JavaSE输入输出流（IO流）" class="headerlink" title="六、JavaSE输入输出流（IO流）"></a>六、JavaSE输入输出流（IO流）</h2><ol>
+      <content type="html"><![CDATA[<p>输入输出（I/O）是指程序与外部设备或其他计算机进行交互的操作。几乎所有的程序都具有输入与输出操作，Java把这些输入与输出操作用流来实现，通过统一的接口来表示，从而使程序设计更为简单。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">File类</a></li>
 <li><a href="#id2">IO流</a></li>
 <li><a href="#id3">文件流</a></li>
@@ -2074,9 +2096,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE异常处理机制]]></title>
+      <title><![CDATA[五、JavaSE异常处理机制]]></title>
       <url>http://chaooo.github.io/2019/07/09/05_JavaSE%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.html</url>
-      <content type="html"><![CDATA[<h2 id="五、JavaSE异常处理机制"><a href="#五、JavaSE异常处理机制" class="headerlink" title="五、JavaSE异常处理机制"></a>五、JavaSE异常处理机制</h2><ol>
+      <content type="html"><![CDATA[<p>Java语言提供了完善的异常处理机制。正确运用这套机制，有助于提高程序的健壮性。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">基本概念</a></li>
 <li><a href="#id2">异常的分支结构</a></li>
 <li><a href="#id3">添加处理异常的手段</a></li>
@@ -2281,9 +2306,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE集合框架]]></title>
+      <title><![CDATA[四、JavaSE集合框架]]></title>
       <url>http://chaooo.github.io/2019/07/08/04_JavaSE%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6.html</url>
-      <content type="html"><![CDATA[<h2 id="四、JavaSE集合框架"><a href="#四、JavaSE集合框架" class="headerlink" title="四、JavaSE集合框架"></a>四、JavaSE集合框架</h2><ol>
+      <content type="html"><![CDATA[<p>为了方便对多个对象的操作，对对象进行存储，集合就是存储对象最常用的一种方式。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">Collection集合</a></li>
 <li><a href="#id2">List集合</a></li>
 <li><a href="#id3">泛型机制</a></li>
@@ -2810,9 +2838,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE核心工具类]]></title>
+      <title><![CDATA[三、JavaSE核心工具类]]></title>
       <url>http://chaooo.github.io/2019/07/08/03_JavaSE%E6%A0%B8%E5%BF%83%E5%B7%A5%E5%85%B7%E7%B1%BB.html</url>
-      <content type="html"><![CDATA[<h2 id="三、JavaSE核心工具类"><a href="#三、JavaSE核心工具类" class="headerlink" title="三、JavaSE核心工具类"></a>三、JavaSE核心工具类</h2><ol>
+      <content type="html"><![CDATA[<p>API (Application Programming Interface) 应用程序编程接口，Java中的API，就是JDK提供的各种功能的Java类。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">Object类与其常用方法</a></li>
 <li><a href="#id2">包装类</a></li>
 <li><a href="#id3">数学处理类</a></li>
@@ -3493,9 +3524,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE面向对象]]></title>
+      <title><![CDATA[二、JavaSE面向对象]]></title>
       <url>http://chaooo.github.io/2019/07/07/02_JavaSE%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1.html</url>
-      <content type="html"><![CDATA[<h2 id="二、JavaSE面向对象"><a href="#二、JavaSE面向对象" class="headerlink" title="二、JavaSE面向对象"></a>二、JavaSE面向对象</h2><ol>
+      <content type="html"><![CDATA[<p>面向对象是相对于面向过程而言，过程其实就是函数，对象是将函数和属性进行了封装。<br>Java中的面向对象（Object Oriented）是一种新兴的程序设计方法，或者是一种新的程序设计规范(paradigm)，其基本思想是使用对象、类、继承、封装、多态等基本概念来进行程序设计。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">类与对象</a></li>
 <li><a href="#id2">构造方法和方法重载</a></li>
 <li><a href="#id3">this关键字</a></li>
@@ -3958,9 +3992,12 @@
     </entry>
     
     <entry>
-      <title><![CDATA[JavaSE语法基础]]></title>
+      <title><![CDATA[一、JavaSE语法基础]]></title>
       <url>http://chaooo.github.io/2019/07/07/01_JavaSE%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80.html</url>
-      <content type="html"><![CDATA[<h2 id="一、JavaSE语法基础"><a href="#一、JavaSE语法基础" class="headerlink" title="一、JavaSE语法基础"></a>一、JavaSE语法基础</h2><ol>
+      <content type="html"><![CDATA[<p>这是<strong>javaSE知识梳理</strong>的第一篇，梳理Java基础知识是学习其他专业知识的第一步阶梯；要想精通编程必须通过大量的编程训练，在实践中掌握编程知识，培养编程能力，并逐步理解和掌握程序设计的思想和方法。</p>
+<a id="more"></a>
+
+<ol>
 <li><a href="#id1">数据类型</a></li>
 <li><a href="#id2">变量与常量</a></li>
 <li><a href="#id3">数据类型之间的转换</a></li>
