@@ -18,7 +18,7 @@
 <li><a href="#id6">JSP</a></li>
 </ol>
 <p><span id="id1"><span></span></span></p>
-<h3 id="1-http协议"><a href="#1-http协议" class="headerlink" title="1. http协议"></a>1. http协议</h3><p>超文本传输协议，是一种应用层的网络传输协议</p>
+<h3 id="1-http协议"><a href="#1-http协议" class="headerlink" title="1. http协议"></a>1. http协议</h3><p>超文本传输协议，是一种应用层的网络传输协议。</p>
 <ul>
 <li>http协议的特点：<ol>
 <li>简单，快速：支持多种不同的的数据提交方式，如get/post</li>
