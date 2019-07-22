@@ -8,9 +8,11 @@
 <li><a href="#id4">上下文对象ServletContext</a></li>
 <li><a href="#id5">会话跟踪（状态管理）</a></li>
 <li><a href="#id6">JSP</a></li>
+<li><a href="#id7">内置对象(隐含对象)</a></li>
+<li><a href="#id8">taglib指令</a></li>
 </ol>
 <p><span id="id1"><span></span></span></p>
-<h3 id="1-http协议"><a href="#1-http协议" class="headerlink" title="1. http协议"></a>1. http协议</h3><p>超文本传输协议，是一种应用层的网络传输协议。</p>
+<h3 id="1-http协议"><a href="#1-http协议" class="headerlink" title="1. http协议"></a>1. http协议</h3><p>超文本传输协议，是一种应用层的网络传输协议</p>
 <ul>
 <li>http协议的特点：<ol>
 <li>简单，快速：支持多种不同的的数据提交方式，如get/post</li>
@@ -86,11 +88,11 @@
 </ul>
 <h4 id="2-5-接收请求中的参数"><a href="#2-5-接收请求中的参数" class="headerlink" title="2.5 接收请求中的参数"></a>2.5 接收请求中的参数</h4><ol>
 <li>根据参数的名称，接收参数的单个值<ul>
-<li>String value = request.getParameter(String name);</li>
+<li>String value = <strong>request.getParameter(String name)</strong>;</li>
 </ul>
 </li>
 <li>根据参数的名称，接收一组参数的值<ul>
-<li>String[] values = request.getParameterValues(String name);</li>
+<li>String[] values = <strong>request.getParameterValues(String name)</strong>;</li>
 </ul>
 </li>
 </ol>
@@ -227,11 +229,11 @@
 </ul>
 </li>
 <li>通过响应对象，将cookie添加到响应头,可添加多个<ul>
-<li>response.addCookie(Cookie cookie);</li>
+<li><strong>response.addCookie(Cookie cookie)</strong>;</li>
 </ul>
 </li>
 <li>通过请求头得到cookie数组，没有则返回null<ul>
-<li>Cookie[] cookies = request.getCookies();</li>
+<li><strong>Cookie[] cookies = request.getCookies()</strong>;</li>
 <li>取键：cookie.getName();</li>
 <li>取值：cookie.getValue()</li>
 </ul>
@@ -266,7 +268,7 @@
 </ul>
 <h4 id="5-3-Session"><a href="#5-3-Session" class="headerlink" title="5.3 Session"></a>5.3 Session</h4><ul>
 <li>获取Session<ul>
-<li>格式1：request.getSession();//等价参数传true</li>
+<li>格式1：<strong>request.getSession()</strong>;//等价参数传true</li>
 <li>格式2：request.getSession(boolean isNew);<ul>
 <li>true，根据浏览器的SessionId查找一个session，若没有就新创建一个对象并返回</li>
 <li>false，根据浏览器的SessionId查找一个session，若没有就返回null</li>
@@ -275,8 +277,8 @@
 </ul>
 </li>
 <li>Session常用方法<ul>
-<li>session.setAttribute(String key, object value);//设置/替换值</li>
-<li>session.getAttribute(String key);//获取值</li>
+<li><strong>session.setAttribute(String key, object value)</strong>;//设置/替换值</li>
+<li><strong>session.getAttribute(String key)</strong>;//获取值</li>
 <li>session.invalidate();//销毁</li>
 </ul>
 </li>
@@ -392,9 +394,156 @@
 </li>
 </ul>
 <blockquote>
-<p>include指令 与 include动作区别：<br><br>include指令：引入文件操作，是在JSP引擎的转换时发生，将多个jsp文件，生产为了一个Servlert（多个jsp =&gt; 一个Servlet）<br><br>include动作：引入文件操作，是在浏览器请求时，将引用文件的响应体添加到了请求文件的响应体中（多个jsp =&gt; 多个Servlet）</p>
+<p>include指令 与 include动作区别：</p>
+<ul>
+<li>include指令：引入文件操作，是在JSP引擎的转换时发生，将多个jsp文件，生产为了一个Servlert（多个jsp =&gt; 一个Servlet）</li>
+<li>include动作：引入文件操作，是在浏览器请求时，将引用文件的响应体添加到了请求文件的响应体中（多个jsp =&gt; 多个Servlet）</li>
+</ul>
 </blockquote>
-</div><div class="post-copyright"><blockquote><p>原文作者: 郑超(Charles·Zheng)</p><p>原文链接: <a href="http://chaooo.github.io/2019/07/20/12_JavaWeb编程基础.html">http://chaooo.github.io/2019/07/20/12_JavaWeb编程基础.html</a></p><p>版权声明: 转载请注明出处(保留作者署名及原文链接)</p></blockquote></div><div class="tags"><a href="/tags/后端开发/">后端开发</a><a href="/tags/javaEE/">javaEE</a></div><div class="post-share"><div class="social-share"><span>分享到:</span></div></div><div class="post-nav"><a href="/2019/07/15/11_JavaSE数据结构与算法入门.html" class="next">十一、JavaSE数据结构与算法入门</a></div><div id="comments"><div id="container"><script type="text/javascript" src="https://unpkg.com/gitalk/dist/gitalk.min.js?v=2.0.4"></script><script type="text/javascript" src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js?v=2.0.4"></script><script>var gitalk = new Gitalk({
+<p><span id="id7"><span></span></span></p>
+<h3 id="7-内置对象-隐含对象"><a href="#7-内置对象-隐含对象" class="headerlink" title="7.内置对象(隐含对象)"></a>7.内置对象(隐含对象)</h3><ul>
+<li>在JSP中，我们的代码执行在service中，所谓内置对象，指的是在JSP引擎转换时期，在我们代码生成位置的上面，提前准备好的一些变量，对象。</li>
+<li>内置对象通常是我们会主动创建的对象</li>
+</ul>
+<h4 id="7-1-九大内置对象"><a href="#7-1-九大内置对象" class="headerlink" title="7.1 九大内置对象"></a>7.1 九大内置对象</h4><ol>
+<li>request<ul>
+<li>对象类型：java.servlet.<strong>HttpServletRequest</strong></li>
+<li>request内置对象中包含了有关浏览器请求的信息，提供了大量get方法，用于获取cookie、header以及session内数据等。</li>
+</ul>
+</li>
+<li>response<ul>
+<li>对象类型：javax.servlet.<strong>HttpServletResponse</strong></li>
+<li>response对象提供了多个方法用来处理HTTP响应，可以调用response中的方法修改ContentType中的MIME类型以及实现页面的跳转等。</li>
+</ul>
+</li>
+<li>config<ul>
+<li>对象类型：javax.servlet.<strong>ServletConfig</strong></li>
+<li>在Servlet初始化的时候，JSP引擎通过config向它传递信息。这种信息可以是属性名/值匹配的参数，也可以是通过ServletContext对象传递的服务器的有关信息。</li>
+</ul>
+</li>
+<li>out<ul>
+<li>对象类型：javax.servlet.jsp.<strong>JspWriter</strong></li>
+<li>在JSP开发过程中使用得最为频繁的对象</li>
+</ul>
+</li>
+<li>page<ul>
+<li>对象类型：java.lang.<strong>Object</strong></li>
+<li>page对象有点类似于Java编程中的this指针，就是指当前JSP页面本身。</li>
+</ul>
+</li>
+<li>pageContext<ul>
+<li>对象类型：<strong>pageContext</strong></li>
+<li>pageContext对象是一个比较特殊的对象。它相当于页面中所有其他对象功能的最大集成者，即使用它可以访问到本页面中所有其他对象</li>
+</ul>
+</li>
+<li>session<ul>
+<li>对象类型：java.servlet.http.<strong>HttpSession</strong></li>
+<li>session是与请求有关的会话期，用来表示和存储当前页面的请求信息。</li>
+</ul>
+</li>
+<li>application<ul>
+<li>对象类型：javax.servlet.<strong>ServletContext</strong></li>
+<li>用于实现用户之间的数据共享（多使用于网络聊天系统）。</li>
+</ul>
+</li>
+<li>exception<ul>
+<li>对象类型：java.lang.<strong>Throwable</strong></li>
+<li>作用 exception内置对象是用来处理页面出现的异常错误。</li>
+</ul>
+</li>
+</ol>
+<h4 id="7-2-JSP四大域对象"><a href="#7-2-JSP四大域对象" class="headerlink" title="7.2 JSP四大域对象"></a>7.2 JSP四大域对象</h4><ul>
+<li>九大内置对象中，存在四个较为特殊的对象，这四个对象用户在不同的作用域中存储数据，获取数据，删除数据</li>
+<li>域对象的特点：每一个内置对象，都类似一个Map集合，可以存取删除数据，都具备如下三个方法：<ol>
+<li>存储数据：setAttribute(String key, Object value);</li>
+<li>获取数据：Object value = getAttribute(String);</li>
+<li>删除数据： removeAttribute(String key);</li>
+</ol>
+</li>
+<li>四大内置对象，分别指的是：<ol>
+<li>pageContext: (作用域：1个页面)<ul>
+<li>页面上下文，存储在pageContext中的数据, 作用域是最小的,  pageContext在JSP代码执行时 创建, 在JSP代码执行完毕时, 销毁.</li>
+</ul>
+</li>
+<li>request: (作用域：一次请求，如果请求被转发，可能跨越多个页面)<ul>
+<li>请求对象, 存储在请求对象中的数据, 域范围是一次请求, 请求一旦进行了响应, 就会被销毁.</li>
+</ul>
+</li>
+<li>session: (作用域：一次会话，一次会话可能包含多个请求)<ul>
+<li>会话对象，存储在会话对象中的数据，只有在当前用户会话中可以使用，用户再次访问服务器的时间间隔超过30分钟，session就销毁了。</li>
+</ul>
+</li>
+<li>application: (域范围：一次服务，应用从启动到关闭application一直都在)<ul>
+<li>Servlet上下文对象, 存储在application中的数据, 域范围是最大的. 在应用关闭之前 都可以使用.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h4 id="7-3-EL表达式"><a href="#7-3-EL表达式" class="headerlink" title="7.3 EL表达式"></a>7.3 EL表达式</h4><ul>
+<li>用于将计算的结果输出到网页，也常用于快速的从域对象中取出数据，并输出到网页。</li>
+<li>格式：<code>${表达式}</code></li>
+<li>EL表达式用于运算<ul>
+<li>在JSP中, 可以直接使用el表达式运算一些数据，例如: ${123+123} , 最终网页中显示的效果是:   246 </li>
+</ul>
+</li>
+<li>用于取出域对象中的数据<ul>
+<li>取出数据直接输出：<code>${域对象中存储的键}</code></li>
+<li>如果取出的数据不存在, 则不输出 (不可能显示null)</li>
+</ul>
+</li>
+<li>取出对象数据的属性值:<ul>
+<li>格式1： ${对象存储的键.属性名}</li>
+<li>格式2： ${对象存储的键[“属性名”]}</li>
+<li>格式3(动态取值)： ${对象存储的键[属性存储的键]}</li>
+</ul>
+</li>
+<li>取出集合中的数据<ul>
+<li>格式: ${集合存储时的key[下标]}</li>
+</ul>
+</li>
+</ul>
+<h4 id="7-4-EL表达式取出数据的流程"><a href="#7-4-EL表达式取出数据的流程" class="headerlink" title="7.4 EL表达式取出数据的流程"></a>7.4 EL表达式取出数据的流程</h4><ul>
+<li>四个域对象之间, 有时数据的键可能重复,优先从域范围较小的对象中, 取出数据.</li>
+<li>步骤:<ol>
+<li>先从pageContext中, 寻找数据是否存在.</li>
+<li>如果pageContext中数据不存在, 则去request中寻找数据是否存在</li>
+<li>如果request 中数据不存在, 则去session中寻找数据是否存在</li>
+<li>如果session中数据不存在, 则去application中寻找数据是否存在</li>
+<li>如果application中数据不存在,则不输出任何数据.</li>
+</ol>
+</li>
+</ul>
+<p><span id="id8"><span></span></span></p>
+<h3 id="8-taglib指令"><a href="#8-taglib指令" class="headerlink" title="8. taglib指令"></a>8. taglib指令</h3><p>用于在JSP文件中，引入标签库文件。</p>
+<ul>
+<li>格式： <code>&lt;%@ taglib prefix=&quot;&quot; uri=&quot;&quot; %&gt;</code><ul>
+<li>prefix: 是引入标签库后，标签库的名称。作用是用于区分引入的多个标签库，在使用标签库中的标签时，标签的写法：<code>&lt;标签库名称:标签名&gt;</code></li>
+<li>uri: 每个标签库，都会拥有一个uri，它是用于区分标签库的，我们在引入这个库时，需要匹配uri属性</li>
+</ul>
+</li>
+<li>JSTL(JSP Standard Tag Library): JSP标准标签库<ul>
+<li>使用时，需要引入jar文件</li>
+<li>if 标签，格式：&lt;库名称:if text=”${ booble }”&gt;</li>
+<li>forEach 标签，格式：&lt;库名称:forEach items=”${ List }” var=”item”&gt;</li>
+</ul>
+</li>
+<li>自定义标签库:<ol>
+<li>编写一个Java类, 继承SimpleTagSupport类.</li>
+<li>重写父类的doTag方法.</li>
+<li>在doTag方法中, 通过getJspContext方法,  的到JSP页面的上下文</li>
+<li>通过上下文对象, 得到JSP中的out对象, </li>
+<li>通过out对象,  向网页中输出内容</li>
+<li>编写tld文件 , 描述标签库 以及 标签.</li>
+</ol>
+</li>
+</ul>
+<p>自定义标签库案例:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTag1</span> <span class="keyword">extends</span> <span class="title">SimpleTagSupport</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span>  <span class="keyword">static</span> ArrayList&lt;String&gt; data = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        data.add(<span class="string">"流水在碰到底处时才会释放活力。——歌德"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doTag</span><span class="params">()</span> <span class="keyword">throws</span> JspException, IOException </span>&#123;</span><br><span class="line">        JspContext context = getJspContext();</span><br><span class="line">        JspWriter out = context.getOut();</span><br><span class="line">        Random r = <span class="keyword">new</span> Random();</span><br><span class="line">        <span class="keyword">int</span> index = r.nextInt(data.size());</span><br><span class="line">        out.println(<span class="string">"&lt;span&gt;"</span>+data.get(index)+<span class="string">"&lt;/span&gt;"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">taglib</span> <span class="attr">xmlns</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee"</span></span></span><br><span class="line"><span class="tag"><span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag"><span class="attr">xsi:schemaLocation</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"</span></span></span><br><span class="line"><span class="tag"><span class="attr">version</span>=<span class="string">"2.0"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 描述标签库 --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 是对于标签库的介绍 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>我们这个标签库, 是闲的慌 , 所以写的.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 描述标签库的名称 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">display-name</span>&gt;</span>xdl<span class="tag">&lt;/<span class="name">display-name</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 标签库的版本 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tlib-version</span>&gt;</span>11.88<span class="tag">&lt;/<span class="name">tlib-version</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 建议的短命名称 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">short-name</span>&gt;</span>xdl<span class="tag">&lt;/<span class="name">short-name</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 标签库的表示, 用于引入时匹配标签库 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">uri</span>&gt;</span>http://shuidianshuisg.com<span class="tag">&lt;/<span class="name">uri</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 开始描述标签 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tag</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 对于标签的介绍 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">description</span>&gt;</span>这个标签用于随机向网页中, 输出一句名言<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 标签名称 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>heiheihei<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 标签所对应的的Java类 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">tag-class</span>&gt;</span>cn.xdl.tag.MyTag1<span class="tag">&lt;/<span class="name">tag-class</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 标签的内容 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">body-content</span>&gt;</span>empty<span class="tag">&lt;/<span class="name">body-content</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">tag</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">taglib</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+</div><div class="post-copyright"><blockquote><p>原文作者: 郑超(Charles·Zheng)</p><p>原文链接: <a href="http://chaooo.github.io/2019/07/20/12_JavaWeb编程基础.html">http://chaooo.github.io/2019/07/20/12_JavaWeb编程基础.html</a></p><p>版权声明: 转载请注明出处(保留作者署名及原文链接)</p></blockquote></div><div class="tags"><a href="/tags/后端开发/">后端开发</a><a href="/tags/javaEE/">javaEE</a></div><div class="post-share"><div class="social-share"><span>分享到:</span></div></div><div class="post-nav"><a href="/2019/07/22/01-数据库系统基础.html" class="pre">一、数据库系统基础</a><a href="/2019/07/15/11_JavaSE数据结构与算法入门.html" class="next">十一、JavaSE数据结构与算法入门</a></div><div id="comments"><div id="container"><script type="text/javascript" src="https://unpkg.com/gitalk/dist/gitalk.min.js?v=2.0.4"></script><script type="text/javascript" src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js?v=2.0.4"></script><script>var gitalk = new Gitalk({
   clientID: 'dd644e0a840b03bbb238',
   clientSecret: 'de8b7f88cfa9812e15f93e986181d1c2194ba6e8',
   repo: 'BlogComments',
@@ -405,7 +554,7 @@
   language: 'zh-CN',
   pagerDirection: 'last'
 })
-gitalk.render('container')</script></div></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-http协议"><span class="toc-text">1. http协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Servlet"><span class="toc-text">2. Servlet</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-Servlet编写步骤："><span class="toc-text">2.1 Servlet编写步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-配置ervlet类的访问网址"><span class="toc-text">2.2 配置ervlet类的访问网址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-Servlet生命周期"><span class="toc-text">2.3 Servlet生命周期</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-get和post区别"><span class="toc-text">2.4 get和post区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-接收请求中的参数"><span class="toc-text">2.5 接收请求中的参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-乱码处理"><span class="toc-text">2.6 乱码处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-1-乱码情况："><span class="toc-text">2.6.1 乱码情况：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-2-请求乱码处理："><span class="toc-text">2.6.2 请求乱码处理：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-3-响应乱码的处理："><span class="toc-text">2.6.3 响应乱码的处理：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-7-Servlet的创建时机"><span class="toc-text">2.7 Servlet的创建时机</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-请求的转发与重定向"><span class="toc-text">3. 请求的转发与重定向</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-请求对象request的常用操作"><span class="toc-text">3.1 请求对象request的常用操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-请求的转发与重定向注意事项"><span class="toc-text">3.1 请求的转发与重定向注意事项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-转发"><span class="toc-text">3.2 转发*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-重定向"><span class="toc-text">3.3 重定向*</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-上下文对象ServletContext"><span class="toc-text">4. 上下文对象ServletContext</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-会话跟踪（状态管理）"><span class="toc-text">5. 会话跟踪（状态管理）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-Cookie"><span class="toc-text">5.1 Cookie</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-Cookie的优缺点"><span class="toc-text">5.2 Cookie的优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-Session"><span class="toc-text">5.3 Session</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-Session的优缺点"><span class="toc-text">5.4 Session的优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-5-Cookie和Session的使用"><span class="toc-text">5.5 Cookie和Session的使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-JSP"><span class="toc-text">6.JSP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-JSP语法基础"><span class="toc-text">6.1 JSP语法基础</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-JSP三大指令"><span class="toc-text">6.2 JSP三大指令</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#6-2-1-page指令"><span class="toc-text">6.2.1 page指令</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-项目发生错误时，统一的处理方式"><span class="toc-text">6.3 项目发生错误时，统一的处理方式</span></a></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/07/20/12_JavaWeb编程基础.html">十二、JavaWeb编程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/15/11_JavaSE数据结构与算法入门.html">十一、JavaSE数据结构与算法入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/15/10_JavaSE常用设计模式.html">十、JavaSE常用设计模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/12/09_JavaSE网络编程.html">九、JavaSE网络编程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/11/谈谈开源.html">谈谈开源</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/10/08_JavaSE反射机制.html">八、JavaSE反射机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/09/07_JavaSE多线程.html">七、JavaSE多线程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/09/06_JavaSE输入输出-IO.html">六、JavaSE输入输出(IO)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/09/05_JavaSE异常处理机制.html">五、JavaSE异常处理机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/08/04_JavaSE集合框架.html">四、JavaSE集合框架</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaWeb编程/">JavaWeb编程</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo博客折腾/">hexo博客折腾</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/javaSE知识梳理/">javaSE知识梳理</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/前端工具/">前端工具</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">1</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/javaSE/" style="font-size: 15px;">javaSE</a> <a href="/tags/后端开发/" style="font-size: 15px;">后端开发</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/bower/" style="font-size: 15px;">bower</a> <a href="/tags/sublime/" style="font-size: 15px;">sublime</a> <a href="/tags/开源/" style="font-size: 15px;">开源</a> <a href="/tags/javascript/" style="font-size: 15px;">javascript</a> <a href="/tags/BlueLake/" style="font-size: 15px;">BlueLake</a> <a href="/tags/mongodb/" style="font-size: 15px;">mongodb</a> <a href="/tags/javaEE/" style="font-size: 15px;">javaEE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-you"> 友情链接</i></div><ul></ul><a href="https://github.com/chaooo" title="chaooo" target="_blank">chaooo</a><ul></ul><a href="https://github.com/chaooo/hexo-theme-BlueLake" title="BlueLake主题" target="_blank">BlueLake主题</a><ul></ul><a href="http://weibo.com/zhengchaooo" title="秋过冬漫长" target="_blank">秋过冬漫长</a></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">网站地图</a> |  <a href="/atom.xml">订阅本站</a> |  <a href="/about/">联系博主</a></p><p><span> Copyright &copy;<a href="/." rel="nofollow">郑超(Charles·Zheng).</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+gitalk.render('container')</script></div></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-http协议"><span class="toc-text">1. http协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Servlet"><span class="toc-text">2. Servlet</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-Servlet编写步骤："><span class="toc-text">2.1 Servlet编写步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-配置ervlet类的访问网址"><span class="toc-text">2.2 配置ervlet类的访问网址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-Servlet生命周期"><span class="toc-text">2.3 Servlet生命周期</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-get和post区别"><span class="toc-text">2.4 get和post区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-接收请求中的参数"><span class="toc-text">2.5 接收请求中的参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-乱码处理"><span class="toc-text">2.6 乱码处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-1-乱码情况："><span class="toc-text">2.6.1 乱码情况：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-2-请求乱码处理："><span class="toc-text">2.6.2 请求乱码处理：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-3-响应乱码的处理："><span class="toc-text">2.6.3 响应乱码的处理：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-7-Servlet的创建时机"><span class="toc-text">2.7 Servlet的创建时机</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-请求的转发与重定向"><span class="toc-text">3. 请求的转发与重定向</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-请求对象request的常用操作"><span class="toc-text">3.1 请求对象request的常用操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-请求的转发与重定向注意事项"><span class="toc-text">3.1 请求的转发与重定向注意事项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-转发"><span class="toc-text">3.2 转发*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-重定向"><span class="toc-text">3.3 重定向*</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-上下文对象ServletContext"><span class="toc-text">4. 上下文对象ServletContext</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-会话跟踪（状态管理）"><span class="toc-text">5. 会话跟踪（状态管理）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-Cookie"><span class="toc-text">5.1 Cookie</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-Cookie的优缺点"><span class="toc-text">5.2 Cookie的优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-Session"><span class="toc-text">5.3 Session</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-Session的优缺点"><span class="toc-text">5.4 Session的优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-5-Cookie和Session的使用"><span class="toc-text">5.5 Cookie和Session的使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-JSP"><span class="toc-text">6.JSP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-JSP语法基础"><span class="toc-text">6.1 JSP语法基础</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-JSP三大指令"><span class="toc-text">6.2 JSP三大指令</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#6-2-1-page指令"><span class="toc-text">6.2.1 page指令</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-项目发生错误时，统一的处理方式"><span class="toc-text">6.3 项目发生错误时，统一的处理方式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-内置对象-隐含对象"><span class="toc-text">7.内置对象(隐含对象)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-九大内置对象"><span class="toc-text">7.1 九大内置对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-JSP四大域对象"><span class="toc-text">7.2 JSP四大域对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3-EL表达式"><span class="toc-text">7.3 EL表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-4-EL表达式取出数据的流程"><span class="toc-text">7.4 EL表达式取出数据的流程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-taglib指令"><span class="toc-text">8. taglib指令</span></a></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/07/22/01-数据库系统基础.html">一、数据库系统基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/20/12_JavaWeb编程基础.html">十二、JavaWeb编程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/15/11_JavaSE数据结构与算法入门.html">十一、JavaSE数据结构与算法入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/15/10_JavaSE常用设计模式.html">十、JavaSE常用设计模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/12/09_JavaSE网络编程.html">九、JavaSE网络编程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/11/谈谈开源.html">谈谈开源</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/10/08_JavaSE反射机制.html">八、JavaSE反射机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/09/07_JavaSE多线程.html">七、JavaSE多线程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/09/06_JavaSE输入输出-IO.html">六、JavaSE输入输出(IO)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/09/05_JavaSE异常处理机制.html">五、JavaSE异常处理机制</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaWeb编程/">JavaWeb编程</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo博客折腾/">hexo博客折腾</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/javaSE知识梳理/">javaSE知识梳理</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/前端工具/">前端工具</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库系统/">数据库系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">1</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/javascript/" style="font-size: 15px;">javascript</a> <a href="/tags/javaSE/" style="font-size: 15px;">javaSE</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/bower/" style="font-size: 15px;">bower</a> <a href="/tags/sublime/" style="font-size: 15px;">sublime</a> <a href="/tags/后端开发/" style="font-size: 15px;">后端开发</a> <a href="/tags/开源/" style="font-size: 15px;">开源</a> <a href="/tags/BlueLake/" style="font-size: 15px;">BlueLake</a> <a href="/tags/mongodb/" style="font-size: 15px;">mongodb</a> <a href="/tags/数据库/" style="font-size: 15px;">数据库</a> <a href="/tags/javaEE/" style="font-size: 15px;">javaEE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-you"> 友情链接</i></div><ul></ul><a href="https://github.com/chaooo" title="chaooo" target="_blank">chaooo</a><ul></ul><a href="https://github.com/chaooo/hexo-theme-BlueLake" title="BlueLake主题" target="_blank">BlueLake主题</a><ul></ul><a href="http://weibo.com/zhengchaooo" title="秋过冬漫长" target="_blank">秋过冬漫长</a></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">网站地图</a> |  <a href="/atom.xml">订阅本站</a> |  <a href="/about/">联系博主</a></p><p><span> Copyright &copy;<a href="/." rel="nofollow">郑超(Charles·Zheng).</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');

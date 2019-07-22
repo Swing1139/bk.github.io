@@ -4,6 +4,381 @@
   
     
     <entry>
+      <title><![CDATA[一、数据库系统基础]]></title>
+      <url>http://chaooo.github.io/2019/07/22/01-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80.html</url>
+      <content type="html"><![CDATA[<h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h3><ol>
+<li>数据库 是 电子化信息的集合<ul>
+<li>将信息规范化并使之电子化，形成电子信息’库’，以便利用计算机对这些信息进行快速有效的存储、检索、统计与管理。</li>
+</ul>
+</li>
+<li>表(Table)：以按行按列形式组织及展现的数据<a id="more"></a>
+<ul>
+<li>数据库起源于规范化“表(Table)”的处理，Table中描述了一批相互有关联关系的数据–&gt;关系</li>
+</ul>
+</li>
+<li>数据库系统的构成（概念层次）:<ol>
+<li>数据库(DB):Database：相互之间有关联关系的数据的集合</li>
+<li>数据库管理系统(DBMS):Database Management System</li>
+<li>数据库应用(DBAP):Database Application</li>
+<li>数据库管理员(DBA):Database Asministrator</li>
+<li>计算机基本系统</li>
+</ol>
+</li>
+</ol>
+<h3 id="2-数据库管理系统-DBMS"><a href="#2-数据库管理系统-DBMS" class="headerlink" title="2. 数据库管理系统(DBMS)"></a>2. 数据库管理系统(DBMS)</h3><h4 id="2-1-从用户角度看DBMS-数据库管理系统"><a href="#2-1-从用户角度看DBMS-数据库管理系统" class="headerlink" title="2.1 从用户角度看DBMS(数据库管理系统)"></a>2.1 从用户角度看DBMS(数据库管理系统)</h4><ol>
+<li>数据库定义：定义数据库中的Table的表名、标题(属性以及属性值的要求)等<ul>
+<li>DBMS提供了一套<strong>数据定义语言(DDL</strong>: Data Definition Language)给用户</li>
+<li>用户使用DDL描述其所要建立的表的格式</li>
+<li>DBMS依照用户的定义，创建数据库及其中的表</li>
+</ul>
+</li>
+<li>数据库操作：向数据库的Table中增加/删除/更新数据及对数据进行查询、检索、统计等<ul>
+<li>DBMS提供了一套<strong>数据库操纵语言(DML</strong>: Data Manipulation Language)给用户</li>
+<li>用户使用DML描述其所要进行的增、删、改、查等操作</li>
+<li>DBMS依照用户的操作描述，实际执行这些操作</li>
+</ul>
+</li>
+<li>数据库控制：控制数据库中数据的使用(哪些用户可以使用，哪些不可以)<ul>
+<li>DBMS提供了一套<strong>数据控制语言(DCL</strong>: Data Control Language)给用户</li>
+<li>用户使用DCL描述其对数据库所要实施的控制</li>
+<li>DBMS依照用户描述，实际ijnx控制</li>
+</ul>
+</li>
+<li>数据库维护：转储/恢复/重组/性能监测/分析…<ul>
+<li>DBMS提供了一系列程序(实用程序/例行程序)给用户</li>
+<li>在这些程序中提供了对数据库维护的各种功能</li>
+<li>用户使用这些程序进行各种数据库维护操作</li>
+<li>(数据库维护的实用程序，一般由数据库管理员(DBA)来使用和掌握的)</li>
+</ul>
+</li>
+</ol>
+<h4 id="2-2-数据库语言"><a href="#2-2-数据库语言" class="headerlink" title="2.2 数据库语言"></a>2.2 数据库语言</h4><ul>
+<li>使用者使用数据库语言，利用DBMS操纵数据库</li>
+<li>SQL语言：结构化的数据库语言</li>
+<li>高级语言：一条数据库语言相当于高级语言的一个或多个循环程序，数据库语言可以嵌入到高级语言(宿主语言)中使用</li>
+</ul>
+<h4 id="2-3-从系统实现角度看DBMS的功能"><a href="#2-3-从系统实现角度看DBMS的功能" class="headerlink" title="2.3 从系统实现角度看DBMS的功能"></a>2.3 从系统实现角度看DBMS的功能</h4><ol>
+<li>数据库管理系统的实现：形式 –&gt; 构造 –&gt; 自动化</li>
+<li>DBMS为完成DB管理，在后台运行着一系列程序…<ul>
+<li><strong>语言编译器</strong>：将数据库语言书写的内容，翻译成BDMS可执行的命令。例如：DDL编译器，DML编译器，DCL编译器等</li>
+<li><strong>查询优化</strong>(执行引擎)与<strong>查询实现</strong>(基本命令的不同执行算法)：提高数据库检索速度的手段。例如贯穿于数据存取各个阶段的优化程序</li>
+<li><strong>数据存取与索引</strong>：提供数据在磁盘/磁带等上的搞笑存取手段。例如：存储管理器，缓冲区管理器，索引/文件和记录管理器等</li>
+<li><strong>通信控制</strong>：提供网络环境下数据库操作与数据传输的手段</li>
+<li><strong>事务管理</strong>：提供提高可靠性并避免并发操作错误的手段</li>
+<li><strong>故障恢复</strong>：使用数据库自动恢复到故障发生前正确状态的手段。例如备份、运行日志操控等实用程序</li>
+<li><strong>安全性控制</strong>：提供合法性检验，避免非授权非法用户访问数据库的手段</li>
+<li><strong>完整性控制</strong>：提供数据及数据操作正确性检查的手段</li>
+<li><strong>数据字典管理</strong>：管理用户已经定义的信息</li>
+<li><strong>应用程序接口(API)</strong>：提供应用程序使用DBMS特定功能的二首段</li>
+<li><strong>数据库数据装载、重组等实用程序</strong></li>
+<li><strong>数据库性能分析</strong>：统计在运行过程中数据库的各种性能数据，便于优化运行</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>典型的数据库管理系统(DBMS)：Oracle、DB2(IBM)、Sybase、Microsoft SQL Server、Microsoft Access、PostgreSQL </p>
+</blockquote>
+<h3 id="3-数据库系统的标准结构"><a href="#3-数据库系统的标准结构" class="headerlink" title="3. 数据库系统的标准结构"></a>3. 数据库系统的标准结构</h3><h4 id="3-1-DBMS管理数据的三个层次"><a href="#3-1-DBMS管理数据的三个层次" class="headerlink" title="3.1 DBMS管理数据的三个层次"></a>3.1 DBMS管理数据的三个层次</h4><ol>
+<li>External Level = User Level（外部级别 = 用户级别）<ul>
+<li>某一用户能够看到与处理的数据,   全局数据中的某一部分</li>
+</ul>
+</li>
+<li>Conceptual Level = Logic level（概念级别 = 逻辑级别）<ul>
+<li>从全局角度理解/管理的数据, 含相应的关联约束</li>
+</ul>
+</li>
+<li>Internal Level = Physical level（内部级别 = 物理级别）<ul>
+<li>存储在介质上的数据，含存储路径、存储方式 、索引方式等</li>
+</ul>
+</li>
+</ol>
+<h4 id="3-2-三级模式两层映像"><a href="#3-2-三级模式两层映像" class="headerlink" title="3.2 三级模式两层映像"></a>3.2 三级模式两层映像</h4><h5 id="3-2-1-数据-视图-与模式-数据的结构"><a href="#3-2-1-数据-视图-与模式-数据的结构" class="headerlink" title="3.2.1 数据(视图)与模式(数据的结构)"></a>3.2.1 数据(视图)与模式(数据的结构)</h5><ul>
+<li>模式(Schema):对数据库中数据所进行的一种结构性的描述，所观察到数据的结构信息</li>
+<li>视图(View)/数据(Data)：某一种表现形式下表现出来的数据库中的数据</li>
+</ul>
+<h5 id="3-2-2-三级模式-三级视图"><a href="#3-2-2-三级模式-三级视图" class="headerlink" title="3.2.2 三级模式(三级视图)"></a>3.2.2 三级模式(三级视图)</h5><ul>
+<li>External Schema —-(External) View<ul>
+<li>某一用户能够看到与处理的数据的结构描述</li>
+</ul>
+</li>
+<li>(Conceptual) Schema —- Conceptual View<ul>
+<li>从全局角度理解/管理的数据的结构描述, 含相应的关联约束</li>
+<li>体现在数据之间的内在本质联系</li>
+</ul>
+</li>
+<li>Internal Schema —- Internal  View<ul>
+<li>存储在介质上的数据的结构描述，含存储路径、存储方式 、索引方式等</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-2-3-两层映像"><a href="#3-2-3-两层映像" class="headerlink" title="3.2.3 两层映像"></a>3.2.3 两层映像</h5><ul>
+<li>E-C Mapping：External Schema-Conceptual Schema Mapping <ul>
+<li>将外模式映射为概念模式，从而支持实现数据概念视图向外部视图的转换</li>
+<li>便于用户观察和使用</li>
+</ul>
+</li>
+<li>C-I Mapping：Conceptual Schema-Internal Schema Mapping <ul>
+<li>将概念模式映射为内模式，从而支持实现数据概念视图向内部视图的转换</li>
+<li>便于计算机进行存储和处理</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-3-标准结构的两个独立性"><a href="#3-3-标准结构的两个独立性" class="headerlink" title="3.3 标准结构的两个独立性"></a>3.3 标准结构的两个独立性</h4><ul>
+<li>逻辑数据独立性<ul>
+<li>当概念模式变化时，可以不改变外部模式(只需改变E-C Mapping)，从而无需改变应用程序</li>
+</ul>
+</li>
+<li>物理数据独立性<ul>
+<li>当内部模式变化时，可以不改变概念模式(只需改变C-I Mapping) ，从而不改变外部模式</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-数据模型"><a href="#4-数据模型" class="headerlink" title="4. 数据模型"></a>4. 数据模型</h3><ul>
+<li>数据模型：模式 与 模式的结构<ul>
+<li>规定模式统一描述方式的模型，包括：数据结构、操作和约束</li>
+<li>数据模型是对模式本身结构的抽象，模式是对数据本身结构形式的抽象</li>
+<li>比如：关系模型：所有模式都可为抽象表(Table)的形式[<strong>数据结构</strong>]，而每一个具体的模式都是拥有不同列名的具体的表。对这种表形式的数据有哪些[<strong>操作</strong>]和[<strong>约束</strong>]</li>
+</ul>
+</li>
+<li>三大经典数据模型<ul>
+<li>关系模型：<strong>表</strong>的形式组织数据</li>
+<li>层次模型：<strong>树</strong>的形式组织数据</li>
+<li>网状模型：<strong>图</strong>的形式组织数据</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-关系模型"><a href="#5-关系模型" class="headerlink" title="5. 关系模型"></a>5. 关系模型</h3><ul>
+<li>形象地说，<strong>一个关系(relation)就是一个Table</strong>，关系模型就是处理Table的，它由三个部分组成：<ul>
+<li>描述DB各种数据的基本结构形式(Table/Relation)</li>
+<li>描述Table与Table之间所可能发生的各种操作(关系运算)</li>
+<li>描述这些操作所应遵循的约束条件(完整性约束)</li>
+</ul>
+</li>
+<li>关系模型的三个要素：<ul>
+<li>基本结构：Relation/Table</li>
+<li>基本操作：Relation Operator<ul>
+<li>基本的:(并, UNION)、(差, DIFFERENCE)、(广义积,PRODUCT)、(选择, SELECTION)、(投影, PROJECTION)。</li>
+<li>扩展的:(交, INTERSECTION)、(连接, JOIN)、(除, DIVISION)运算</li>
+</ul>
+</li>
+<li>完整性约束：实体完整性、参照完整性和用户自定义的完整性</li>
+</ul>
+</li>
+<li>表(Table)的基本构成要素<ul>
+<li>列/字段/属性/数据项：列名，列值</li>
+<li>行/元组/记录</li>
+<li>标题/模式</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-1-“表”的严格定义"><a href="#5-1-“表”的严格定义" class="headerlink" title="5.1 “表”的严格定义"></a>5.1 “表”的严格定义</h4><ul>
+<li>域(Domain)：“列”的取值范围，一组值的集合，这组值具有相同的数据类型</li>
+<li>笛卡尔积(Cartesian Product)：“元组”及所有可能组合成的元组</li>
+<li>关系(Relation)：一组域D1,D2,…,Dn的笛卡尔积的子集，笛卡尔积中具有某一方面意义的那些元组被称作一个关系(Relation)</li>
+</ul>
+<h4 id="5-2-关系模式与关系"><a href="#5-2-关系模式与关系" class="headerlink" title="5.2 关系模式与关系"></a>5.2 关系模式与关系</h4><ul>
+<li>同一关系模式下，可有很多的关系</li>
+<li>关系模式是关系的结构, 关系是关系模式在某一时刻的数据</li>
+<li>关系模式是稳定的；而关系是某一时刻的值，是随时间可能变化的</li>
+</ul>
+<h4 id="5-3-关系的特性"><a href="#5-3-关系的特性" class="headerlink" title="5.3 关系的特性"></a>5.3 关系的特性</h4><ul>
+<li>列是同质：即每一列中的分量来自同一域，是同一类型的数据</li>
+<li>不同的列可来自同一个域，称其中的每一列为一个属性，不同的属性要给予不同的属性名。</li>
+<li>列位置互换性：区分哪一列是靠列名</li>
+<li>行位置互换性：区分哪一行是靠某一或某几列的值(关键字/键字/码字)</li>
+<li>关系是以内容(名字或值)来区分的，而不是属性在关系的位置来区分</li>
+<li>理论上，关系的任意两个元组不能完全相同。(集合的要求：集合内不能有相同的两个元素)；现实应用中，表(Table)可能并不完全遵守此特性。元组相同是指两个元组的每个分量(列值)都相同。</li>
+<li>属性不可再分特性:又被称为关系第一范式</li>
+</ul>
+<h4 id="5-4-关系的一些重要概念"><a href="#5-4-关系的一些重要概念" class="headerlink" title="5.4 关系的一些重要概念"></a>5.4 关系的一些重要概念</h4><ul>
+<li>候选码(Candidate Key)/候选键<ul>
+<li>关系中的一个属性组，其值能唯一标识一个元组，若从该属性组中去掉<br>任何一个属性，它就不具有这一性质了，这样的属性组称作候选码。</li>
+</ul>
+</li>
+<li>主码(Primary Key)/主键<ul>
+<li>当有多个候选码时，可以选定一个作为主码。DBMS以主码为主要线索管理关系中的各个元组</li>
+</ul>
+</li>
+<li>主属性与非主属性<ul>
+<li>包含在任何一个候选码中的属性被称作主属性，而其他属性被称作非主属性</li>
+<li>最简单的，候选码只包含一个属性；</li>
+<li>极端的，所有属性构成这个关系的候选码，称为全码(All-Key)</li>
+</ul>
+</li>
+<li>外码(Foreign Key)/外键<ul>
+<li>关系R中的一个属性组，它不是R的候选码，但它与另一个关系S的候选码相对应，则称这个属性组为R的外码或外键。</li>
+<li>两个关系通常是靠外码连接起来的。</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-关系模型中的完整性"><a href="#6-关系模型中的完整性" class="headerlink" title="6. 关系模型中的完整性"></a>6. 关系模型中的完整性</h3><h4 id="6-1-实体完整性"><a href="#6-1-实体完整性" class="headerlink" title="6.1 实体完整性"></a>6.1 实体完整性</h4><ul>
+<li>关系的主码中的属性值不能为空值；</li>
+<li>意义：关系中的元组对应到现实世界相互之间可区分的一个个个体，这些个体是通过主码来唯一标识的；若主码为空，则出现不可标识的个体，这是不容许的。</li>
+</ul>
+<h4 id="6-2-参照完整性"><a href="#6-2-参照完整性" class="headerlink" title="6.2 参照完整性"></a>6.2 参照完整性</h4><ul>
+<li>如果关系R1的外码Fk与关系R2的主码Pk相对应，则R1中的每一个元组的Fk值或者等于R2 中某个元组的Pk 值，或者为空值</li>
+<li>意义：如果关系R1的某个元组t1参照了关系R2的某个元组t2，则t2必须存在</li>
+</ul>
+<h4 id="6-3-用户自定义完整性"><a href="#6-3-用户自定义完整性" class="headerlink" title="6.3 用户自定义完整性"></a>6.3 用户自定义完整性</h4><ul>
+<li>用户针对具体的应用环境定义的完整性约束条件</li>
+</ul>
+<h4 id="6-4-DBMS对关系完整性的支持"><a href="#6-4-DBMS对关系完整性的支持" class="headerlink" title="6.4 DBMS对关系完整性的支持"></a>6.4 DBMS对关系完整性的支持</h4><ul>
+<li>实体完整性和参照完整性由DBMS系统自动支持</li>
+<li>DBMS系统通常提供了如下机制：<ol>
+<li>它使用户可以自行定义有关的完整性约束条件</li>
+<li>当有更新操作发生时，DBMS将自动按照完整性约束条件检验更新操作的正确性，即是否符合用户自定义的完整性</li>
+</ol>
+</li>
+</ul>
+<h3 id="7-关系代数"><a href="#7-关系代数" class="headerlink" title="7. 关系代数"></a>7. 关系代数</h3><h4 id="7-1-关系代数的特点"><a href="#7-1-关系代数的特点" class="headerlink" title="7.1 关系代数的特点"></a>7.1 关系代数的特点</h4><ul>
+<li>基于集合，提供了一系列的关系代数操作：并、差、笛卡尔积(广义积)、选择、投影和更名等基本操作</li>
+<li>以及交、 连接和关系除等扩展操作，是一种集合思维的操作语言。</li>
+<li>关系代数操作以一个或多个关系为输入，结果是一个新的关系。</li>
+<li>用对关系的运算来表达查询，需要指明所用操作, 具有一定的过程性。</li>
+<li>是一种抽象的语言，是学习其他数据库语言，如SQL等的基础</li>
+</ul>
+<h4 id="7-2-关系代数的约束"><a href="#7-2-关系代数的约束" class="headerlink" title="7.2 关系代数的约束"></a>7.2 关系代数的约束</h4><p>某些关系代数操作，如并、差、交等，需满足”并相容性”</p>
+<ul>
+<li>并相容性<ul>
+<li>参与运算的两个关系及其相关属性之间有一定的对应性、可比性或意义关联性</li>
+<li>定义：关系R与关系S存在相容性，当且仅当：<ul>
+<li>(1) 关系R和关系S的属性数目必须相同；</li>
+<li>(2) 对于任意i，关系R的第i个属性的域必须和关系S的第i个属性的域相同</li>
+</ul>
+</li>
+<li>示例：关系R：STUDENT(SID <strong>char(10)</strong>, Sname <strong>char(8)</strong>, Age <strong>char(3)</strong>)</li>
+<li>示例：关系S：TEACHER(TID <strong>char(10)</strong>, Tname <strong>char(8)</strong>, Age <strong>char(3)</strong>)</li>
+</ul>
+</li>
+</ul>
+<h4 id="7-3-关系代数的基本操作"><a href="#7-3-关系代数的基本操作" class="headerlink" title="7.3 关系代数的基本操作"></a>7.3 关系代数的基本操作</h4><ol>
+<li>集合操作<ul>
+<li>并（UNIO）：R∪S</li>
+<li>交（INTERSECTION）：R∩S</li>
+<li>差（DIFFERENCE）：R-S</li>
+<li>笛卡儿积（Cartesian PRODUCT）：R×S</li>
+</ul>
+</li>
+<li>纯关系操作<ul>
+<li>投影（PROJECT）：∏ a(R)</li>
+<li>选择（SELECT）：σ Con(R)</li>
+<li>连接（JOIN）：R⋈S</li>
+<li>除（DIVISION）：R÷S</li>
+</ul>
+</li>
+</ol>
+<h5 id="7-3-1-并-Union-操作"><a href="#7-3-1-并-Union-操作" class="headerlink" title="7.3.1 并(Union) 操作"></a>7.3.1 并(Union) 操作</h5><ul>
+<li>定义：假设关系R和关系S是并相容的，则关系R与关系S的并运算结果也是一个关系，记作：<strong><code>R∪S</code></strong>, 它由 或者出现在关系R中，或者出现在S中的元组构成。</li>
+<li>数学描述：<code>R∪S = {t|t∈R ∨ t∈S}</code>，其中t是元组</li>
+<li>并运算是将两个关系的元组合并成一个关系，在合并时去掉重复的元组。</li>
+<li>汉语中的“或者…或者…”通常意义是并运算的要求。</li>
+<li><code>R ∪S</code> 与 <code>S∪R</code> 运算的结果是<strong>同</strong>一个关系</li>
+</ul>
+<h5 id="7-3-2-差-Difference-操作"><a href="#7-3-2-差-Difference-操作" class="headerlink" title="7.3.2 差(Difference) 操作"></a>7.3.2 差(Difference) 操作</h5><ul>
+<li>定义：假设关系R 和关系S是并相容的，则关系R与关系S的差运算结果也是一个关系，记作：<strong><code>R-S</code></strong>, 它由出现在关系R中但不出现在关系S中的元组构成。</li>
+<li>数学描述：<code>R-S ={t|t∈R ∧ t(!∈)S }</code> ，其中t是元组</li>
+<li>汉语中的“是…但不含…”通常意义是差运算的要求。</li>
+<li><code>R-S</code> 与 <code>S-R</code> 是<strong>不同</strong>的</li>
+</ul>
+<h5 id="7-3-3-广义笛卡尔积-Cartesian-Product-操作"><a href="#7-3-3-广义笛卡尔积-Cartesian-Product-操作" class="headerlink" title="7.3.3 广义笛卡尔积(Cartesian Product) 操作"></a>7.3.3 广义笛卡尔积(Cartesian Product) 操作</h5><ul>
+<li>定义：关系<code>R(&lt;a1,a2, …,an&gt;)</code>与关系<code>S(&lt;b1,b2, …,bm &gt;)</code>的广义笛卡尔积(简称广义积,或 积 或笛卡尔积)运算结果也是一个关系，记作：<strong><code>RxS</code></strong>, 它由关系R中的元组与关系S的元组进行所有可能的拼接(或串接)构成。</li>
+<li>数学描述：<code>RxS = {&lt;a1,a2,…,an,b1,b2,…,bm&gt;|&lt;a1,a2,…,an&gt;∈R ∧ &lt;b1,b2,…,bm&gt;∈S}</code></li>
+<li><code>RxS=SxR</code>：RxS为R中的每一个元组都和S中的所有元组进行串接。<code>SxR</code>为S中的每一个元组都和R中的所有元组进行串接。结果是相同的。</li>
+<li>两个关系R和S，它们的<strong>属性个数</strong>分别为n和m(R是n度关系，S是m度关系)则笛卡尔积R×S的属性个数=n+m。即元组的前n个分量是R中元组的分量，后m个分量是S中元组的分量(R×S是n+m度关系).</li>
+<li>两个关系R和S，它们的<strong>元组个数</strong>分别为x和y(关系R的基数×,S的基数y),则笛卡尔积R×S的元组个数=x×y。(R×S的基数是x×y).</li>
+</ul>
+<h5 id="7-3-4-选择-Select"><a href="#7-3-4-选择-Select" class="headerlink" title="7.3.4 选择(Select)"></a>7.3.4 选择(Select)</h5><ul>
+<li>定义：给定一个关系R, 同时给定一个选择的条件condition(简记con), 选择运算结果也是一个关系，记作<strong><code>σ con(R)</code></strong>, 它从关系R中选择出满足给定条件condition的元组构成。</li>
+<li>数学描述：<code>con(R)={t|t(R)={t|t∈R ∧ con(t)=&#39;真&#39;}</code>，</li>
+<li>选择操作从给定的关系中选出满足条件的行,条件的书写很重要，尤其是当不同运算符在一起时，要注意运算符的优先次序，优先次序自高至低为{ <code>括弧()；θ；﹁；∧；∨</code> }</li>
+</ul>
+<h5 id="7-3-5-投影-Project"><a href="#7-3-5-投影-Project" class="headerlink" title="7.3.5 投影(Project)"></a>7.3.5 投影(Project)</h5><ul>
+<li>定义：给定一个关系R, 投影运算结果也是一个关系，记作<strong><code>A(R)</code></strong>, 它从关系R中选出属性包含在A中的列构成。</li>
+<li>数学描述：<code>∏ Ai1,Ai2,…,Aik (R) = {&lt;t[Ai1],t[Ai2],…,t[Aik]&gt; | t∈R}</code></li>
+<li>投影操作从给定关系中选出某些列组成新的关系, 而选择操作是从给定关系中选出某些行组成新的关系</li>
+</ul>
+<h4 id="7-4-关系代数的扩展操作"><a href="#7-4-关系代数的扩展操作" class="headerlink" title="7.4 关系代数的扩展操作"></a>7.4 关系代数的扩展操作</h4><h5 id="7-4-1-交-Intersection"><a href="#7-4-1-交-Intersection" class="headerlink" title="7.4.1 交(Intersection)"></a>7.4.1 交(Intersection)</h5><ul>
+<li><strong>定义</strong>：假设关系R和关系S是并相容的，则关系R与关系S的交运算结果也是一个关系，记作：<strong><code>R∩S</code></strong>, 它由同时出现在关系R和关系S中的元组构成。</li>
+<li>数学描述：<code>R∩S = {t|t∈R ∧ t∈S}</code>，其中t是元组</li>
+<li>R∩S 和 S∩R 运算的结果是同一个关系</li>
+<li>交运算可以通过差运算来实现：<code>R∩S = R-(R-S) = S-(S-R)</code></li>
+<li>汉语中的“既…又…”，“…, 并且…”通常意义是交运算的要求</li>
+</ul>
+<h5 id="7-4-2-θ-连接-θ-Join-theta-Join"><a href="#7-4-2-θ-连接-θ-Join-theta-Join" class="headerlink" title="7.4.2 θ-连接(θ-Join, theta-Join)"></a>7.4.2 θ-连接(θ-Join, theta-Join)</h5><ul>
+<li>投影与选择操作只是对单个关系(表)进行操作, 而实际应用中往往涉及多个表之间的操作, 这就需要θ-连接操作</li>
+<li><strong>定义</strong>：给定关系R和关系S, R与S的连接运算结果也是一个关系，记作 <strong><code>R⋈[AθB]S</code></strong>：(括号内AθB是⋈的下标)，它由关系R和关系S的笛卡尔积中, 选取R中属性A与S中属性B之间满足 θ 条件的元组构成。</li>
+<li>数学描述：<code>R⋈[AθB]S = σ t[A] θ s[B] (R×S)</code></li>
+<li>在实际应用中，θ-连接操作经常与投影∏、选择σ操作一起使用</li>
+<li><strong>特别注意</strong>：当引入θ-连接操作后，DBMS可直接进行连接操作，而不必先形成笛卡尔积。</li>
+</ul>
+<h5 id="7-4-3-等值连接-Equi-Join"><a href="#7-4-3-等值连接-Equi-Join" class="headerlink" title="7.4.3 等值连接(Equi-Join)"></a>7.4.3 等值连接(Equi-Join)</h5><ul>
+<li><strong>定义</strong>：给定关系R和关系S, R与S的等值连接运算结果也是一个关系，记作<strong><code>R⋈[A=B]S</code></strong>：(括号内A=B是⋈的下标)，它由关系R和关系S的笛卡尔积中选取R中属性A与S中属性B上值相等的元组所构成。</li>
+<li>数学描述：<code>R⋈[A=B]S = σ t[A] = s[B] (R×S)</code></li>
+<li>当θ-连接中运算符为“＝”时，就是等值连接，等值连接是θ-连接的一个特例；</li>
+<li>广义积的元组组合并不是都有意义的，另广义积的元组组合数目也非常庞大，因此采用<strong>θ-连接/等值连接</strong>运算可大幅度降低中间结果的保存量，提高速度。</li>
+</ul>
+<h5 id="7-4-4-自然连接-Natural-Join"><a href="#7-4-4-自然连接-Natural-Join" class="headerlink" title="7.4.4 自然连接(Natural-Join)"></a>7.4.4 自然连接(Natural-Join)</h5><ul>
+<li>定义：给定关系R和关系S, R与S的自然连接运算结果也是一个关系，记作 ，它由关系R和关系S的笛卡尔积中选取相同属性组B上值相等的元组所构成。</li>
+<li>数学描述：<code>R⋈S = σ t[B]=s[B](R×S)</code></li>
+<li>自然连接是一种特殊的等值连接，要求关系R和关系S必须有相同的属性组B，R, S属性相同，值必须相等才能连接，要在结果中去掉重复的属性列</li>
+</ul>
+<h4 id="7-5-关系代数的基本书写思路"><a href="#7-5-关系代数的基本书写思路" class="headerlink" title="7.5 关系代数的基本书写思路"></a>7.5 关系代数的基本书写思路</h4><ol>
+<li>选出将用到的关系/表</li>
+<li>做”积”运算（可用连接运算替换）</li>
+<li>做选择运算保留所需的行/元组</li>
+<li>做投影运算保留所需的列/属性</li>
+</ol>
+<ul>
+<li>基本思路： 检索是否涉及多个表，如不涉及，则可直接采用并、差、交、选择与投影，只要注意条件书写正确与否即可</li>
+<li>如涉及多个表，则检查：<ul>
+<li>能否使用自然连接，将多个表连接起来(多数情况是这样的)</li>
+<li>如不能，能否使用等值或不等值连接(-连接)</li>
+<li>还不能，则使用广义笛卡尔积，注意相关条件的书写</li>
+</ul>
+</li>
+<li>连接完后，可以继续使用选择、投影等运算，即所谓数据库的“选投联”操作</li>
+</ul>
+<h4 id="7-6-关系代数之复杂扩展操作"><a href="#7-6-关系代数之复杂扩展操作" class="headerlink" title="7.6 关系代数之复杂扩展操作"></a>7.6 关系代数之复杂扩展操作</h4><h5 id="7-6-1-除-Division"><a href="#7-6-1-除-Division" class="headerlink" title="7.6.1 除(Division)"></a>7.6.1 除(Division)</h5><ul>
+<li>除法运算经常用于求解“查询… 全部的/所有的…”问题</li>
+<li>前提条件：给定关系R(A1 ,A2 , … ,An)为n度关系，关系S(B1 ,B2 , … ,Bm)为m度关系 。如果可以进行关系R与关系S的除运算，当且仅当：属性集{ B1 ,B2 , … , Bm }是属性集{ A1 ,A2 , … ,An }的真子集，即m &lt; n。</li>
+<li>定义：关系R 和关系S的除运算结果也是一个关系，记作R÷S，分两部分来定义。</li>
+<li>数学描述：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">R÷S = &#123;t|t∈∏[R-S](R) ∧ ▽u∈S(tu∈R) &#125;</span><br><span class="line">    = ∏[R-S](R) - ∏[R-S]((∏[R-S](R)×S)-R)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="7-6-2-外连接-Outer-Join"><a href="#7-6-2-外连接-Outer-Join" class="headerlink" title="7.6.2 外连接(Outer-Join)"></a>7.6.2 外连接(Outer-Join)</h5><ul>
+<li>定义：两个关系R与S进行连接时，如果关系R(或S)中的元组在S(或R)中找不到相匹配的元组，则为了避免该元组信息丢失，从而将该元组与S(或R)中假定存在的全为空值的元组形成连接，放置在结果关系中，这种连接称之为外连接(Outer Join)。</li>
+<li>外连接 = 自然连接 (或θ连接) + 失配的元组(与全空元组形成的连接)</li>
+<li>外连接的形式：左外连接、右外连接、全外连接<ul>
+<li>左外连接 = 自然连接(或连接) + 左侧表中失配的元组</li>
+<li>右外连接 = 自然连接(或连接) + 右侧表中失配的元组</li>
+<li>全外连接 = 自然连接(或连接) + 两侧表中失配的元组</li>
+<li>左外连接(Left Outer Join)记为：⋊</li>
+<li>右外连接(Right Outer Join)记为：⋉</li>
+<li>全外连接(Full Outer Join)记为：×</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> 数据库系统 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 后端开发 </tag>
+            
+            <tag> 数据库 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[十二、JavaWeb编程基础]]></title>
       <url>http://chaooo.github.io/2019/07/20/12_JavaWeb%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.html</url>
       <content type="html"><![CDATA[<p>JavaWeb是用Java技术来解决相关web互联网领域的技术总和。Java提供了技术方案可以解决客户端和服务器端的实现，特别是服务器的应用，比如Servlet，JSP和第三方框架等等。</p>
@@ -16,9 +391,11 @@
 <li><a href="#id4">上下文对象ServletContext</a></li>
 <li><a href="#id5">会话跟踪（状态管理）</a></li>
 <li><a href="#id6">JSP</a></li>
+<li><a href="#id7">内置对象(隐含对象)</a></li>
+<li><a href="#id8">taglib指令</a></li>
 </ol>
 <p><span id="id1"><span></span></span></p>
-<h3 id="1-http协议"><a href="#1-http协议" class="headerlink" title="1. http协议"></a>1. http协议</h3><p>超文本传输协议，是一种应用层的网络传输协议。</p>
+<h3 id="1-http协议"><a href="#1-http协议" class="headerlink" title="1. http协议"></a>1. http协议</h3><p>超文本传输协议，是一种应用层的网络传输协议</p>
 <ul>
 <li>http协议的特点：<ol>
 <li>简单，快速：支持多种不同的的数据提交方式，如get/post</li>
@@ -94,11 +471,11 @@
 </ul>
 <h4 id="2-5-接收请求中的参数"><a href="#2-5-接收请求中的参数" class="headerlink" title="2.5 接收请求中的参数"></a>2.5 接收请求中的参数</h4><ol>
 <li>根据参数的名称，接收参数的单个值<ul>
-<li>String value = request.getParameter(String name);</li>
+<li>String value = <strong>request.getParameter(String name)</strong>;</li>
 </ul>
 </li>
 <li>根据参数的名称，接收一组参数的值<ul>
-<li>String[] values = request.getParameterValues(String name);</li>
+<li>String[] values = <strong>request.getParameterValues(String name)</strong>;</li>
 </ul>
 </li>
 </ol>
@@ -235,11 +612,11 @@
 </ul>
 </li>
 <li>通过响应对象，将cookie添加到响应头,可添加多个<ul>
-<li>response.addCookie(Cookie cookie);</li>
+<li><strong>response.addCookie(Cookie cookie)</strong>;</li>
 </ul>
 </li>
 <li>通过请求头得到cookie数组，没有则返回null<ul>
-<li>Cookie[] cookies = request.getCookies();</li>
+<li><strong>Cookie[] cookies = request.getCookies()</strong>;</li>
 <li>取键：cookie.getName();</li>
 <li>取值：cookie.getValue()</li>
 </ul>
@@ -274,7 +651,7 @@
 </ul>
 <h4 id="5-3-Session"><a href="#5-3-Session" class="headerlink" title="5.3 Session"></a>5.3 Session</h4><ul>
 <li>获取Session<ul>
-<li>格式1：request.getSession();//等价参数传true</li>
+<li>格式1：<strong>request.getSession()</strong>;//等价参数传true</li>
 <li>格式2：request.getSession(boolean isNew);<ul>
 <li>true，根据浏览器的SessionId查找一个session，若没有就新创建一个对象并返回</li>
 <li>false，根据浏览器的SessionId查找一个session，若没有就返回null</li>
@@ -283,8 +660,8 @@
 </ul>
 </li>
 <li>Session常用方法<ul>
-<li>session.setAttribute(String key, object value);//设置/替换值</li>
-<li>session.getAttribute(String key);//获取值</li>
+<li><strong>session.setAttribute(String key, object value)</strong>;//设置/替换值</li>
+<li><strong>session.getAttribute(String key)</strong>;//获取值</li>
 <li>session.invalidate();//销毁</li>
 </ul>
 </li>
@@ -400,8 +777,155 @@
 </li>
 </ul>
 <blockquote>
-<p>include指令 与 include动作区别：<br><br>include指令：引入文件操作，是在JSP引擎的转换时发生，将多个jsp文件，生产为了一个Servlert（多个jsp =&gt; 一个Servlet）<br><br>include动作：引入文件操作，是在浏览器请求时，将引用文件的响应体添加到了请求文件的响应体中（多个jsp =&gt; 多个Servlet）</p>
+<p>include指令 与 include动作区别：</p>
+<ul>
+<li>include指令：引入文件操作，是在JSP引擎的转换时发生，将多个jsp文件，生产为了一个Servlert（多个jsp =&gt; 一个Servlet）</li>
+<li>include动作：引入文件操作，是在浏览器请求时，将引用文件的响应体添加到了请求文件的响应体中（多个jsp =&gt; 多个Servlet）</li>
+</ul>
 </blockquote>
+<p><span id="id7"><span></span></span></p>
+<h3 id="7-内置对象-隐含对象"><a href="#7-内置对象-隐含对象" class="headerlink" title="7.内置对象(隐含对象)"></a>7.内置对象(隐含对象)</h3><ul>
+<li>在JSP中，我们的代码执行在service中，所谓内置对象，指的是在JSP引擎转换时期，在我们代码生成位置的上面，提前准备好的一些变量，对象。</li>
+<li>内置对象通常是我们会主动创建的对象</li>
+</ul>
+<h4 id="7-1-九大内置对象"><a href="#7-1-九大内置对象" class="headerlink" title="7.1 九大内置对象"></a>7.1 九大内置对象</h4><ol>
+<li>request<ul>
+<li>对象类型：java.servlet.<strong>HttpServletRequest</strong></li>
+<li>request内置对象中包含了有关浏览器请求的信息，提供了大量get方法，用于获取cookie、header以及session内数据等。</li>
+</ul>
+</li>
+<li>response<ul>
+<li>对象类型：javax.servlet.<strong>HttpServletResponse</strong></li>
+<li>response对象提供了多个方法用来处理HTTP响应，可以调用response中的方法修改ContentType中的MIME类型以及实现页面的跳转等。</li>
+</ul>
+</li>
+<li>config<ul>
+<li>对象类型：javax.servlet.<strong>ServletConfig</strong></li>
+<li>在Servlet初始化的时候，JSP引擎通过config向它传递信息。这种信息可以是属性名/值匹配的参数，也可以是通过ServletContext对象传递的服务器的有关信息。</li>
+</ul>
+</li>
+<li>out<ul>
+<li>对象类型：javax.servlet.jsp.<strong>JspWriter</strong></li>
+<li>在JSP开发过程中使用得最为频繁的对象</li>
+</ul>
+</li>
+<li>page<ul>
+<li>对象类型：java.lang.<strong>Object</strong></li>
+<li>page对象有点类似于Java编程中的this指针，就是指当前JSP页面本身。</li>
+</ul>
+</li>
+<li>pageContext<ul>
+<li>对象类型：<strong>pageContext</strong></li>
+<li>pageContext对象是一个比较特殊的对象。它相当于页面中所有其他对象功能的最大集成者，即使用它可以访问到本页面中所有其他对象</li>
+</ul>
+</li>
+<li>session<ul>
+<li>对象类型：java.servlet.http.<strong>HttpSession</strong></li>
+<li>session是与请求有关的会话期，用来表示和存储当前页面的请求信息。</li>
+</ul>
+</li>
+<li>application<ul>
+<li>对象类型：javax.servlet.<strong>ServletContext</strong></li>
+<li>用于实现用户之间的数据共享（多使用于网络聊天系统）。</li>
+</ul>
+</li>
+<li>exception<ul>
+<li>对象类型：java.lang.<strong>Throwable</strong></li>
+<li>作用 exception内置对象是用来处理页面出现的异常错误。</li>
+</ul>
+</li>
+</ol>
+<h4 id="7-2-JSP四大域对象"><a href="#7-2-JSP四大域对象" class="headerlink" title="7.2 JSP四大域对象"></a>7.2 JSP四大域对象</h4><ul>
+<li>九大内置对象中，存在四个较为特殊的对象，这四个对象用户在不同的作用域中存储数据，获取数据，删除数据</li>
+<li>域对象的特点：每一个内置对象，都类似一个Map集合，可以存取删除数据，都具备如下三个方法：<ol>
+<li>存储数据：setAttribute(String key, Object value);</li>
+<li>获取数据：Object value = getAttribute(String);</li>
+<li>删除数据： removeAttribute(String key);</li>
+</ol>
+</li>
+<li>四大内置对象，分别指的是：<ol>
+<li>pageContext: (作用域：1个页面)<ul>
+<li>页面上下文，存储在pageContext中的数据, 作用域是最小的,  pageContext在JSP代码执行时 创建, 在JSP代码执行完毕时, 销毁.</li>
+</ul>
+</li>
+<li>request: (作用域：一次请求，如果请求被转发，可能跨越多个页面)<ul>
+<li>请求对象, 存储在请求对象中的数据, 域范围是一次请求, 请求一旦进行了响应, 就会被销毁.</li>
+</ul>
+</li>
+<li>session: (作用域：一次会话，一次会话可能包含多个请求)<ul>
+<li>会话对象，存储在会话对象中的数据，只有在当前用户会话中可以使用，用户再次访问服务器的时间间隔超过30分钟，session就销毁了。</li>
+</ul>
+</li>
+<li>application: (域范围：一次服务，应用从启动到关闭application一直都在)<ul>
+<li>Servlet上下文对象, 存储在application中的数据, 域范围是最大的. 在应用关闭之前 都可以使用.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h4 id="7-3-EL表达式"><a href="#7-3-EL表达式" class="headerlink" title="7.3 EL表达式"></a>7.3 EL表达式</h4><ul>
+<li>用于将计算的结果输出到网页，也常用于快速的从域对象中取出数据，并输出到网页。</li>
+<li>格式：<code>${表达式}</code></li>
+<li>EL表达式用于运算<ul>
+<li>在JSP中, 可以直接使用el表达式运算一些数据，例如: ${123+123} , 最终网页中显示的效果是:   246 </li>
+</ul>
+</li>
+<li>用于取出域对象中的数据<ul>
+<li>取出数据直接输出：<code>${域对象中存储的键}</code></li>
+<li>如果取出的数据不存在, 则不输出 (不可能显示null)</li>
+</ul>
+</li>
+<li>取出对象数据的属性值:<ul>
+<li>格式1： ${对象存储的键.属性名}</li>
+<li>格式2： ${对象存储的键[“属性名”]}</li>
+<li>格式3(动态取值)： ${对象存储的键[属性存储的键]}</li>
+</ul>
+</li>
+<li>取出集合中的数据<ul>
+<li>格式: ${集合存储时的key[下标]}</li>
+</ul>
+</li>
+</ul>
+<h4 id="7-4-EL表达式取出数据的流程"><a href="#7-4-EL表达式取出数据的流程" class="headerlink" title="7.4 EL表达式取出数据的流程"></a>7.4 EL表达式取出数据的流程</h4><ul>
+<li>四个域对象之间, 有时数据的键可能重复,优先从域范围较小的对象中, 取出数据.</li>
+<li>步骤:<ol>
+<li>先从pageContext中, 寻找数据是否存在.</li>
+<li>如果pageContext中数据不存在, 则去request中寻找数据是否存在</li>
+<li>如果request 中数据不存在, 则去session中寻找数据是否存在</li>
+<li>如果session中数据不存在, 则去application中寻找数据是否存在</li>
+<li>如果application中数据不存在,则不输出任何数据.</li>
+</ol>
+</li>
+</ul>
+<p><span id="id8"><span></span></span></p>
+<h3 id="8-taglib指令"><a href="#8-taglib指令" class="headerlink" title="8. taglib指令"></a>8. taglib指令</h3><p>用于在JSP文件中，引入标签库文件。</p>
+<ul>
+<li>格式： <code>&lt;%@ taglib prefix=&quot;&quot; uri=&quot;&quot; %&gt;</code><ul>
+<li>prefix: 是引入标签库后，标签库的名称。作用是用于区分引入的多个标签库，在使用标签库中的标签时，标签的写法：<code>&lt;标签库名称:标签名&gt;</code></li>
+<li>uri: 每个标签库，都会拥有一个uri，它是用于区分标签库的，我们在引入这个库时，需要匹配uri属性</li>
+</ul>
+</li>
+<li>JSTL(JSP Standard Tag Library): JSP标准标签库<ul>
+<li>使用时，需要引入jar文件</li>
+<li>if 标签，格式：&lt;库名称:if text=”${ booble }”&gt;</li>
+<li>forEach 标签，格式：&lt;库名称:forEach items=”${ List }” var=”item”&gt;</li>
+</ul>
+</li>
+<li>自定义标签库:<ol>
+<li>编写一个Java类, 继承SimpleTagSupport类.</li>
+<li>重写父类的doTag方法.</li>
+<li>在doTag方法中, 通过getJspContext方法,  的到JSP页面的上下文</li>
+<li>通过上下文对象, 得到JSP中的out对象, </li>
+<li>通过out对象,  向网页中输出内容</li>
+<li>编写tld文件 , 描述标签库 以及 标签.</li>
+</ol>
+</li>
+</ul>
+<p>自定义标签库案例:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTag1</span> <span class="keyword">extends</span> <span class="title">SimpleTagSupport</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span>  <span class="keyword">static</span> ArrayList&lt;String&gt; data = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        data.add(<span class="string">"流水在碰到底处时才会释放活力。——歌德"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doTag</span><span class="params">()</span> <span class="keyword">throws</span> JspException, IOException </span>&#123;</span><br><span class="line">        JspContext context = getJspContext();</span><br><span class="line">        JspWriter out = context.getOut();</span><br><span class="line">        Random r = <span class="keyword">new</span> Random();</span><br><span class="line">        <span class="keyword">int</span> index = r.nextInt(data.size());</span><br><span class="line">        out.println(<span class="string">"&lt;span&gt;"</span>+data.get(index)+<span class="string">"&lt;/span&gt;"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">taglib</span> <span class="attr">xmlns</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee"</span></span></span><br><span class="line"><span class="tag"><span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag"><span class="attr">xsi:schemaLocation</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"</span></span></span><br><span class="line"><span class="tag"><span class="attr">version</span>=<span class="string">"2.0"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 描述标签库 --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 是对于标签库的介绍 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>我们这个标签库, 是闲的慌 , 所以写的.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 描述标签库的名称 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">display-name</span>&gt;</span>xdl<span class="tag">&lt;/<span class="name">display-name</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 标签库的版本 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tlib-version</span>&gt;</span>11.88<span class="tag">&lt;/<span class="name">tlib-version</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 建议的短命名称 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">short-name</span>&gt;</span>xdl<span class="tag">&lt;/<span class="name">short-name</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 标签库的表示, 用于引入时匹配标签库 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">uri</span>&gt;</span>http://shuidianshuisg.com<span class="tag">&lt;/<span class="name">uri</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 开始描述标签 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tag</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 对于标签的介绍 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">description</span>&gt;</span>这个标签用于随机向网页中, 输出一句名言<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 标签名称 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>heiheihei<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 标签所对应的的Java类 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">tag-class</span>&gt;</span>cn.xdl.tag.MyTag1<span class="tag">&lt;/<span class="name">tag-class</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 标签的内容 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">body-content</span>&gt;</span>empty<span class="tag">&lt;/<span class="name">body-content</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">tag</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">taglib</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 ]]></content>
       
         <categories>
