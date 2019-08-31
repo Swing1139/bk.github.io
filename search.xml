@@ -4,6 +4,326 @@
   
     
     <entry>
+      <title><![CDATA[二十三、SpringBoot MVC应用]]></title>
+      <url>http://chaooo.github.io/2019/08/31/23-SpringBoot-MVC%E5%BA%94%E7%94%A8.html</url>
+      <content type="html"><![CDATA[<p>对Spring Web MVC封装，简化MVC结构web应用开发。</p>
+<a id="more"></a>
+
+<h3 id="1-SpringBoot-MVC开发Restful服务（前后分离）"><a href="#1-SpringBoot-MVC开发Restful服务（前后分离）" class="headerlink" title="1. SpringBoot MVC开发Restful服务（前后分离）*"></a>1. SpringBoot MVC开发Restful服务（前后分离）*</h3><p>按rest规则发送HTTP请求–&gt;Spring MVC–&gt;返回JSON结果</p>
+<p>主要步骤：</p>
+<ol>
+<li>导入spring-boot-starter-web（springmvc、rest、jackson、tomcat）</li>
+<li>在application.properties修改tomcat端口</li>
+<li>定义启动类RunBoot，追加@SpringBootApplication</li>
+<li>定义Controller、Service、Dao组件</li>
+</ol>
+<h3 id="2-SpringBoot-MVC开发JSP应用（PC浏览器）"><a href="#2-SpringBoot-MVC开发JSP应用（PC浏览器）" class="headerlink" title="2. SpringBoot MVC开发JSP应用（PC浏览器）"></a>2. SpringBoot MVC开发JSP应用（PC浏览器）</h3><p>HTTP请求–&gt;Spring MVC–&gt;JSP–&gt;HTML响应输出结果</p>
+<p>主要步骤：</p>
+<ol>
+<li>导入spring-boot-starter-web、jasper解析器、jstl</li>
+<li>在application.properties修改tomcat端口、viewResolver</li>
+<li>定义启动类RunBoot，追加@SpringBootApplication</li>
+<li>定义Controller组件，返回ModelAndView</li>
+<li>在src/main/webapp下定义JSP组件</li>
+</ol>
+<h3 id="3-SpringBoot-MVC开发Thymeleaf应用（PC浏览器）"><a href="#3-SpringBoot-MVC开发Thymeleaf应用（PC浏览器）" class="headerlink" title="3. SpringBoot MVC开发Thymeleaf应用（PC浏览器）*"></a>3. SpringBoot MVC开发Thymeleaf应用（PC浏览器）*</h3><p>HTTP请求–&gt;Spring MVC–&gt;Thymeleaf模板–&gt;HTML响应输出结果</p>
+<p>主要步骤：</p>
+<ol>
+<li>导入spring-boot-starter-web、spring-boot-starter-thymeleaf</li>
+<li>在application.properties修改tomcat端口</li>
+<li>定义启动类RunBoot，追加@SpringBootApplication</li>
+<li>定义Controller组件，返回ModelAndView</li>
+<li>在src/main/resources/templates下定义模板文件<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">xmlns:th</span>=<span class="string">"https://www.thymeleaf.org/"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h1</span>&gt;</span>Hello<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h2</span> <span class="attr">th:text</span>=<span class="string">"$&#123;data&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>th:text表达式作用：将模型中的数据以只读文本显示到元素中</li>
+<li>th:text表达式作用：将模型中的数据以只读文本显示到元素中。</li>
+<li>th:if 表达式作用：if判断逻辑</li>
+<li>th:each 表达式作用：循环逻辑</li>
+<li>th:href 表达式作用：动态生成href链接</li>
+</ul>
+</blockquote>
+<p>Thymeleaf模板和JSP区别</p>
+<ol>
+<li>运行机制不同<ul>
+<li>JSP–&gt;Servlet–&gt;HTML</li>
+<li>模板+数据–&gt;HTML输出</li>
+</ul>
+</li>
+<li>模板简单易用;JSP相对复杂些<ul>
+<li>JSP:9大内置对象、EL、JSTL、嵌入Java代码、框架标签</li>
+<li>模板：模板表达式</li>
+</ul>
+</li>
+<li>模板效率高,比JSP性能好<ul>
+<li>模板：缓存</li>
+</ul>
+</li>
+</ol>
+<h3 id="4-SpringBoot-MVC静态资源处理"><a href="#4-SpringBoot-MVC静态资源处理" class="headerlink" title="4. SpringBoot MVC静态资源处理"></a>4. SpringBoot MVC静态资源处理</h3><p>静态资源包含图片、js、css等，动态资源servlet、jsp等。</p>
+<p>SpringBoot中src/main/resources目录下有几个约定的静态资源存放位置</p>
+<ul>
+<li>META-INF/resources（优先级最高）</li>
+<li>resources</li>
+<li>static</li>
+<li>public（优先级最低）</li>
+</ul>
+<p>自定义静态资源访问路径，编写一个配置文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//@Configuration</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyStaticConfiguration</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addResourceHandlers</span><span class="params">(ResourceHandlerRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addResourceHandler(<span class="string">"/**"</span>)</span><br><span class="line">            .addResourceLocations(</span><br><span class="line">                <span class="string">"classpath:/images/"</span>,</span><br><span class="line">                <span class="string">"classpath:/resources/"</span>,</span><br><span class="line">                <span class="string">"classpath:/static/"</span>,</span><br><span class="line">                <span class="string">"classpath:/public/"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-SpringBoot-MVC异常处理"><a href="#5-SpringBoot-MVC异常处理" class="headerlink" title="5. SpringBoot MVC异常处理"></a>5. SpringBoot MVC异常处理</h3><ol>
+<li><p>异常处理机制</p>
+<ul>
+<li>SpringBoot底层提供了异常处理机制。SpringBoot提供了一个ErrorMvcAutoConfiguration自动配置组件，创建了一个BasicErrorController对象，提供两个/error请求处理，一个返回html，另一个返回json。当MVC底层遇到异常会用转发方式发出/error请求。</li>
+</ul>
+</li>
+<li><p>可以自定义ErrorController替代底层BasicErrorController，将错误提示转发到自定义提示界面(全局)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="comment">//@RequestMapping("/error")</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyErrorController</span> <span class="keyword">implements</span> <span class="title">ErrorController</span></span>&#123;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(value=<span class="string">"/error"</span>,produces= MediaType.TEXT_HTML_VALUE)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">errorHtml</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ModelAndView mav = <span class="keyword">new</span> ModelAndView();</span><br><span class="line">        mav.setViewName(<span class="string">"myerror"</span>);</span><br><span class="line">        <span class="keyword">return</span> mav;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(value=<span class="string">"/error"</span>)</span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">error</span><span class="params">(HttpServletRequest request)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">        map.put(<span class="string">"msg"</span>, <span class="string">"程序发生了异常"</span>);</span><br><span class="line">        <span class="keyword">return</span> map;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getErrorPath</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"/error"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>@ExceptionHandler异常处理（局部）</p>
+<ul>
+<li>ErrorController管理全局异常，@ExceptionHandler管理所在Controller组件的异常。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExceptionHandler</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">error</span><span class="params">(Exception ex)</span> </span>&#123;</span><br><span class="line">    Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">    map.put(<span class="string">"msg"</span>, <span class="string">"发生异常"</span>);</span><br><span class="line">    map.put(<span class="string">"type"</span>, ex.getClass());</span><br><span class="line">    <span class="keyword">return</span> map;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+<p>可以将上述方法封装成一个BasicController，通过@ControllerAdvice作用到所有Controller组件上。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ControllerAdvice</span><span class="comment">//等价于所有Controller都继承它</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@ExceptionHandler</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">error</span><span class="params">(Exception ex)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">        map.put(<span class="string">"msg"</span>, <span class="string">"发生异常"</span>);</span><br><span class="line">        map.put(<span class="string">"type"</span>, ex.getClass());</span><br><span class="line">        <span class="keyword">return</span> map;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-SpringBoot-AOP"><a href="#6-SpringBoot-AOP" class="headerlink" title="6. SpringBoot AOP"></a>6. SpringBoot AOP</h3><ol>
+<li><p>引入spring-boot-starter-aop</p>
+</li>
+<li><p>定义一个切面组件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span><span class="comment">//将Bean组件纳入Spring容器</span></span><br><span class="line"><span class="meta">@Aspect</span><span class="comment">//将Bean组件定义为Aspect切面</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyAspectBean</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Before</span>(<span class="string">"within(cn.xdl.controller.*)"</span>)<span class="comment">//前置通知</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">before</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"----开始处理----"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@After</span>(<span class="string">"within(cn.xdl.controller.*)"</span>)<span class="comment">//最终通知</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">after</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"----处理完毕----"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Around</span>(<span class="string">"within(cn.xdl.controller.*)"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">around</span><span class="params">(ProceedingJoinPoint pjp)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        StopWatch watch = <span class="keyword">new</span> StopWatch();</span><br><span class="line">        watch.start();</span><br><span class="line">        Object obj = pjp.proceed();<span class="comment">//调用目标组件方法</span></span><br><span class="line">        watch.stop();</span><br><span class="line">        System.out.println(<span class="string">"处理时间:"</span>+watch.getTotalTimeMillis()+<span class="string">" 毫秒"</span>);</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置切面组件</p>
+<ul>
+<li>@Aspect、@Before、@After、@Around、@AfterReturning、@AfterThrowing等</li>
+</ul>
+</li>
+</ol>
+<h3 id="7-SpringBoot-MVC拦截器"><a href="#7-SpringBoot-MVC拦截器" class="headerlink" title="7. SpringBoot MVC拦截器"></a>7. SpringBoot MVC拦截器</h3><ol>
+<li><p>编写一个拦截器组件,实现HandlerInterceptor接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInterceptor</span> <span class="keyword">implements</span> <span class="title">HandlerInterceptor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">        HttpServletResponse response, Object handler)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"执行了MyInterceptor拦截器"</span>);</span><br><span class="line">        String user = (String)request.getSession().getAttribute(<span class="string">"user"</span>);</span><br><span class="line">        <span class="keyword">if</span>(user == <span class="keyword">null</span>) &#123;</span><br><span class="line">            response.sendRedirect(<span class="string">"/tologin"</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;<span class="comment">//阻止后续流程执行</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;<span class="comment">//继续执行后续处理</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置拦截器组件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInterceptorConfiguration</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span></span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MyInterceptor my;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addInterceptor(my).addPathPatterns(<span class="string">"/direction/list"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="8-SpringBoot整合Servlet-Filter"><a href="#8-SpringBoot整合Servlet-Filter" class="headerlink" title="8. SpringBoot整合Servlet/Filter"></a>8. SpringBoot整合Servlet/Filter</h3><h4 id="8-1-整合Servlet"><a href="#8-1-整合Servlet" class="headerlink" title="8.1 整合Servlet"></a>8.1 整合Servlet</h4><p>首先导入spring-boot-starter-web</p>
+<h5 id="8-1-1-整合Servlet方式一："><a href="#8-1-1-整合Servlet方式一：" class="headerlink" title="8.1.1 整合Servlet方式一："></a>8.1.1 整合Servlet方式一：</h5><ol>
+<li><p>编写一个Servlet组件，继承HttpServlet</p>
+</li>
+<li><p>在Servlet类定义前使用@WebServlet</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebServlet</span>(name=<span class="string">"helloservlet"</span>,urlPatterns= &#123;<span class="string">"/hello.do"</span>&#125;,loadOnStartup=<span class="number">1</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">        HttpServletResponse response</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        response.getWriter().println(<span class="string">"Hello SpringBoot Servlet"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动类前需要使用@ServletComponentScan扫描@WebServlet配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ServletComponentScan</span> <span class="comment">//扫描@WebServlet、@WebFilter、@WebListener组件</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunBoot</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(RunBoot.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h5 id="8-1-2-整合Servlet方式二："><a href="#8-1-2-整合Servlet方式二：" class="headerlink" title="8.1.2 整合Servlet方式二："></a>8.1.2 整合Servlet方式二：</h5><ol>
+<li><p>编写一个Servlet组件，继承HttpServlet</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SomeServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        HttpServletRequest request, </span></span></span><br><span class="line"><span class="function"><span class="params">        HttpServletResponse response</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        response.getWriter().println(<span class="string">"Hello Spring Some Servlet"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用ServletRegistrationBean+@Bean</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunBoot</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(RunBoot.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletRegistrationBean&lt;Servlet&gt; <span class="title">someservlet</span><span class="params">()</span></span>&#123;</span><br><span class="line">        ServletRegistrationBean&lt;Servlet&gt; bean = <span class="keyword">new</span> ServletRegistrationBean&lt;Servlet&gt;();</span><br><span class="line">        bean.setServlet(<span class="keyword">new</span> SomeServlet());</span><br><span class="line">        bean.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">        List&lt;String&gt; urls = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        urls.add(<span class="string">"/some.do"</span>);</span><br><span class="line">        bean.setUrlMappings(urls);</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h4 id="8-2-整合Filter"><a href="#8-2-整合Filter" class="headerlink" title="8.2 整合Filter"></a>8.2 整合Filter</h4><p>在SpringBoot整合Servlet的基础上整合Filter</p>
+<h5 id="8-2-1-整合Filter方式一："><a href="#8-2-1-整合Filter方式一：" class="headerlink" title="8.2.1 整合Filter方式一："></a>8.2.1 整合Filter方式一：</h5><ol>
+<li><p>编写一个Filter组件，继承Filter</p>
+</li>
+<li><p>在Filter类定义前使用@WebFilter</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebFilter</span>(urlPatterns=<span class="string">"/hello.do"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        ServletRequest request, ServletResponse response, FilterChain chain</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span> <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"-----hello filter------servlet执行之前"</span>);</span><br><span class="line">        chain.doFilter(request, response);</span><br><span class="line">        System.out.println(<span class="string">"-----hello filter------servlet执行之后"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动类前需要使用@ServletComponentScan扫描@WebServlet配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ServletComponentScan</span> <span class="comment">//扫描@WebServlet、@WebFilter、@WebListener组件</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunBoot</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(RunBoot.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h5 id="8-2-2-整合Filter方式二："><a href="#8-2-2-整合Filter方式二：" class="headerlink" title="8.2.2 整合Filter方式二："></a>8.2.2 整合Filter方式二：</h5><ol>
+<li><p>编写一个Filter组件，继承Filter</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SomeFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        ServletRequest request, ServletResponse response, FilterChain chain</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span> <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"-----som filter------servlet执行之前"</span>);</span><br><span class="line">        chain.doFilter(request, response);</span><br><span class="line">        System.out.println(<span class="string">"-----som filter------servlet执行之后"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用FilterRegistrationBean+@Bean 注册过滤器并设置拦截的请求地址</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunBoot</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(RunBoot.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> FilterRegistrationBean&lt;Filter&gt; <span class="title">somefilter</span><span class="params">()</span></span>&#123;</span><br><span class="line">        FilterRegistrationBean&lt;Filter&gt; bean = <span class="keyword">new</span> FilterRegistrationBean&lt;Filter&gt;();</span><br><span class="line">        bean.setFilter(<span class="keyword">new</span> SomeFilter());</span><br><span class="line">        <span class="comment">// 配置要拦截的请求</span></span><br><span class="line">        bean.addUrlPatterns(<span class="string">"/some.do"</span>);</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="9-SpringBoot-任务调度"><a href="#9-SpringBoot-任务调度" class="headerlink" title="9. SpringBoot 任务调度"></a>9. SpringBoot 任务调度</h3><h4 id="9-1-服务器启动后自动调用"><a href="#9-1-服务器启动后自动调用" class="headerlink" title="9.1 服务器启动后自动调用"></a>9.1 服务器启动后自动调用</h4><p>tomcat服务器启动后自动调用任务，可以使用ApplicationRunner或CommandLineRunner接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Order</span>(<span class="number">2</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SomeTask1</span> <span class="keyword">implements</span> <span class="title">ApplicationRunner</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(ApplicationArguments args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"----服务器启动后自动执行SomeTask1任务---"</span> + <span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Order</span>(<span class="number">1</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SomeTask2</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"----服务器启动后自动执行SomeTask2任务-----"</span>+<span class="keyword">new</span> Date());</span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>多个Task任务，可以通过@Order指定先后顺序，多个任务是线程同步调用。</p>
+</blockquote>
+<h4 id="9-2-程序运行后定时调用任务"><a href="#9-2-程序运行后定时调用任务" class="headerlink" title="9.2 程序运行后定时调用任务"></a>9.2 程序运行后定时调用任务</h4><p>Spring提供了一个Spring Schedule模块，封装了任务调用，之前都是采用Quartz组件调用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@EnableScheduling</span><span class="comment">//开启Schedule模块</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SomeTask3</span> </span>&#123;</span><br><span class="line">    <span class="comment">//在服务器启动1秒后调用任务，每隔3秒调用一次</span></span><br><span class="line">    <span class="meta">@Scheduled</span>(initialDelay=<span class="number">1000</span>,fixedRate=<span class="number">3000</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"-----周期性调用SomeTask3-----"</span>+<span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//在服务器启动0秒后调用任务，每隔5秒调用一次</span></span><br><span class="line">    <span class="meta">@Scheduled</span>(cron=<span class="string">"0/5 * * * * ?"</span>)<span class="comment">//秒 分 时 日 月 星期</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"-----周期性调用SomeTask4-----"</span>+<span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用Spring Schedule还需要指定cron表达式，表达式具体规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">秒   分    时    日   月   星期   年（可省略）</span><br><span class="line">0    0     10    1   10    ？</span><br><span class="line">秒： 0-59</span><br><span class="line">分： 0-59</span><br><span class="line">时： 0-23</span><br><span class="line">日： 1-31</span><br><span class="line">月： 1-12</span><br><span class="line">星期：1-7，1表示星期日，7表示星期六</span><br><span class="line">* ： 表示每一分、每一秒、每一天，任何一个可能值</span><br><span class="line">? ： 只用在日和星期部分，如果指定日，星期用？;如果指定星期，日用?，避免日和星期冲突 </span><br><span class="line">/ ： 表示增量，0/1表示0\1\2\3\4递增加1；0/5表示0\5\10\15；1/5表示1\6\11\16\21</span><br><span class="line">L ： 只用在日和星期部分，表示最后一天、周六</span><br></pre></td></tr></table></figure>
+
+<p>cron表达式案例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&quot;30 * * * * ?&quot; 每半分钟触发任务</span><br><span class="line">&quot;30 10 * * * ?&quot; 每小时的10分30秒触发任务</span><br><span class="line">&quot;30 10 1 * * ?&quot; 每天1点10分30秒触发任务</span><br><span class="line">&quot;30 10 1 20 * ?&quot; 每月20号1点10分30秒触发任务</span><br><span class="line">&quot;30 10 1 20 10 ? *&quot; 每年10月20号1点10分30秒触发任务</span><br><span class="line">&quot;30 10 1 20 10 ? 2011&quot; 2011年10月20号1点10分30秒触发任务</span><br><span class="line">&quot;30 10 1 ? 10 * 2011&quot; 2011年10月每天1点10分30秒触发任务</span><br><span class="line">&quot;30 10 1 ? 10 SUN 2011&quot; 2011年10月每周日1点10分30秒触发任务</span><br><span class="line">&quot;15,30,45 * * * * ?&quot; 每15秒，30秒，45秒时触发任务</span><br><span class="line">&quot;15-45 * * * * ?&quot; 15到45秒内，每秒都触发任务</span><br><span class="line">&quot;15/5 * * * * ?&quot; 每分钟的每15秒开始触发，每隔5秒触发一次</span><br><span class="line">&quot;15-30/5 * * * * ?&quot; 每分钟的15秒到30秒之间开始触发，每隔5秒触发一次</span><br><span class="line">&quot;0 0/3 * * * ?&quot; 每小时的第0分0秒开始，每三分钟触发一次</span><br><span class="line">&quot;0 15 10 ? * MON-FRI&quot; 星期一到星期五的10点15分0秒触发任务</span><br><span class="line">&quot;0 15 10 L * ?&quot; 每个月最后一天的10点15分0秒触发任务</span><br><span class="line">&quot;0 15 10 LW * ?&quot; 每个月最后一个工作日的10点15分0秒触发任务</span><br><span class="line">&quot;0 15 10 ? * 5L&quot; 每个月最后一个星期四的10点15分0秒触发任务</span><br><span class="line">&quot;0 15 10 ? * 5#3&quot; 每个月第三周的星期四的10点15分0秒触发任务</span><br></pre></td></tr></table></figure>
+
+<h4 id="9-3-SpringBoot-Quartz"><a href="#9-3-SpringBoot-Quartz" class="headerlink" title="9.3 SpringBoot+Quartz"></a>9.3 SpringBoot+Quartz</h4><p>导入spring-boot-starter-quartz, 编写Job任务组件，继承QuartzJobBean</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTask5</span> <span class="keyword">extends</span> <span class="title">QuartzJobBean</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">executeInternal</span><span class="params">(JobExecutionContext context)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"通过Quartz工具调用定时任务"</span>+<span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>配置Job组件（JobDetail、Tigger）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuartzConfiguration</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span><span class="comment">//将MyTask5任务组件封装成JobDetail</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JobDetail <span class="title">task5</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> JobBuilder.newJob(MyTask5.class)</span><br><span class="line">            .withIdentity(<span class="string">"task5"</span>).storeDurably().build();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Bean</span><span class="comment">//为JobDetail指定触发时间cron表达式</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Trigger <span class="title">task5Trigger</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        CronScheduleBuilder cronScheduleBuilder = </span><br><span class="line">            CronScheduleBuilder.cronSchedule(<span class="string">"0/5 46 10 * * ?"</span>);</span><br><span class="line">        <span class="keyword">return</span> TriggerBuilder.newTrigger()</span><br><span class="line">                .forJob(task5())</span><br><span class="line">                .withIdentity(<span class="string">"task5"</span>)</span><br><span class="line">                .withSchedule(cronScheduleBuilder)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      
+        <categories>
+            
+            <category> JavaWeb编程 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 后端开发 </tag>
+            
+            <tag> javaEE </tag>
+            
+            <tag> Spring </tag>
+            
+            <tag> SpringBoot </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[二十二、SpringBoot数据库访问]]></title>
+      <url>http://chaooo.github.io/2019/08/31/22-SpringBoot%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BF%E9%97%AE.html</url>
+      <content type="html"><![CDATA[<p>Springboot对于数据访问层，无论是SQL还是NOSQL，都默认采用整合Spring Data的方式进行统一处理，Springboot添加大量自动配置，屏蔽了很多设置。并引入各种<em>Template，</em>Repository来简化我们对数据访问层的操作。</p>
+<a id="more"></a>
+
+<h3 id="1-SpringBoot数据库访问"><a href="#1-SpringBoot数据库访问" class="headerlink" title="1.SpringBoot数据库访问"></a>1.SpringBoot数据库访问</h3><h4 id="1-1-Spring-DAO-JdbcTemplate"><a href="#1-1-Spring-DAO-JdbcTemplate" class="headerlink" title="1.1 Spring DAO JdbcTemplate"></a>1.1 Spring DAO JdbcTemplate</h4><p>引入spring-boot-starter-jdbc后（hikari、spring-jdbc包），就可以借助DataSourceAutoConfiguration、JdbcTemplateAutoConfiguration自动配置组件创建出HikariDataSource、JdbcTemplate对象。</p>
+<ol>
+<li>引入jdbc启动器、驱动包，创建连接池</li>
+<li>根据要操作表定义entity（pojo，属性名与字段名一致）</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Direction</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>定义Dao接口</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DirectionDao</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Direction&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>定义Dao实现类，扫描并注入JdbcTemplate使用</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Repository</span><span class="comment">//通过组件扫描加载到Spring容器</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcDirectionDao</span> <span class="keyword">implements</span> <span class="title">DirectionDao</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> JdbcTemplate template;<span class="comment">//通过自动配置加载到Spring容器</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Direction&gt; <span class="title">findAll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String sql = <span class="string">"select * from direction"</span>;</span><br><span class="line">        RowMapper&lt;Direction&gt; rowMapper = </span><br><span class="line">            <span class="keyword">new</span> BeanPropertyRowMapper&lt;Direction&gt;(Direction.class);</span><br><span class="line">        <span class="keyword">return</span> template.query(sql, rowMapper);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-Spring-MyBatis（XML-SQL版本）"><a href="#1-2-Spring-MyBatis（XML-SQL版本）" class="headerlink" title="1.2 Spring MyBatis（XML SQL版本）"></a>1.2 Spring MyBatis（XML SQL版本）</h4><ul>
+<li>引入spring-boot-starter-jdbc、驱动包、mybatis-spring-boot-starter</li>
+<li>引入application.properties（连接池参数）</li>
+<li>实体类(同上)</li>
+<li>SQL定义</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span>  </span><br><span class="line"><span class="meta">&lt;!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" </span></span><br><span class="line"><span class="meta">"http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"cn.xdl.dao.DirectionMapper"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectAll"</span> <span class="attr">resultType</span>=<span class="string">"cn.xdl.entity.Direction"</span>&gt;</span></span><br><span class="line">        select * from direction</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectById"</span> <span class="attr">parameterType</span>=<span class="string">"int"</span> </span></span><br><span class="line"><span class="tag">        <span class="attr">resultType</span>=<span class="string">"cn.xdl.entity.Direction"</span>&gt;</span></span><br><span class="line">        select * from direction where id=#&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Mapper接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DirectionMapper</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Direction&gt; <span class="title">selectAll</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Direction <span class="title">selectById</span><span class="params">(<span class="keyword">int</span> id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用@MapperScan和mybatis.mapperLocations=classpath:sql/*.xml</p>
+</li>
+<li><p>在启动类前追加@MapperScan</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@MapperScan</span>(basePackages=<span class="string">"cn.xdl.dao"</span>)<span class="comment">//扫描Mapper接口创建对象加载到Spring容器</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunBoot</span> </span>&#123;</span><br><span class="line">    ... ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在application.properties追加mybatis.mapperLocations</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mybatis.mapperLocations=classpath:sql/*.xml</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-3-Spring-MyBatis（注解-SQL版本）"><a href="#1-3-Spring-MyBatis（注解-SQL版本）" class="headerlink" title="1.3 Spring MyBatis（注解 SQL版本）"></a>1.3 Spring MyBatis（注解 SQL版本）</h4><ul>
+<li>引入spring-boot-starter-jdbc、驱动包、mybatis-spring-boot-starter</li>
+<li>引入application.properties（连接池参数）</li>
+<li>实体类(同上)</li>
+<li>定义Mapper接口，使用@Select、@Update、@Insert、@Delete注解定义SQL</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DirectionMapper</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Select</span>(<span class="string">"select * from direction"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Direction&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="meta">@Select</span>(<span class="string">"select * from direction where id=#&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Direction <span class="title">findById</span><span class="params">(<span class="keyword">int</span> id)</span></span>;</span><br><span class="line">    <span class="meta">@Update</span>(<span class="string">"update direction set name=#&#123;name&#125; where id=#&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">updateName</span><span class="params">(@Param(<span class="string">"id"</span>)</span><span class="keyword">int</span> id,@<span class="title">Param</span><span class="params">(<span class="string">"name"</span>)</span>String name)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用@MapperScan（同上）</li>
+</ul>
+<h3 id="2-Spring-Data-JPA"><a href="#2-Spring-Data-JPA" class="headerlink" title="2. Spring Data JPA"></a>2. Spring Data JPA</h3><h4 id="2-1-Jpa"><a href="#2-1-Jpa" class="headerlink" title="2.1 Jpa"></a>2.1 Jpa</h4><p>Jpa (Java Persistence API) 是 Sun 官方提出的 Java 持久化规范。中文名Java持久层API，是JDK 5.0注解或XML描述对象－关系表的映射关系，并将运行期的实体对象持久化到数据库中。</p>
+<p>Sun引入新的JPA ORM规范主要是为了简化现有的持久化开发工作和整合 ORM 技术，结束现在 Hibernate，TopLink，JDO 等 ORM 框架各自为营的局面。</p>
+<blockquote>
+<p>注意:Jpa 是一套规范，不是一套产品，那么像 Hibernate,TopLink,JDO 他们是一套产品，如果说这些产品实现了这个 Jpa 规范，那么我们就可以叫他们为 Jpa 的实现产品。</p>
+</blockquote>
+<h4 id="2-2-Spring-Boot-Jpa"><a href="#2-2-Spring-Boot-Jpa" class="headerlink" title="2.2 Spring Boot Jpa"></a>2.2 Spring Boot Jpa</h4><p>Spring Boot Jpa 是 Spring 基于 ORM 框架、Jpa 规范的基础上封装的一套 Jpa 应用框架，可使开发者用极简的代码即可实现对数据的访问和操作。</p>
+<blockquote>
+<p>Spring Boot Jpa 让我们解脱了 DAO 层的操作，基本上所有 CRUD 都可以依赖于它来实现</p>
+</blockquote>
+<p>在Spring中使用JPA访问数据库，需要使用Spring Data模块支持。<br>    - SpringData是对Spring框架一个扩展模块，包含对JPA、Redis、MongoDB等技术的访问支持。</p>
+<p>Spring Boot Jpa的使用 </p>
+<ol>
+<li><p>引入spring-boot-starter-jdbc、spring-boot-starter-data-jpa、驱动包</p>
+</li>
+<li><p>在application.properties定义db连接池参数（同上）</p>
+</li>
+<li><p>定义RunBoot启动类，使用@SpringBootApplication标记（同上）</p>
+</li>
+<li><p>根据要操作的表定义实体类，使用@Entity、@Table、@Id、@Column定义该对象和表结构之间的映射关系</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table</span>(name=<span class="string">"direction"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Direction</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@Column</span>(name=<span class="string">"id"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span>(name=<span class="string">"name"</span>)</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义Dao接口，可以选择继承JpaRepository、PagingAndSortingRepository、CrudRepository等</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DirectionDao</span> </span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">Direction</span>, <span class="title">Integer</span>&gt;</span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h4 id="2-3-Dao扩展操作"><a href="#2-3-Dao扩展操作" class="headerlink" title="2.3 Dao扩展操作"></a>2.3 Dao扩展操作</h4><p>分页查询</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Pageable pageable = PageRequest.of(<span class="number">1</span>, <span class="number">3</span>);<span class="comment">//of(页数从0开始,记录条数)</span></span><br><span class="line">Page&lt;Direction&gt; page = dao.findAll(pageable);</span><br><span class="line">List&lt;Direction&gt; list = page.getContent();</span><br><span class="line">list.forEach(d-&gt;&#123;System.out.println(d.getId()+<span class="string">" "</span>+d.getName());&#125;);</span><br><span class="line">System.out.println(<span class="string">"总记录数:"</span>+page.getTotalElements()</span><br><span class="line">+<span class="string">" 页数:"</span>+(page.getNumber()+<span class="number">1</span>)+<span class="string">"/"</span>+page.getTotalPages());</span><br><span class="line">List&lt;Direction&gt; list1 = dao.findByIdGreaterThan2(<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+<p>按方法名规则扩展</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//where id&gt;?</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Direction&gt; <span class="title">findByIdGreaterThan</span><span class="params">(<span class="keyword">int</span> id)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>定义SQL语句扩展</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Query</span>(nativeQuery=<span class="keyword">true</span>,value=<span class="string">"select * from direction where id&gt;:id"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Direction&gt; <span class="title">findByIdGreaterThan1</span><span class="params">(@Param(<span class="string">"id"</span>)</span><span class="keyword">int</span> id)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>定义JPQL面向查询语句扩展</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Query</span>(<span class="string">"from Direction where id&gt;:id"</span>) <span class="comment">//使用类型名和属性名替代表名和字段名</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Direction&gt; <span class="title">findByIdGreaterThan2</span><span class="params">(@Param(<span class="string">"id"</span>)</span><span class="keyword">int</span> id)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>按名称模糊查询，带分页支持</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Query</span>(nativeQuery=<span class="keyword">true</span>,value=<span class="string">"select * from direction where name like :name"</span></span><br><span class="line">    ,countQuery=<span class="string">"select count(*) from direction where name like :name"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Page&lt;Direction&gt; <span class="title">findByNameLike1</span><span class="params">(@Param(<span class="string">"name"</span>)</span>String name,Pageable pageable)</span>;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      
+        <categories>
+            
+            <category> JavaWeb编程 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 后端开发 </tag>
+            
+            <tag> javaEE </tag>
+            
+            <tag> Spring </tag>
+            
+            <tag> SpringBoot </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[二十一、SpringBoot入门]]></title>
       <url>http://chaooo.github.io/2019/08/27/21-SpringBoot%E5%85%A5%E9%97%A8.html</url>
       <content type="html"><![CDATA[<h3 id="1-项目管理工具Maven的基本使用"><a href="#1-项目管理工具Maven的基本使用" class="headerlink" title="1. 项目管理工具Maven的基本使用"></a>1. 项目管理工具Maven的基本使用</h3><p>Maven是一个使用java编写的开源的项目管理工具，可以方便灵活的控制项目，不必浪费时间去在不同的环境中配置依赖的jar包，而专心于业务逻辑。</p>
@@ -1636,7 +1956,7 @@
 <li>模式(Schema):对数据库中数据所进行的一种结构性的描述，所观察到数据的结构信息</li>
 <li>视图(View)/数据(Data)：某一种表现形式下表现出来的数据库中的数据</li>
 </ul>
-<h5 id="3-2-2-三级模式-三级视图"><a href="#3-2-2-三级模式-三级视图" class="headerlink" title="3.2.2 三级模式(三级视图)"></a>3.2.2 三级模式(三级视图)</h5><ul>
+<h5 id="3-2-2-三级模式-三级视图"><a href="#3-2-2-三级模式-三级视图" class="headerlink" title="3.2.2 三级模式(三级视图)"></a>3.2.2 三级模式(三级视图)</h5><ol>
 <li>External Schema —-(External) View<ul>
 <li>某一用户能够看到与处理的数据的结构描述</li>
 </ul>
@@ -1650,8 +1970,8 @@
 <li>存储在介质上的数据的结构描述，含存储路径、存储方式 、索引方式等</li>
 </ul>
 </li>
-</ul>
-<h5 id="3-2-3-两层映像"><a href="#3-2-3-两层映像" class="headerlink" title="3.2.3 两层映像"></a>3.2.3 两层映像</h5><ul>
+</ol>
+<h5 id="3-2-3-两层映像"><a href="#3-2-3-两层映像" class="headerlink" title="3.2.3 两层映像"></a>3.2.3 两层映像</h5><ol>
 <li>E-C Mapping：External Schema-Conceptual Schema Mapping <ul>
 <li>将外模式映射为概念模式，从而支持实现数据概念视图向外部视图的转换</li>
 <li>便于用户观察和使用</li>
@@ -1662,8 +1982,8 @@
 <li>便于计算机进行存储和处理</li>
 </ul>
 </li>
-</ul>
-<h4 id="3-3-标准结构的两个独立性"><a href="#3-3-标准结构的两个独立性" class="headerlink" title="3.3 标准结构的两个独立性"></a>3.3 标准结构的两个独立性</h4><ul>
+</ol>
+<h4 id="3-3-标准结构的两个独立性"><a href="#3-3-标准结构的两个独立性" class="headerlink" title="3.3 标准结构的两个独立性"></a>3.3 标准结构的两个独立性</h4><ol>
 <li>逻辑数据独立性<ul>
 <li>当概念模式变化时，可以不改变外部模式(只需改变E-C Mapping)，从而无需改变应用程序</li>
 </ul>
@@ -1672,8 +1992,8 @@
 <li>当内部模式变化时，可以不改变概念模式(只需改变C-I Mapping) ，从而不改变外部模式</li>
 </ul>
 </li>
-</ul>
-<h3 id="4-数据模型"><a href="#4-数据模型" class="headerlink" title="4. 数据模型"></a>4. 数据模型</h3><ul>
+</ol>
+<h3 id="4-数据模型"><a href="#4-数据模型" class="headerlink" title="4. 数据模型"></a>4. 数据模型</h3><ol>
 <li>数据模型：模式 与 模式的结构<ul>
 <li>规定模式统一描述方式的模型，包括：数据结构、操作和约束</li>
 <li>数据模型是对模式本身结构的抽象，模式是对数据本身结构形式的抽象</li>
@@ -1686,8 +2006,8 @@
 <li>网状模型：<strong>图</strong>的形式组织数据</li>
 </ul>
 </li>
-</ul>
-<h3 id="5-关系模型"><a href="#5-关系模型" class="headerlink" title="5. 关系模型"></a>5. 关系模型</h3><ul>
+</ol>
+<h3 id="5-关系模型"><a href="#5-关系模型" class="headerlink" title="5. 关系模型"></a>5. 关系模型</h3><ol>
 <li>形象地说，<strong>一个关系(relation)就是一个Table</strong>，关系模型就是处理Table的，它由三个部分组成：<ul>
 <li>描述DB各种数据的基本结构形式(Table/Relation)</li>
 <li>描述Table与Table之间所可能发生的各种操作(关系运算)</li>
@@ -1710,7 +2030,7 @@
 <li>标题/模式</li>
 </ul>
 </li>
-</ul>
+</ol>
 <h4 id="5-1-“表”的严格定义"><a href="#5-1-“表”的严格定义" class="headerlink" title="5.1 “表”的严格定义"></a>5.1 “表”的严格定义</h4><ul>
 <li>域(Domain)：“列”的取值范围，一组值的集合，这组值具有相同的数据类型</li>
 <li>笛卡尔积(Cartesian Product)：“元组”及所有可能组合成的元组</li>
@@ -1730,7 +2050,7 @@
 <li>理论上，关系的任意两个元组不能完全相同。(集合的要求：集合内不能有相同的两个元素)；现实应用中，表(Table)可能并不完全遵守此特性。元组相同是指两个元组的每个分量(列值)都相同。</li>
 <li>属性不可再分特性:又被称为关系第一范式</li>
 </ul>
-<h4 id="5-4-关系的一些重要概念"><a href="#5-4-关系的一些重要概念" class="headerlink" title="5.4 关系的一些重要概念"></a>5.4 关系的一些重要概念</h4><ul>
+<h4 id="5-4-关系的一些重要概念"><a href="#5-4-关系的一些重要概念" class="headerlink" title="5.4 关系的一些重要概念"></a>5.4 关系的一些重要概念</h4><ol>
 <li>候选码(Candidate Key)/候选键<ul>
 <li>关系中的一个属性组，其值能唯一标识一个元组，若从该属性组中去掉<br>任何一个属性，它就不具有这一性质了，这样的属性组称作候选码。</li>
 </ul>
@@ -1750,7 +2070,7 @@
 <li>两个关系通常是靠外码连接起来的。</li>
 </ul>
 </li>
-</ul>
+</ol>
 <h3 id="6-关系模型中的完整性"><a href="#6-关系模型中的完整性" class="headerlink" title="6. 关系模型中的完整性"></a>6. 关系模型中的完整性</h3><h4 id="6-1-实体完整性"><a href="#6-1-实体完整性" class="headerlink" title="6.1 实体完整性"></a>6.1 实体完整性</h4><ul>
 <li>关系的主码中的属性值不能为空值；</li>
 <li>意义：关系中的元组对应到现实世界相互之间可区分的一个个个体，这些个体是通过主码来唯一标识的；若主码为空，则出现不可标识的个体，这是不容许的。</li>
@@ -1779,13 +2099,15 @@
 </ul>
 <h4 id="7-2-关系代数的约束"><a href="#7-2-关系代数的约束" class="headerlink" title="7.2 关系代数的约束"></a>7.2 关系代数的约束</h4><p>某些关系代数操作，如并、差、交等，需满足”并相容性”</p>
 <ul>
-<li>并相容性<ul>
+<li>并相容性：<ol>
 <li>参与运算的两个关系及其相关属性之间有一定的对应性、可比性或意义关联性</li>
 <li>定义：关系R与关系S存在相容性，当且仅当：<ul>
 <li>(1) 关系R和关系S的属性数目必须相同；</li>
 <li>(2) 对于任意i，关系R的第i个属性的域必须和关系S的第i个属性的域相同</li>
 </ul>
 </li>
+</ol>
+<ul>
 <li>示例：关系R：STUDENT(SID <strong>char(10)</strong>, Sname <strong>char(8)</strong>, Age <strong>char(3)</strong>)</li>
 <li>示例：关系S：TEACHER(TID <strong>char(10)</strong>, Tname <strong>char(8)</strong>, Age <strong>char(3)</strong>)</li>
 </ul>
@@ -1800,41 +2122,45 @@
 </ul>
 </li>
 <li>纯关系操作<ul>
-<li>投影（PROJECT）：∏ a(R)</li>
-<li>选择（SELECT）：σ Con(R)</li>
+<li>选择（SELECT）：σF(R)</li>
+<li>投影（PROJECT）：ΠA(R)</li>
 <li>连接（JOIN）：R⋈S</li>
 <li>除（DIVISION）：R÷S</li>
 </ul>
 </li>
 </ol>
 <h5 id="7-3-1-并-Union-操作"><a href="#7-3-1-并-Union-操作" class="headerlink" title="7.3.1 并(Union) 操作"></a>7.3.1 并(Union) 操作</h5><ul>
-<li>定义：假设关系R和关系S是并相容的，则关系R与关系S的并运算结果也是一个关系，记作：<strong><code>R∪S</code></strong>, 它由 或者出现在关系R中，或者出现在S中的元组构成。</li>
-<li>数学描述：<code>R∪S = {t|t∈R ∨ t∈S}</code>，其中t是元组</li>
+<li>定义：设关系R和关系S是并相容的，则关系R与关系S的并运算结果也是一个关系，记作：<strong><code>R∪S</code></strong>, 它由 或者出现在关系R中，或者出现在S中的元组构成。</li>
+<li>数学描述：<code>R∪S={t|t∈R∨t∈S}</code>，其中t是元组</li>
 <li>并运算是将两个关系的元组合并成一个关系，在合并时去掉重复的元组。</li>
 <li>汉语中的“或者…或者…”通常意义是并运算的要求。</li>
-<li><code>R ∪S</code> 与 <code>S∪R</code> 运算的结果是<strong>同</strong>一个关系</li>
+<li><code>R∪S</code> 与 <code>S∪R</code> 运算的结果是<strong>同</strong>一个关系</li>
 </ul>
 <h5 id="7-3-2-差-Difference-操作"><a href="#7-3-2-差-Difference-操作" class="headerlink" title="7.3.2 差(Difference) 操作"></a>7.3.2 差(Difference) 操作</h5><ul>
-<li>定义：假设关系R 和关系S是并相容的，则关系R与关系S的差运算结果也是一个关系，记作：<strong><code>R-S</code></strong>, 它由出现在关系R中但不出现在关系S中的元组构成。</li>
-<li>数学描述：<code>R-S ={t|t∈R ∧ t(!∈)S }</code> ，其中t是元组</li>
+<li>定义：设关系R 和关系S是并相容的，则关系R与关系S的差运算结果也是一个关系，记作：<strong><code>R-S</code></strong>, 它由出现在关系R中但不出现在关系S中的元组构成。</li>
+<li>数学描述：<code>R－S={t|t∈R∧t∉S}</code>，其中t是元组</li>
 <li>汉语中的“是…但不含…”通常意义是差运算的要求。</li>
 <li><code>R-S</code> 与 <code>S-R</code> 是<strong>不同</strong>的</li>
 </ul>
-<h5 id="7-3-3-广义笛卡尔积-Cartesian-Product-操作"><a href="#7-3-3-广义笛卡尔积-Cartesian-Product-操作" class="headerlink" title="7.3.3 广义笛卡尔积(Cartesian Product) 操作"></a>7.3.3 广义笛卡尔积(Cartesian Product) 操作</h5><ul>
-<li>定义：关系<code>R(&lt;a1,a2, …,an&gt;)</code>与关系<code>S(&lt;b1,b2, …,bm &gt;)</code>的广义笛卡尔积(简称广义积,或 积 或笛卡尔积)运算结果也是一个关系，记作：<strong><code>RxS</code></strong>, 它由关系R中的元组与关系S的元组进行所有可能的拼接(或串接)构成。</li>
+<h5 id="7-3-3-交（Intersection-Referential-integrity）-操作"><a href="#7-3-3-交（Intersection-Referential-integrity）-操作" class="headerlink" title="7.3.3  交（Intersection Referential integrity） 操作"></a>7.3.3  交（Intersection Referential integrity） 操作</h5><ul>
+<li>定义：设关系R和关系S具有相同的目n，且相应的属性取自同一个域，则关系R与关系S的交由既属于R又属于S的元组组成。其结果关系仍为n目关系。</li>
+<li>数学描述：<code>R∩S={t|t∈R∧t∈S}</code>，其中t是元组</li>
+</ul>
+<h5 id="7-3-4-广义笛卡尔积-Extended-cartesian-product-操作"><a href="#7-3-4-广义笛卡尔积-Extended-cartesian-product-操作" class="headerlink" title="7.3.4 广义笛卡尔积(Extended cartesian product) 操作"></a>7.3.4 广义笛卡尔积(Extended cartesian product) 操作</h5><ul>
+<li>定义：关系<code>R(&lt;a1,a2, …,an&gt;)</code>与关系<code>S(&lt;b1,b2, …,bm &gt;)</code>的广义笛卡尔积(简称广义积,或 积 或笛卡尔积)运算结果也是一个关系，记作：<strong><code>RxS</code></strong>；两个分别为n目和m目的关系R和S的广义笛卡尔积是一个(n+m)列的元组的集合，元组的前n列是关系R的一个元组，后m列是关系S的一个元组，若R有k1个元组，S有k2个元组，则关系R和关系S的广义笛卡尔积有k1×k2个元组。</li>
 <li>数学描述：<code>RxS = {&lt;a1,a2,…,an,b1,b2,…,bm&gt;|&lt;a1,a2,…,an&gt;∈R ∧ &lt;b1,b2,…,bm&gt;∈S}</code></li>
 <li><code>RxS=SxR</code>：RxS为R中的每一个元组都和S中的所有元组进行串接。<code>SxR</code>为S中的每一个元组都和R中的所有元组进行串接。结果是相同的。</li>
 <li>两个关系R和S，它们的<strong>属性个数</strong>分别为n和m(R是n度关系，S是m度关系)则笛卡尔积R×S的属性个数=n+m。即元组的前n个分量是R中元组的分量，后m个分量是S中元组的分量(R×S是n+m度关系).</li>
-<li>两个关系R和S，它们的<strong>元组个数</strong>分别为x和y(关系R的基数×,S的基数y),则笛卡尔积R×S的元组个数=x×y。(R×S的基数是x×y).</li>
+<li>两个关系R和S，它们的<strong>元组个数</strong>分别为x和y(关系R的基数x,S的基数y),则笛卡尔积R×S的元组个数=x×y。(R×S的基数是x×y).</li>
 </ul>
-<h5 id="7-3-4-选择-Select"><a href="#7-3-4-选择-Select" class="headerlink" title="7.3.4 选择(Select)"></a>7.3.4 选择(Select)</h5><ul>
-<li>定义：给定一个关系R, 同时给定一个选择的条件condition(简记con), 选择运算结果也是一个关系，记作<strong><code>σ con(R)</code></strong>, 它从关系R中选择出满足给定条件condition的元组构成。</li>
-<li>数学描述：<code>con(R)={t|t(R)={t|t∈R ∧ con(t)=&#39;真&#39;}</code>，</li>
-<li>选择操作从给定的关系中选出满足条件的行,条件的书写很重要，尤其是当不同运算符在一起时，要注意运算符的优先次序，优先次序自高至低为{ <code>括弧()；θ；﹁；∧；∨</code> }</li>
+<h5 id="7-3-5-选择-Select"><a href="#7-3-5-选择-Select" class="headerlink" title="7.3.5 选择(Select)"></a>7.3.5 选择(Select)</h5><ul>
+<li>定义：给定一个关系R, 同时给定一个选择的条件condition(简记F), 选择运算结果也是一个关系，记作<strong><code>σF(R)</code></strong>, 它从关系R中选择出满足给定条件condition的元组构成。</li>
+<li>数学描述：<code>σF(R) = {t|t∈R ∧ F(t)=&#39;真&#39;}</code>,其中F表示选择条件，它是一个逻辑表达式，取逻辑值‘真’或‘假’。</li>
+<li>选择操作从给定的关系中选出满足条件的行,条件的书写很重要，尤其是当不同运算符在一起时，要注意运算符的优先次序，优先次序自高至低为{ <code>括弧()；θ；¬；∧；∨</code> }</li>
 </ul>
-<h5 id="7-3-5-投影-Project"><a href="#7-3-5-投影-Project" class="headerlink" title="7.3.5 投影(Project)"></a>7.3.5 投影(Project)</h5><ul>
+<h5 id="7-3-6-投影-Project"><a href="#7-3-6-投影-Project" class="headerlink" title="7.3.6 投影(Project)"></a>7.3.6 投影(Project)</h5><ul>
 <li>定义：给定一个关系R, 投影运算结果也是一个关系，记作<strong><code>A(R)</code></strong>, 它从关系R中选出属性包含在A中的列构成。</li>
-<li>数学描述：<code>∏ Ai1,Ai2,…,Aik (R) = {&lt;t[Ai1],t[Ai2],…,t[Aik]&gt; | t∈R}</code></li>
+<li>数学描述：<code>ΠA(R) = {t[A] | t∈R}</code>,其中A为R中的属性列</li>
 <li>投影操作从给定关系中选出某些列组成新的关系, 而选择操作是从给定关系中选出某些行组成新的关系</li>
 </ul>
 <h4 id="7-4-关系代数的扩展操作"><a href="#7-4-关系代数的扩展操作" class="headerlink" title="7.4 关系代数的扩展操作"></a>7.4 关系代数的扩展操作</h4><h5 id="7-4-1-交-Intersection"><a href="#7-4-1-交-Intersection" class="headerlink" title="7.4.1 交(Intersection)"></a>7.4.1 交(Intersection)</h5><ul>
@@ -1846,20 +2172,20 @@
 </ul>
 <h5 id="7-4-2-θ-连接-θ-Join-theta-Join"><a href="#7-4-2-θ-连接-θ-Join-theta-Join" class="headerlink" title="7.4.2 θ-连接(θ-Join, theta-Join)"></a>7.4.2 θ-连接(θ-Join, theta-Join)</h5><ul>
 <li>投影与选择操作只是对单个关系(表)进行操作, 而实际应用中往往涉及多个表之间的操作, 这就需要θ-连接操作</li>
-<li><strong>定义</strong>：给定关系R和关系S, R与S的连接运算结果也是一个关系，记作 <strong><code>R⋈[AθB]S</code></strong>：(括号内AθB是⋈的下标)，它由关系R和关系S的笛卡尔积中, 选取R中属性A与S中属性B之间满足 θ 条件的元组构成。</li>
-<li>数学描述：<code>R⋈[AθB]S = σ t[A] θ s[B] (R×S)</code></li>
-<li>在实际应用中，θ-连接操作经常与投影∏、选择σ操作一起使用</li>
+<li><strong>定义</strong>：给定关系R和关系S, R与S的连接运算结果也是一个关系，记作 <strong><code>R⋈S[AθB]</code></strong>：(括号内AθB是⋈的下标)，它由关系R和关系S的笛卡尔积中, 选取R中属性A与S中属性B之间满足 θ 条件的元组构成。</li>
+<li>数学描述：<code>R⋈S[AθB] = σ t[A]θs[B] (R×S)</code>，σF(RxS)其中t是R中的元组，s是S中的元组</li>
+<li>在实际应用中，θ-连接操作经常与投影Π、选择σ操作一起使用</li>
 <li><strong>特别注意</strong>：当引入θ-连接操作后，DBMS可直接进行连接操作，而不必先形成笛卡尔积。</li>
 </ul>
 <h5 id="7-4-3-等值连接-Equi-Join"><a href="#7-4-3-等值连接-Equi-Join" class="headerlink" title="7.4.3 等值连接(Equi-Join)"></a>7.4.3 等值连接(Equi-Join)</h5><ul>
-<li><strong>定义</strong>：给定关系R和关系S, R与S的等值连接运算结果也是一个关系，记作<strong><code>R⋈[A=B]S</code></strong>：(括号内A=B是⋈的下标)，它由关系R和关系S的笛卡尔积中选取R中属性A与S中属性B上值相等的元组所构成。</li>
-<li>数学描述：<code>R⋈[A=B]S = σ t[A] = s[B] (R×S)</code></li>
+<li><strong>定义</strong>：给定关系R和关系S, R与S的等值连接运算结果也是一个关系，记作<strong><code>R⋈S[A=B]</code></strong>：(括号内A=B是⋈的下标)，它由关系R和关系S的笛卡尔积中选取R中属性A与S中属性B上值相等的元组所构成。</li>
+<li>数学描述：<code>R⋈S[A=B] = σ t[A]=s[B] (R×S)</code></li>
 <li>当θ-连接中运算符为“＝”时，就是等值连接，等值连接是θ-连接的一个特例；</li>
 <li>广义积的元组组合并不是都有意义的，另广义积的元组组合数目也非常庞大，因此采用<strong>θ-连接/等值连接</strong>运算可大幅度降低中间结果的保存量，提高速度。</li>
 </ul>
 <h5 id="7-4-4-自然连接-Natural-Join"><a href="#7-4-4-自然连接-Natural-Join" class="headerlink" title="7.4.4 自然连接(Natural-Join)"></a>7.4.4 自然连接(Natural-Join)</h5><ul>
 <li>定义：给定关系R和关系S, R与S的自然连接运算结果也是一个关系，记作 ，它由关系R和关系S的笛卡尔积中选取相同属性组B上值相等的元组所构成。</li>
-<li>数学描述：<code>R⋈S = σ t[B]=s[B](R×S)</code></li>
+<li>数学描述：<code>R⋈S = σ t[B]=s[B] (R×S)</code></li>
 <li>自然连接是一种特殊的等值连接，要求关系R和关系S必须有相同的属性组B，R, S属性相同，值必须相等才能连接，要在结果中去掉重复的属性列</li>
 </ul>
 <h4 id="7-5-关系代数的基本书写思路"><a href="#7-5-关系代数的基本书写思路" class="headerlink" title="7.5 关系代数的基本书写思路"></a>7.5 关系代数的基本书写思路</h4><ol>
@@ -1872,7 +2198,7 @@
 <li>基本思路： 检索是否涉及多个表，如不涉及，则可直接采用并、差、交、选择与投影，只要注意条件书写正确与否即可</li>
 <li>如涉及多个表，则检查：<ul>
 <li>能否使用自然连接，将多个表连接起来(多数情况是这样的)</li>
-<li>如不能，能否使用等值或不等值连接(-连接)</li>
+<li>如不能，能否使用等值或不等值连接(θ-连接)</li>
 <li>还不能，则使用广义笛卡尔积，注意相关条件的书写</li>
 </ul>
 </li>
@@ -1882,10 +2208,13 @@
 <li>除法运算经常用于求解“查询… 全部的/所有的…”问题</li>
 <li>前提条件：给定关系R(A1 ,A2 , … ,An)为n度关系，关系S(B1 ,B2 , … ,Bm)为m度关系 。如果可以进行关系R与关系S的除运算，当且仅当：属性集{ B1 ,B2 , … , Bm }是属性集{ A1 ,A2 , … ,An }的真子集，即m &lt; n。</li>
 <li>定义：关系R 和关系S的除运算结果也是一个关系，记作R÷S，分两部分来定义。</li>
-<li>数学描述：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">R÷S = &#123;t|t∈∏[R-S](R) ∧ ▽u∈S(tu∈R) &#125;</span><br><span class="line">    = ∏[R-S](R) - ∏[R-S]((∏[R-S](R)×S)-R)</span><br></pre></td></tr></table></figure>
+<li>数学描述：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">R÷S = &#123;t|t∈Π[R-S](R) ∧ ∀u∈S(tu∈R) &#125;</span><br><span class="line">    = Π[R-S](R) - Π[R-S]((Π[R-S](R)×S)-R)</span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
+<blockquote>
+<p>其中[R-S]为投影Π的下标(属性)</p>
+</blockquote>
 <h5 id="7-6-2-外连接-Outer-Join"><a href="#7-6-2-外连接-Outer-Join" class="headerlink" title="7.6.2 外连接(Outer-Join)"></a>7.6.2 外连接(Outer-Join)</h5><ul>
 <li>定义：两个关系R与S进行连接时，如果关系R(或S)中的元组在S(或R)中找不到相匹配的元组，则为了避免该元组信息丢失，从而将该元组与S(或R)中假定存在的全为空值的元组形成连接，放置在结果关系中，这种连接称之为外连接(Outer Join)。</li>
 <li>外连接 = 自然连接 (或θ连接) + 失配的元组(与全空元组形成的连接)</li>
@@ -1895,19 +2224,19 @@
 <li>全外连接 = 自然连接(或连接) + 两侧表中失配的元组</li>
 <li>左外连接(Left Outer Join)记为：⋊</li>
 <li>右外连接(Right Outer Join)记为：⋉</li>
-<li>全外连接(Full Outer Join)记为：×</li>
+<li>全外连接(Full Outer Join)记为：⋊⋉</li>
 </ul>
 </li>
 </ul>
-<h3 id="8-关系演算"><a href="#8-关系演算" class="headerlink" title="8. 关系演算"></a>8. 关系演算</h3><ul>
-<li>关系演算是描述关系运算的另一种思维方式，它是以数理逻辑中的谓词演算为基础的，SQL语言是继承了关系代数和关系演算各自的优点所形成的</li>
-<li>按照谓词变量的不同，可分为关系元组演算和关系域演算<ul>
-<li>关系元组演算是以元组变量作为谓词变量的基本对象</li>
-<li>关系域演算是以域变量作为谓词变量的基本对象</li>
-</ul>
+<h3 id="8-关系演算"><a href="#8-关系演算" class="headerlink" title="8. 关系演算"></a>8. 关系演算</h3><p>关系演算是<strong>描述关系运算</strong>的另一种思维方式，它是以数理逻辑中的谓词演算为基础的，SQL语言是继承了关系代数和关系演算各自的优点所形成的</p>
+<ul>
+<li>按照谓词变量的不同，可分为关系元组演算和关系域演算<ol>
+<li>关系元组演算是以<strong>元组变量</strong>作为谓词变量的基本对象</li>
+<li>关系域演算是以<strong>域变量</strong>作为谓词变量的基本对象</li>
+</ol>
 </li>
 </ul>
-<h4 id="8-1-关系元组演算"><a href="#8-1-关系元组演算" class="headerlink" title="8.1 关系元组演算"></a>8.1 关系元组演算</h4><ul>
+<h4 id="8-1-关系元组演算"><a href="#8-1-关系元组演算" class="headerlink" title="8.1 关系元组演算"></a>8.1 关系元组演算</h4><ol>
 <li>关系元组演算公式：{ t | P(t) }<ul>
 <li>表示：所有使谓词 P 为真的元组 t 的集合</li>
 <li>t 是元组变量</li>
@@ -1923,13 +2252,121 @@
 <li>s[A] θ u[B]：s[A] 与 u[B] 为元组分量，A和B分别是某些关系的属性，他们之间满足比较关系θ，</li>
 </ul>
 </li>
-<li>P(t)可以由公式加运算符 ∧(与)、∨(或)、﹁(非)递归地构造<ul>
-<li>如果F是一个公式，则 ﹁F 也是公式</li>
+<li>P(t)可以由公式加运算符 ∧(与)、∨(或)、¬(非)递归地构造<ul>
+<li>如果F是一个公式，则 ¬F 也是公式</li>
 <li>如果F1、F2是公式，则 F1∧F2, F1∨F2也是公式</li>
 </ul>
 </li>
-<li>P(t)运算符优先次序(括弧；θ；E；▽；﹁；∧；∨)示例</li>
+<li>P(t)运算符优先次序(括弧；θ；∃；∀；¬；∧；∨)示例</li>
+<li>构造P(t)还有两个运算符：∃(存在)、∀(任意)<ul>
+<li>如果F是一个公式，则 ∃(t∈r)(F(t)) 也是公式</li>
+<li>如果F是一个公式，则 ∀(t∈r)(F(t)) 也是公式</li>
+<li>运算符∃和∀，又称为量词，前者称“<strong>存在量词</strong>”，后者称“<strong>全称量词</strong>”</li>
+<li>而被∃或∀限定的元组变量 t , 或者说，元组变量 t 前有存在量词或全称量词，则该变量被称为“<strong>约束变量</strong>”，否则被称为“<strong>自由变量</strong>”。</li>
 </ul>
+</li>
+<li>元组演算的等价性变换<ul>
+<li>符号<code>&lt;=&gt;</code>表示表示等价于,如：<code>¬(A&gt;B) &lt;=&gt; A&lt;=B  &lt;=&gt; A&lt;B∨A=B</code></li>
+</ul>
+</li>
+</ol>
+<h4 id="8-2-关系域演算"><a href="#8-2-关系域演算" class="headerlink" title="8.2 关系域演算"></a>8.2 关系域演算</h4><ol>
+<li>关系域演算公式的基本形式：<code>{&lt;x1,x2, …,xn&gt; | P(x1,x2, …,xn)}</code>,其中 xi 代表域变量或常量, P为以xi为变量的公式。</li>
+<li>元组演算是以元组为变量，以元组为基本处理单位，先找到元组，然后再找到元组分量，进行谓词判断；</li>
+<li>域演算是以域变量为基本处理单位，先有域变量，然后再判断由这些域变量组成的元组是否存在或是否满足谓词判断。</li>
+<li>公式的运算符(∧(与)、∨(或)、¬(非)、∀(全称量词)和∃(存在量词))是相同的，只是其中的变量不同。</li>
+<li>元组演算和域演算可以等价互换。</li>
+</ol>
+<h5 id="8-2-1-基于关系域演算的QBE语言"><a href="#8-2-1-基于关系域演算的QBE语言" class="headerlink" title="8.2.1 基于关系域演算的QBE语言"></a>8.2.1 基于关系域演算的QBE语言</h5><p>QBE: Query By Example，1975年由M. M. Zloof提出，1978年在IBM370上实现，是一种高度非过程化的查询语言，特别适合于终端用户的使用。</p>
+<ol>
+<li>特点：操作独特，基于屏幕表格的查询语言，不用书写复杂的公式，只需将条件填在表格中即可</li>
+<li>QBE操作框架由四个部分构成<ul>
+<li>关系名区：用于书写欲待查询的关系名</li>
+<li>属性名区：用于显示对应关系名区关系的所有属性名</li>
+<li>操作命令区：用于书写查询操作的命令</li>
+<li>查询条件区：用于书写查询条件</li>
+</ul>
+</li>
+<li>QBE的操作命令<ul>
+<li>Print 或 P.   —- 显示输出操作</li>
+<li>Delete或D.   —- 删除操作</li>
+<li>Insert或I.     —- 插入操作</li>
+<li>Update或U. —- 更新操作</li>
+</ul>
+</li>
+<li>构造查询的几个要素 <ul>
+<li>示例元素: 即域变量， 一定要加下划线 </li>
+<li>示例元素是这个域中可能的一个值， 它不必是查询结果中的元素</li>
+<li>打印操作符P.: 指定查询结果所含属性列 </li>
+<li>查询条件: 不用加下划线</li>
+<li>可使用比较运算符＞， ≥，＜， ≤，＝和≠  其中＝可以省略</li>
+<li>排序要求 <ul>
+<li>升序排序(AO.)，降序排序（DO.）,多列排序，用‚AO(i).‛ 或‚DO(i).‛ 表示 ，其中i为排序的优先级， i值越小，优先级越高</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="8-3-安全性"><a href="#8-3-安全性" class="headerlink" title="8.3 安全性"></a>8.3 安全性</h4><p>关系运算的安全性：不产生无限关系和无穷验证的运算被称为是安全的</p>
+<ol>
+<li>关系代数是一种集合运算，是安全的<ul>
+<li>集合本身是有限的，有限元素集合的有限次运算仍旧是有限的。</li>
+</ul>
+</li>
+<li>关系演算不一定是安全的<ul>
+<li>如：{t|¬(R(t))}, {t R(t)∨t[2]&gt;3}可能表示无限关系</li>
+</ul>
+</li>
+<li>需要对关系演算施加约束条件，即任何公式都在一个集合范围内操作，而不是无限范围内操作，才能保证其安全性。</li>
+</ol>
+<h5 id="8-3-1-安全约束有限集合DOM"><a href="#8-3-1-安全约束有限集合DOM" class="headerlink" title="8.3.1 安全约束有限集合DOM"></a>8.3.1 安全约束有限集合DOM</h5><ol>
+<li>DOM(ψ)是一个有限集合，其中的每个符号要么是ψ中明显出现的符号，要么是出现在ψ中的某个关系R的某元组的分量。</li>
+<li>DOM主要用于约束ψ中一些谓词的计算范围，它不必是最小集合。</li>
+<li>安全元组演算表达式，满足三个条件：<ul>
+<li>只要t满足ψ，t的每个分量就是DOM(ψ)的一个成员。<ul>
+<li>{ t|ψ(t) }中t的取值只能是DOM中的值，有限的。</li>
+</ul>
+</li>
+<li>对于ψ中形如(∃u)(ω(u))的子表达式，若u满足ω,则u的每个分量都是DOM(ω)中的成员。<ul>
+<li>{ t|ψ(t) }中的每个(∃u)(ω(u))子表达式，只需要验证DOM中的元素是否有使ω(u)为真的元素。而对于DOM以外的元素，已经明确其都不满足ω(u)，无需验证。</li>
+</ul>
+</li>
+<li>对于ψ中形如(∀u)(ω(u))的子表达式，若u不满足ω,则u的每个分量都是DOM(ω)中的成员。<ul>
+<li>{ t|ψ(t) }中的每个(∀u)(ω(u))子表达式，只需要验证DOM中的元素是否有使ω(u)为假的元素。而对于DOM以外的元素，已经明确其都满足ω(u)，无需验证。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="8-4-关于三种关系运算的一些观点"><a href="#8-4-关于三种关系运算的一些观点" class="headerlink" title="8.4 关于三种关系运算的一些观点"></a>8.4 关于三种关系运算的一些观点</h4><ol>
+<li>关系运算有三种：关系代数、关系元组演算和关系域演算</li>
+<li>三种关系运算都是抽象的数学运算，体现了三种不同的思维<ul>
+<li>关系代数—以集合为对象的操作思维，由集合到集合的变换</li>
+<li>元组演算—以元组为对象的操作思维，取出关系的每一个元组进行验证，有一个元组变量则可能需要一个循环，多个元组变量则需要多个循环</li>
+<li>域演算—以域变量为对象的操作思维，取出域的每一个变量进行验证看其是否满足条件</li>
+</ul>
+</li>
+<li>三种运算之间是等价的<ul>
+<li>关系代数 与 安全的元组演算表达式 与 安全的域演算表达式 是等<br>价的。即一种形式的表达式可以被等价地转换为另一种形式</li>
+</ul>
+</li>
+<li>三种关系运算都可说是非过程性的<ul>
+<li>相比之下：域演算的非过程性最好，元组演算次之，关系代数最差</li>
+</ul>
+</li>
+<li>三种关系运算虽是抽象的，但却是衡量数据库语言完备性的基础<ul>
+<li>一个数据库语言如果能够等价地实现这三种关系运算的操作，则说该语言是完备的</li>
+<li>目前多数数据库语言都能够实现这三种运算的操作，在此基础上还增加了许多其他的操作，如赋值操作、聚集操作等</li>
+</ul>
+</li>
+<li>数据库语言可以基于这三种抽象运算来设计<ul>
+<li>用“键盘符号”来替换抽象的数学符号</li>
+<li>用易于理解的符号组合来表达抽象的数学符号</li>
+<li>例如：ISBL语言—基于关系代数的数据库语言</li>
+<li>再例如：Ingres系统的QUEL语言</li>
+</ul>
+</li>
+</ol>
 ]]></content>
       
         <categories>
