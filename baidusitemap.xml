@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://chaooo.github.io/2019/09/01/02-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%AD%E8%A8%80SQL.html</loc>
+    <lastmod>2019-09-01</lastmod>
+  </url>  <url>
     <loc>http://chaooo.github.io/2019/07/22/01-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80.html</loc>
-    <lastmod>2019-08-31</lastmod>
+    <lastmod>2019-09-01</lastmod>
   </url>  <url>
     <loc>http://chaooo.github.io/2019/08/31/23-SpringBoot-MVC%E5%BA%94%E7%94%A8.html</loc>
     <lastmod>2019-08-31</lastmod>
