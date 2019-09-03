@@ -4106,7 +4106,7 @@
 <ol>
 <li><a href="#id1">http协议</a></li>
 <li><a href="#id2">Servlet</a></li>
-<li><a href="#id3">get和post区别</a></li>
+<li><a href="#id3">请求的转发与重定向</a></li>
 <li><a href="#id4">上下文对象ServletContext</a></li>
 <li><a href="#id5">会话跟踪（状态管理）</a></li>
 <li><a href="#id6">JSP</a></li>
