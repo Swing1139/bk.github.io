@@ -4,8 +4,168 @@
   
     
     <entry>
+      <title><![CDATA[MySQL索引的使用及优化]]></title>
+      <url>http://chaooo.github.io/article/20191016.html</url>
+      <content type="html"><![CDATA[<h3 id="1-索引的基本概念"><a href="#1-索引的基本概念" class="headerlink" title="1. 索引的基本概念"></a>1. 索引的基本概念</h3><p>索引是一种<strong>数据结构</strong>。对数据库表中一列或多列的值进行排序的数据结构。<br>根据数据库的功能，可以在数据库设计器中创建三种索引：唯一索引、主键索引和聚集索引。<a id="more"></a><br>提示：尽管唯一索引有助于定位信息，但为获得最佳性能结果，建议改用主键或唯一约束。</p>
+<ol>
+<li>索引的作用<ol>
+<li>快速检索数据，降低数据库的IO成本；</li>
+<li>保证数据记录的唯一性；</li>
+<li>实现表与表之间的参照完整性；</li>
+<li>在使用order by、group by子句进行数据检索时，利用索引可以减少排序和分组的时间，降低CPU的消耗；</li>
+</ol>
+</li>
+<li>索引的缺点<ol>
+<li>索引的缺点是创建和维护索引需要耗费时间和空间</li>
+<li>索引可以提高查询速度，会减慢写入速度</li>
+<li>索引并不是越多越好，索引固然可以提高相应的 select 的效率，但同时也降低了 insert 及 update 的效率，因为 insert 或 update 时有可能会重建索引，所以怎样建索引需要慎重考虑，视具体情况而定。一个表的索引数最好不要超过6个，若太多则应考虑一些不常使用到的列上建的索引是否有必要。</li>
+</ol>
+</li>
+</ol>
+<h3 id="2-索引的适用场景"><a href="#2-索引的适用场景" class="headerlink" title="2. 索引的适用场景"></a>2. 索引的适用场景</h3><p>适合建索引的场景</p>
+<ol>
+<li>主键自动建立唯一索引</li>
+<li>频繁作为查询条件的字段应该创建索引</li>
+<li>查询中与其他标关联的字段，外检关联建立索引</li>
+<li>频繁更新的字段不适合创建索引（更新字段不仅要更新数据本身，而且还要更新索引树）</li>
+<li>where条件里用不到的字段不创建索引</li>
+<li>单键/组合索引的选择问题（在高并发下倾向创建组合索引）</li>
+<li>查询中排序的字段，排序的字段若通过索引去访问将大大提高排序速度（索引主要干两件事：检索、排序。）</li>
+<li>查询中统计或者分组的字段（）<br>不适合建索引的场景</li>
+<li>表记录太少（300万左右性能开始逐渐下降，虽然官方文档说撑得住5-8百万以上，但是根本也不能等到这个时候再去优化，性能肯定会受到影响）</li>
+<li>经常增删改的表（why：提高了查询速度，同事却会降低了更新表的速度，入队表进行INSERT,UPDATE和DELETE。因为更新表时，MySQL不仅要保存数据，还要保存下索引文件）。</li>
+<li>数据重复切分布平均的表字段，因此应该只为最经常查询和最经常排序的数据建立索引。注意，如果某个数据列包括许多重复的内容，为他建立索引就没有太大的实际效果了。（加入一个表有10万行的记录，有一个字段A只有True和False两个值，且每个值的分布概率大约为50%，那么对这种表的A字段建立索引一般不会提高数据库的查询速度。再比如对银行卡建立索引，毕竟银行卡没有重复的。索引的选择性是指索引列中不同值的数据与表中的记录数的比，如果一个表中有2000条记录，表索引列就有1980个不同的值，那么这个索引的选择性就是1980/2000=0.99。一个索引的选择性越接近于1，这个索引的效率就越高。）</li>
+</ol>
+<h3 id="3-MySQl中索引的结构（B-树）"><a href="#3-MySQl中索引的结构（B-树）" class="headerlink" title="3. MySQl中索引的结构（B+树）"></a>3. MySQl中索引的结构（B+树）</h3><p>基本概念：</p>
+<ol>
+<li>二叉树：一个节点最多两个子节点，一个节点只存储一个关键字，等于则命中，小于走左节点，大于走右节点；</li>
+<li>B-树：多路搜索树，每个节点存储M/2到M个关键字，所有关键字在整颗树中出现，且只出现一次，非叶子节点可以命中；</li>
+<li>B+树：在B-树基础上，为叶子节点增加链表指针，所有关键字都在叶子节点中出现(有序)，叶子节点才命中；</li>
+<li>B*树：在B+树基础上，为非叶子节点也增加兄弟链表指针，将节点的最低利用率从1/2提高到2/3；</li>
+</ol>
+<p>B+树的特性：</p>
+<ol>
+<li>所有关键字都出现在叶子结点的链表中（稠密索引），且链表中的关键字恰好是有序的；</li>
+<li>不可能在非叶子结点命中；</li>
+<li>非叶子结点相当于是叶子结点的索引（稀疏索引），叶子结点相当于是存储（关键字）数据的数据层；</li>
+<li>更适合文件索引系统；</li>
+</ol>
+<p>B+树的三个特点：</p>
+<ol>
+<li>关键字数和子树相同<ul>
+<li>在 B+ 树中，节点的关键字代表子树的最大值，因此关键字数等于子树数。</li>
+</ul>
+</li>
+<li>非叶子节点仅用作索引，它的关键字和子节点有重复元素<ul>
+<li>除叶子节点外的所有节点的关键字，都在它的下一级子树中同样存在，最后所有数据都存储在叶子节点中。</li>
+<li>根节点的最大关键字其实就表示整个 B+ 树的最大元素。</li>
+</ul>
+</li>
+<li>叶子节点用指针连在一起<ul>
+<li>叶子节点包含了全部的数据，并且按顺序排列，B+ 树使用一个链表将它们排列起来，这样在查询时效率更快。</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>由于 B+ 树的中间节点不含有实际数据，只有子树的最大数据和子树指针，因此磁盘页中可以容纳更多节点元素，也就是说同样数据情况下，B+ 树会 B 树更加“矮胖”，因此查询效率更快。<br>B+ 树的查找必会查到叶子节点，更加稳定。<br>有时候需要查询某个范围内的数据，由于 B+ 树的叶子节点是一个有序链表，只需在叶子节点上遍历即可，不用像 B 树那样挨个中序遍历比较大小。</p>
+</blockquote>
+<p>B+ 树的三个优点：</p>
+<ul>
+<li>层级更低，IO 次数更少</li>
+<li>每次都需要查询到叶子节点，查询性能稳定</li>
+<li>叶子节点形成有序链表，范围查询方便</li>
+</ul>
+<h3 id="4-索引的优化"><a href="#4-索引的优化" class="headerlink" title="4. 索引的优化"></a>4. 索引的优化</h3><p>优化法则（口诀）：</p>
+<ul>
+<li>全值匹配我最爱，最左前缀要遵守</li>
+<li>带头大哥不能死，中间兄弟不能断</li>
+<li>索引列上无计算，范围之后全失效</li>
+<li>like百分写最右，覆盖索引不写星</li>
+<li>不等控制还有or，索引失效要少用</li>
+<li>var引号不能丢，SQL优化也不难</li>
+</ul>
+<ol>
+<li>全值匹配<ul>
+<li>怎么建索引就怎么用索引，where后面的条件越来越多精度越来越高，精度越来越高带来的就是长度和花费的代价也就越来越多</li>
+</ul>
+</li>
+<li>最佳左前缀法则<ul>
+<li>指的是查询从索引的最左前列开始并且不跳过索引中的列。</li>
+<li>例如：复合索引<code>A-&gt;B-&gt;C</code>，如果把开头A去掉的话，B，C也就都失效了（带头大哥不能死）；如果把中间B去掉的话，则只会走索引A，而C就失效了（中间兄弟不能断）。</li>
+</ul>
+</li>
+<li>不在索引列上做任何操作(计算、函数、(自动or手动)类型转换)，会导致索引失效而转向全表扫描</li>
+<li>存储引擎不能使用索引中范围条件右面的列<ul>
+<li>例如：<code>select t from test where A=1 and B&gt;2 and C=3</code>，那么B&gt;2后的查询条件失效。</li>
+</ul>
+</li>
+<li>尽量使用覆盖索引(只访问索引的查询（索引列和查询列一直))，减少<code>select *</code>。</li>
+<li>MySQL在使用不等于(<code>!=</code> 或<code>&lt;&gt;</code>)的时候无法使用索引会导致全表扫描</li>
+<li><code>is null</code>，<code>is not null</code> 也无法使用索引</li>
+<li>like以通配符开头<code>(&#39;%abc...&#39;)</code>mysql索引失效回变成全表扫描的操作（使用覆盖索引可解决），只有通配符在右面<code>(&#39;abc...%&#39;)</code>的才能避免索引失效。</li>
+<li>字符串不加单引号索引失效</li>
+<li>少用or，用它来连接时会索引失效</li>
+</ol>
+<h3 id="5-in-和-exists区别及应用场景"><a href="#5-in-和-exists区别及应用场景" class="headerlink" title="5. in 和 exists区别及应用场景"></a>5. in 和 exists区别及应用场景</h3><p>in 和 exists的区别: </p>
+<ul>
+<li>如果子查询得出的结果集记录较少，主查询中的表较大且又有索引时应该用in, 反之如果外层的主查询记录较少，子查询中的表大，又有索引时使用exists。</li>
+<li>其实我们区分in和exists主要是造成了驱动顺序的改变(这是性能变化的关键)，如果是exists，那么以外层表为驱动表，先被访问，如果是IN，那么先执行子查询，所以我们会以驱动表的快速返回为目标，那么就会考虑到索引及结果集的关系了 ，另外IN时不对NULL进行处理。</li>
+<li>in 是把外表和内表作hash 连接，而exists是对外表作loop循环，每次loop循环再对内表进行查询。一直以来认为exists比in效率高的说法是不准确的。</li>
+</ul>
+<p>not in 和not exists</p>
+<ul>
+<li>如果查询语句使用了not in 那么内外表都进行全表扫描，没有用到索引；</li>
+<li>而not extsts 的子查询依然能用到表上的索引。</li>
+<li>所以无论那个表大，用not exists都比not in要快</li>
+</ul>
+<h3 id="6-order-by-和-group-by-优化"><a href="#6-order-by-和-group-by-优化" class="headerlink" title="6. order by 和 group by 优化"></a>6. order by 和 group by 优化</h3><p>索引的主要作用就是查找和排序，ORDER BY 子句尽量使用Index方式排序，能避免使用FileSort方式排序，尽可能在索引列上外城排序操作，遵照索引键的最佳左前缀。</p>
+<p>提高ORDER BY速度的技巧</p>
+<ol>
+<li>ORDER BY时不要使用SELECT *，只查需要的字段。</li>
+<li>增大<code>sort_buffer_size</code>参数大小（根据系统能力去提高，因为这个参数是针对每个进程的）</li>
+<li>增大<code>max_length_for_sort_data</code>参数大小</li>
+</ol>
+<p>GROUP BY的优化</p>
+<ol>
+<li>GROUP BY实质上是先排序后进行分组，遵照索引的最佳左前缀。</li>
+<li>当无法使用索引列，考虑增大<code>max_length_for_sort_data</code>和<code>sort_buffer_size</code>的参数设置。</li>
+<li>WHERE 高于 HAVING，能写在WHERE解决的条件就不要去HAVING限定了。</li>
+</ol>
+<blockquote>
+<p>注意：group by 表面上叫分组，但是分组之前比排序。所以说group by和order by两者排序的法则和索引优化的原则几乎是一致的。当然也有不一样的地方，group by 还有having的存在。如果group by错乱，会导致临时表的产生。(就是说group by的顺序不对，建好的索引我用不上，我内部使用了内排序产生了filesort，为了把这些数据挪出来内部建了一张临时表来进行分组)</p>
+</blockquote>
+<p>一般性建议：</p>
+<ul>
+<li>对于单值索引，尽量选择针对query过滤性更好的索引</li>
+<li>在选择组合索引的时候，当前Query中过滤性最好的字段在索引字段的顺序中，位置越靠左越好。</li>
+<li>在选择组合索引的时候，尽量选择可能包含当前query中的where子句中更多字段的索引</li>
+<li>尽可能通过分析统计信息和调整query的写法来达到选择合适索引的目的。</li>
+</ul>
+<blockquote>
+<p>参考链接：<a href="https://www.zhihu.com/people/hen-six-49/activities" target="_blank" rel="noopener">https://www.zhihu.com/people/hen-six-49/activities</a></p>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> 数据库系统 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 后端开发 </tag>
+            
+            <tag> 数据库 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[JWT(JSON Web Token)安全认证]]></title>
-      <url>http://chaooo.github.io/2019/09/17/JWT%E5%AE%89%E5%85%A8%E8%AE%A4%E8%AF%81.html</url>
+      <url>http://chaooo.github.io/article/20190917.html</url>
       <content type="html"><![CDATA[<h2 id="JSON-Web-Token"><a href="#JSON-Web-Token" class="headerlink" title="JSON Web Token"></a>JSON Web Token</h2><p>JSON Web Token（缩写 JWT）基于JSON格式信息一种Token令牌，是目前最流行的跨域认证解决方案。</p>
 <a id="more"></a>
 <ul>
@@ -219,7 +379,7 @@
     
     <entry>
       <title><![CDATA[MD5算法加盐实现用户密码加密]]></title>
-      <url>http://chaooo.github.io/2019/09/08/MD5%E7%AE%97%E6%B3%95%E5%8A%A0%E7%9B%90%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86.html</url>
+      <url>http://chaooo.github.io/article/20190908.html</url>
       <content type="html"><![CDATA[<h3 id="1-MD5加密算法介绍"><a href="#1-MD5加密算法介绍" class="headerlink" title="1. MD5加密算法介绍"></a>1. MD5加密算法介绍</h3><p>MD5的全称是Message-Digest Algorithm 5（信息-摘要算法 第五版），经MD2、MD3和MD4发展而来的一种加密算法，是典型的消息摘要算法，属Hash算法一类。作用是让大容量信息在用数字签名软件签署私人密匙前被”压缩”成一种保密的格式（就是把一个任意长度的字节串变换成一定长的大整数）。通过MD5算法进行加密获得一个随机长度的信息并产生一个128位的信息摘要。如果将这个128位的二进制摘要信息换算成十六进制，可以得到一个32位的字符串，因此我们加密完成后的16进制的字符串长度为32位。</p>
 <a id="more"></a> 
 
@@ -362,7 +522,7 @@
     
     <entry>
       <title><![CDATA[嵌入式SQL语言]]></title>
-      <url>http://chaooo.github.io/2019/09/02/03-%E5%B5%8C%E5%85%A5%E5%BC%8FSQL%E8%AF%AD%E8%A8%80.html</url>
+      <url>http://chaooo.github.io/article/20190902.html</url>
       <content type="html"><![CDATA[<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
 <li>交互式SQL语言有很多优点：记录集合操作、非过程性操作、一条语句就可实现复杂查询的结果，</li>
 <li>然而，交互式SQL本身也有很多局限：<a id="more"></a><ul>
@@ -941,7 +1101,7 @@
     
     <entry>
       <title><![CDATA[数据库语言SQL]]></title>
-      <url>http://chaooo.github.io/2019/09/01/02-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%AD%E8%A8%80SQL.html</url>
+      <url>http://chaooo.github.io/article/20190901.html</url>
       <content type="html"><![CDATA[<h3 id="SQL语言概述"><a href="#SQL语言概述" class="headerlink" title="SQL语言概述"></a>SQL语言概述</h3><p><strong>结构化查询语言</strong>(Structured Query Language)简称SQL，是一种特殊目的的编程语言，是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数据库系统。</p>
 <ul>
 <li>SQL语言是集DDL、DML和DCL于一体的数据库语言<a id="more"></a><ol>
@@ -2050,7 +2210,7 @@
     
     <entry>
       <title><![CDATA[二十三、SpringBoot MVC应用]]></title>
-      <url>http://chaooo.github.io/2019/08/31/23-SpringBoot-MVC%E5%BA%94%E7%94%A8.html</url>
+      <url>http://chaooo.github.io/article/20190831.html</url>
       <content type="html"><![CDATA[<p>对Spring Web MVC封装，简化MVC结构web应用开发。</p>
 <a id="more"></a>
 
@@ -2248,7 +2408,7 @@
     
     <entry>
       <title><![CDATA[二十二、SpringBoot数据库访问]]></title>
-      <url>http://chaooo.github.io/2019/08/31/22-SpringBoot%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BF%E9%97%AE.html</url>
+      <url>http://chaooo.github.io/article/20190831.html</url>
       <content type="html"><![CDATA[<p>Springboot对于数据访问层，无论是SQL还是NOSQL，都默认采用整合Spring Data的方式进行统一处理，Springboot添加大量自动配置，屏蔽了很多设置。并引入各种<em>Template，</em>Repository来简化我们对数据访问层的操作。</p>
 <a id="more"></a>
 
@@ -2370,7 +2530,7 @@
     
     <entry>
       <title><![CDATA[二十一、SpringBoot入门]]></title>
-      <url>http://chaooo.github.io/2019/08/27/21-SpringBoot%E5%85%A5%E9%97%A8.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<h3 id="1-项目管理工具Maven的基本使用"><a href="#1-项目管理工具Maven的基本使用" class="headerlink" title="1. 项目管理工具Maven的基本使用"></a>1. 项目管理工具Maven的基本使用</h3><p>Maven是一个使用java编写的开源的项目管理工具，可以方便灵活的控制项目，不必浪费时间去在不同的环境中配置依赖的jar包，而专心于业务逻辑。</p>
 <h4 id="1-1-配置Maven的系统环境变量"><a href="#1-1-配置Maven的系统环境变量" class="headerlink" title="1.1 配置Maven的系统环境变量"></a>1.1 配置Maven的系统环境变量</h4><ol>
 <li>下载并解压到目录，如<code>D:\apache-maven-3.6.1</code></li>
@@ -2586,7 +2746,7 @@
     
     <entry>
       <title><![CDATA[二十、SSM框架整合(Spring+SpringMVC+MyBatis)]]></title>
-      <url>http://chaooo.github.io/2019/08/27/20-SSM%E6%A1%86%E6%9E%B6%E6%95%B4%E5%90%88.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<p>SSM框架是spring MVC ，spring和mybatis框架的整合，是标准的MVC模式，将整个系统划分为表现层，controller层，service层，DAO层。<a id="more"></a></p>
 <ul>
 <li>使用spring MVC负责请求的转发和视图管理</li>
@@ -2659,7 +2819,7 @@
     
     <entry>
       <title><![CDATA[十九、Java持久层框架Mybatis]]></title>
-      <url>http://chaooo.github.io/2019/08/27/19-Java%E6%8C%81%E4%B9%85%E5%B1%82%E6%A1%86%E6%9E%B6Mybatis.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<p>Mybatis支持普通sql操作，存储过程的调用，它是一个高级的ORM框架(Object Relation Mapping对象关系映射–以面向对象思想访问数据库)，是一个基于Java的持久层框架。</p>
 <a id="more"></a>
 <p>MyBatis封装了几乎所有的JDBC操作和参数的手工设置，它会对结果集自动封装成对象，以及直接把对象存入数据库，甚至可以做到对象与对象的关系维护；诸如：建立连接、操作 Statment、ResultSet，处理 JDBC 相关异常等等都可以交给 MyBatis 去处理，我们的关注点于是可以就此集中在 SQL 语句上，关注在增删改查这些操作层面上。</p>
@@ -2917,7 +3077,7 @@
     
     <entry>
       <title><![CDATA[十八、Spring MVC框架]]></title>
-      <url>http://chaooo.github.io/2019/08/27/18-SpringMVC%E6%A1%86%E6%9E%B6.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<p>Spring MVC是Spring提供的一个强大而灵活的web框架。借助于注解，Spring MVC提供了几乎是POJO的开发模式，使得控制器的开发和测试更加简单。这些控制器一般不直接处理请求，而是将其委托给Spring上下文中的其他bean，通过Spring的依赖注入功能，这些bean被注入到控制器中。</p>
 <a id="more"></a>
 
@@ -3219,7 +3379,7 @@
     
     <entry>
       <title><![CDATA[十七、Spring面向切面编程(AOP模块)]]></title>
-      <url>http://chaooo.github.io/2019/08/27/17-Spring%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8BAOP.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<p>AOP（Aspect Oriented Programming）：面向切面编程，<br>它是面向对象基础上发展来的技术，是面向对象更高层次的应用，<br>它可以在不修改原有代码的情况给组件增强功能。</p>
 <a id="more"></a>
 
@@ -3325,7 +3485,7 @@
     
     <entry>
       <title><![CDATA[十六、Spring事务管理]]></title>
-      <url>http://chaooo.github.io/2019/08/27/16-Spring%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<p>事务的基本概念：事务指的是逻辑上的一组操作，这组操作要么全部成功，要么全部失败。</p>
 <a id="more"></a>
 
@@ -3461,7 +3621,7 @@
     
     <entry>
       <title><![CDATA[十五、SpringJDBC详解]]></title>
-      <url>http://chaooo.github.io/2019/08/27/15-SpringJDBC%E8%AF%A6%E8%A7%A3.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<p>Spring对JDBC做了简化和封装；简化了DAO实现类编写；提供了基于AOP的<strong>声明式</strong>事务管理；对JDBC中异常做了封装，把原来检查异常封装成了继承自RuntimeException的异常（DataAcessException）。</p>
 <a id="more"></a>
 
@@ -3540,7 +3700,7 @@
     
     <entry>
       <title><![CDATA[十四、Spring IoC注解实现]]></title>
-      <url>http://chaooo.github.io/2019/08/27/14-SpringIoC%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<ol>
 <li><a href="#id1">回顾xml方式管理Java Bean</a></li>
 <li><a href="#id2">注解方式管理Java Bean</a></li>
@@ -3653,7 +3813,7 @@
     
     <entry>
       <title><![CDATA[十三、Spring基础和IoC控制反转]]></title>
-      <url>http://chaooo.github.io/2019/08/27/13-Spring%E5%9F%BA%E7%A1%80%E5%92%8CIoC%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC.html</url>
+      <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<p>Spring是一个开源的轻量级控制反转(IOC)和面向切面(AOP)的容器框架，它主要是为了解决企业应用开发的复杂性而诞生的，但现在已不止应用于企业服务。</p>
 <ul>
 <li>IOC：Inversion Of Control（控制反转），构成Spring框架的核心基础<a id="more"></a></li>
@@ -3910,7 +4070,7 @@
     
     <entry>
       <title><![CDATA[数据库系统基础]]></title>
-      <url>http://chaooo.github.io/2019/07/22/01-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80.html</url>
+      <url>http://chaooo.github.io/article/20190722.html</url>
       <content type="html"><![CDATA[<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ol>
 <li>数据库 是 电子化信息的集合<ul>
 <li>将信息规范化并使之电子化，形成电子信息’库’，以便利用计算机对这些信息进行快速有效的存储、检索、统计与管理。</li>
@@ -4456,7 +4616,7 @@
     
     <entry>
       <title><![CDATA[十二、JavaWeb编程基础]]></title>
-      <url>http://chaooo.github.io/2019/07/20/12_JavaWeb%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.html</url>
+      <url>http://chaooo.github.io/article/20190720.html</url>
       <content type="html"><![CDATA[<p>JavaWeb是用Java技术来解决相关web互联网领域的技术总和。Java提供了技术方案可以解决客户端和服务器端的实现，特别是服务器的应用，比如Servlet，JSP和第三方框架等等。</p>
 <a id="more"></a>
 
@@ -5169,7 +5329,7 @@
     
     <entry>
       <title><![CDATA[十一、JavaSE数据结构与算法入门]]></title>
-      <url>http://chaooo.github.io/2019/07/15/11_JavaSE%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%85%A5%E9%97%A8.html</url>
+      <url>http://chaooo.github.io/article/20190715.html</url>
       <content type="html"><![CDATA[<p>数据结构，它是储存数据的一种结构体，在此结构中储存一些数据，而这些数据之间有一定的关系。<br>算法（Algorithm）是对特定问题求解步骤的一种描述，它是指令的有限序列，其中每一条指令表示一个或者多个操作。</p>
 <a id="more"></a>
 
@@ -5374,7 +5534,7 @@
     
     <entry>
       <title><![CDATA[十、JavaSE常用设计模式]]></title>
-      <url>http://chaooo.github.io/2019/07/15/10_JavaSE%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.html</url>
+      <url>http://chaooo.github.io/article/20190715.html</url>
       <content type="html"><![CDATA[<p>设计模式（Design pattern）是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了可重用代码、让代码更容易被他人理解、保证代码可靠性。</p>
 <a id="more"></a>
 
@@ -5515,7 +5675,7 @@
     
     <entry>
       <title><![CDATA[九、JavaSE网络编程]]></title>
-      <url>http://chaooo.github.io/2019/07/12/09_JavaSE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.html</url>
+      <url>http://chaooo.github.io/article/20190712.html</url>
       <content type="html"><![CDATA[<p>网络编程是指编写运行在多个设备（计算机）的程序，这些设备都通过网络连接起来。<br>java.net 包中的类和接口，它们提供低层次的通信细节。你可以直接使用这些类和接口，来专注于解决问题，而不用关注通信细节。</p>
 <a id="more"></a>
 
@@ -5770,7 +5930,7 @@
     
     <entry>
       <title><![CDATA[谈谈开源]]></title>
-      <url>http://chaooo.github.io/2019/07/11/%E8%B0%88%E8%B0%88%E5%BC%80%E6%BA%90.html</url>
+      <url>http://chaooo.github.io/article/20190711.html</url>
       <content type="html"><![CDATA[<h3 id="什么是开源"><a href="#什么是开源" class="headerlink" title="什么是开源"></a>什么是开源</h3><p>所谓的「开源」，原本指的是开放其设计让所有使用者自由修改的一项机制。</p>
 <p>在IT领域来说的话，字面意思就是<strong>开放源代码</strong>，开源软件的源代码任何人都可以审查、修改和增强。</p>
 <a id="more"></a>
@@ -5812,7 +5972,7 @@
     
     <entry>
       <title><![CDATA[八、JavaSE反射机制]]></title>
-      <url>http://chaooo.github.io/2019/07/10/08_JavaSE%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6.html</url>
+      <url>http://chaooo.github.io/article/20190710.html</url>
       <content type="html"><![CDATA[<p>反射(Reflection)是Java 程序开发语言的特征之一，它允许运行中的 Java 程序获取自身的信息，并且可以操作类或对象的内部属性。<br>多数情况下反射是为了提高程序的灵活性，运行时动态加载需要加载的对象。</p>
 <a id="more"></a>
 
@@ -6105,7 +6265,7 @@
     
     <entry>
       <title><![CDATA[七、JavaSE多线程]]></title>
-      <url>http://chaooo.github.io/2019/07/09/07_JavaSE%E5%A4%9A%E7%BA%BF%E7%A8%8B.html</url>
+      <url>http://chaooo.github.io/article/20190709.html</url>
       <content type="html"><![CDATA[<p>多线程的存在，不是提高程序的执行速度。其实是为了提高应用程序的使用率。<br>程序的执行其实都是在抢CPU的资源，CPU的执行权。<br>多个进程是在抢这个资源，而其中的某一个进程如果执行路径(线程)比较多，就会有更高的几率抢到CPU的执行权。</p>
 <a id="more"></a>
 
@@ -6443,7 +6603,7 @@
     
     <entry>
       <title><![CDATA[六、JavaSE输入输出(IO)]]></title>
-      <url>http://chaooo.github.io/2019/07/09/06_JavaSE%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA-IO.html</url>
+      <url>http://chaooo.github.io/article/20190709.html</url>
       <content type="html"><![CDATA[<p>输入输出（I/O）是指程序与外部设备或其他计算机进行交互的操作。几乎所有的程序都具有输入与输出操作，Java把这些输入与输出操作用流来实现，通过统一的接口来表示，从而使程序设计更为简单。</p>
 <a id="more"></a>
 
@@ -6843,7 +7003,7 @@
     
     <entry>
       <title><![CDATA[五、JavaSE异常处理机制]]></title>
-      <url>http://chaooo.github.io/2019/07/09/05_JavaSE%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.html</url>
+      <url>http://chaooo.github.io/article/20190709.html</url>
       <content type="html"><![CDATA[<p>Java语言提供了完善的异常处理机制。正确运用这套机制，有助于提高程序的健壮性。</p>
 <a id="more"></a>
 
@@ -7053,7 +7213,7 @@
     
     <entry>
       <title><![CDATA[四、JavaSE集合框架]]></title>
-      <url>http://chaooo.github.io/2019/07/08/04_JavaSE%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6.html</url>
+      <url>http://chaooo.github.io/article/20190708.html</url>
       <content type="html"><![CDATA[<p>为了方便对多个对象的操作，对对象进行存储，集合就是存储对象最常用的一种方式。</p>
 <a id="more"></a>
 
@@ -7585,7 +7745,7 @@
     
     <entry>
       <title><![CDATA[三、JavaSE核心工具类]]></title>
-      <url>http://chaooo.github.io/2019/07/08/03_JavaSE%E6%A0%B8%E5%BF%83%E5%B7%A5%E5%85%B7%E7%B1%BB.html</url>
+      <url>http://chaooo.github.io/article/20190708.html</url>
       <content type="html"><![CDATA[<p>API (Application Programming Interface) 应用程序编程接口，Java中的API，就是JDK提供的各种功能的Java类。</p>
 <a id="more"></a>
 
@@ -8271,7 +8431,7 @@
     
     <entry>
       <title><![CDATA[二、JavaSE面向对象]]></title>
-      <url>http://chaooo.github.io/2019/07/07/02_JavaSE%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1.html</url>
+      <url>http://chaooo.github.io/article/20190707.html</url>
       <content type="html"><![CDATA[<p>面向对象是相对于面向过程而言，过程其实就是函数，对象是将函数和属性进行了封装。<br>Java中的面向对象（Object Oriented）是一种新兴的程序设计方法，或者是一种新的程序设计规范(paradigm)，其基本思想是使用对象、类、继承、封装、多态等基本概念来进行程序设计。</p>
 <a id="more"></a>
 
@@ -8739,7 +8899,7 @@
     
     <entry>
       <title><![CDATA[一、JavaSE语法基础]]></title>
-      <url>http://chaooo.github.io/2019/07/07/01_JavaSE%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80.html</url>
+      <url>http://chaooo.github.io/article/20190707.html</url>
       <content type="html"><![CDATA[<p>这是<strong>javaSE知识梳理</strong>的第一篇，梳理Java基础知识是学习其他专业知识的第一步阶梯；要想精通编程必须通过大量的编程训练，在实践中掌握编程知识，培养编程能力，并逐步理解和掌握程序设计的思想和方法。</p>
 <a id="more"></a>
 
@@ -8927,7 +9087,7 @@
     
     <entry>
       <title><![CDATA[Win10下配置Nginx+PHP-7+MySQL-5.6]]></title>
-      <url>http://chaooo.github.io/2019/02/22/Win10%E4%B8%8B%E9%85%8D%E7%BD%AENginx-php7-mysql-5-6.html</url>
+      <url>http://chaooo.github.io/article/20190222.html</url>
       <content type="html"><![CDATA[<h3 id="1-软件下载"><a href="#1-软件下载" class="headerlink" title="1. 软件下载"></a>1. 软件下载</h3><ul>
 <li>Windows操作系统。</li>
 <li>Nginx，下载地址：<a href="http://nginx.org/en/download.html" target="_blank" rel="noopener">http://nginx.org/en/download.html</a>。</li>
@@ -8974,7 +9134,7 @@
     
     <entry>
       <title><![CDATA[BlueLake博客主题的详细配置]]></title>
-      <url>http://chaooo.github.io/2016/12/29/BlueLake%E5%8D%9A%E5%AE%A2%E4%B8%BB%E9%A2%98%E7%9A%84%E8%AF%A6%E7%BB%86%E9%85%8D%E7%BD%AE.html</url>
+      <url>http://chaooo.github.io/article/20161229.html</url>
       <content type="html"><![CDATA[<h3 id="开始之前"><a href="#开始之前" class="headerlink" title="开始之前"></a>开始之前</h3><p><a href="https://github.com/chaooo/hexo-theme-BlueLake" target="_blank" rel="noopener">BlueLake主题</a>写了有一段时间了，经常会有朋友发消息给我问一些配置的问题，这篇博文主要也是为了解决这些问题。主题以简洁轻量自居(实则简陋)，去掉了Jquery和Fancybox,用原生JS实现站内搜索功能。这个主题只是一个小小的雏形，期待您来帮助它成长。</p>
 <a id="more"></a>
 <p>在阅读本文之前，假定您已经成功安装了<a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">Hexo</a>，并使用 Hexo 提供的命令创建了一个静态博客。Hexo是一个快速、简洁且高效的博客框架。Hexo基于Node.js ，使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
@@ -9120,7 +9280,7 @@
     
     <entry>
       <title><![CDATA[自定义HEXO站内搜索Javascript+json]]></title>
-      <url>http://chaooo.github.io/2016/11/09/%E8%87%AA%E5%AE%9A%E4%B9%89HEXO%E7%AB%99%E5%86%85%E6%90%9C%E7%B4%A2Javascript-json.html</url>
+      <url>http://chaooo.github.io/article/20161109.html</url>
       <content type="html"><![CDATA[<h3 id="开始之前"><a href="#开始之前" class="headerlink" title="开始之前"></a>开始之前</h3><p>目前很多<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>博客都用的Swiftype和Algolia等第三方搜索服务。其实针对无数据库的情况下，Hexo本身也提供了两个插件来生成数据文件作为数据源：<br>    <a href="https://github.com/PaicHyperionDev/hexo-generator-search" target="_blank" rel="noopener">hexo-generator-search</a>生成<code>xml</code>格式的数据文件。<br>    <a href="https://github.com/alexbruno/hexo-generator-json-content" target="_blank" rel="noopener">hexo-generator-json-content</a> 生成<code>json</code>格式的数据文件。<br>今天的主角是<a href="https://github.com/alexbruno/hexo-generator-json-content" target="_blank" rel="noopener">hexo-generator-json-content</a>，对于 Javascript语言来说还是解析 json 更方便，如果需要用 xml 做数据文件也可以使用已有的atom.xml。</p>
 <a id="more"></a>
 <h3 id="1-安装"><a href="#1-安装" class="headerlink" title="1.安装"></a>1.安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-generator-json-content@2.2.0 --save</span><br></pre></td></tr></table></figure>
@@ -9165,7 +9325,7 @@
     
     <entry>
       <title><![CDATA[好用的Web包管理器-Bower]]></title>
-      <url>http://chaooo.github.io/2016/08/12/Web%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8-Bower.html</url>
+      <url>http://chaooo.github.io/article/20160812.html</url>
       <content type="html"><![CDATA[<p>Bower是twitter推出的客户端包管理工具，用于命令行操作包的搜索、下载、更新、卸载(如jQuery、Bootstrap、JavaScript、HTML、CSS之类的网络资源)。Bower对包结构没有强制规范，可以很方便获取各种Web模块文件，但bower本身不存储模块文件和模块版本信息，模块发布者通过register方式将模块可访问的公开的git地址记录在bower的数据库中，而所有版本都是通过代码库的tag来决定的。</p>
 <a id="more"></a> 
 <h3 id="开始之前"><a href="#开始之前" class="headerlink" title="开始之前"></a>开始之前</h3><p>在安装<a href="https://bower.io/" target="_blank" rel="noopener">bower</a>之前，必须确认你已经安装了<a href="http://nodejs.org/" target="_blank" rel="noopener">Node.js</a>和<a href="http://git-scm.com/" target="_blank" rel="noopener">Git</a>。</p>
@@ -9225,7 +9385,7 @@
     
     <entry>
       <title><![CDATA[MongoDB学习笔记]]></title>
-      <url>http://chaooo.github.io/2016/07/30/MongoDB%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</url>
+      <url>http://chaooo.github.io/article/20160730.html</url>
       <content type="html"><![CDATA[<h2 id="part1-安装配置"><a href="#part1-安装配置" class="headerlink" title="part1 安装配置"></a>part1 安装配置</h2><h3 id="一、安装："><a href="#一、安装：" class="headerlink" title="一、安装："></a>一、安装：</h3><p>在mongodb官网下载对应自己电脑系统的安装包，地址为： <a href="http://www.mongodb.org/downloads" target="_blank" rel="noopener">http://www.mongodb.org/downloads</a>。</p>
 <a id="more"></a> 
 <p>1、以Windows64bit为例，下载.msi文件双击安装。<br>2、安装过程中，点击 “Custom(自定义)” 按钮来设置安装目录(D:\MongoDB\bin)。<br>3、创建数据目录(D:\MongoDB\data\db),MongoDB默认数据目录\data\db。<br>4、连接数据库(命令行win+r cmd,到D:\MongoDB\bin目录下，执行代码：mongod –dbpath D:\MongoDB\data\db)</p>
@@ -9318,7 +9478,7 @@
     
     <entry>
       <title><![CDATA[sublime text3个人习惯配置]]></title>
-      <url>http://chaooo.github.io/2016/06/29/sublime-text3%E4%B8%AA%E4%BA%BA%E4%B9%A0%E6%83%AF%E9%85%8D%E7%BD%AE-C.html</url>
+      <url>http://chaooo.github.io/article/20160629.html</url>
       <content type="html"><![CDATA[<h3 id="1、安装"><a href="#1、安装" class="headerlink" title="1、安装"></a>1、安装</h3><p>分别在官网下载并安装 <a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">nodejs</a> 和 <a href="https://www.sublimetext.com/3" target="_blank" rel="noopener">sublime text3</a>。</p>
 <h3 id="2、sublime-text3注册："><a href="#2、sublime-text3注册：" class="headerlink" title="2、sublime text3注册："></a>2、sublime text3注册：</h3><a id="more"></a> 
 <p>点击菜单【help】－&gt;【Enter License】，粘贴注册码。</p>
@@ -9354,7 +9514,7 @@
     
     <entry>
       <title><![CDATA[Hexo3.2+GitHub搭建静态博客]]></title>
-      <url>http://chaooo.github.io/2016/05/23/Hexo3-2-github%E6%90%AD%E5%BB%BA%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2.html</url>
+      <url>http://chaooo.github.io/article/20160523.html</url>
       <content type="html"><![CDATA[<h3 id="开始之前"><a href="#开始之前" class="headerlink" title="开始之前"></a>开始之前</h3><p>在安装<a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">hexo</a>之前，必须确认你已经安装了<a href="http://nodejs.org/" target="_blank" rel="noopener">Node.js</a>和<a href="http://git-scm.com/" target="_blank" rel="noopener">Git</a>。</p>
 <a id="more"></a> 
 <h4 id="1-创建GitHub仓库"><a href="#1-创建GitHub仓库" class="headerlink" title="1.创建GitHub仓库"></a>1.创建GitHub仓库</h4><p>注册<a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>账号，创建一个以”用户名.github.io”命名的仓库，如我的用户名为chaooo,那我的仓库名为：<a href="https://github.com/chaooo/chaooo.github.io" target="_blank" rel="noopener">chaooo.github.io</a>，仓库默有master分支，用于托管生成的静态文件，再新建一个develop(名字自定)分支，用于托管后台文件，方便以后换电脑时后台文件不会丢失。</p>
@@ -9453,7 +9613,7 @@
     
     <entry>
       <title><![CDATA[Hello World]]></title>
-      <url>http://chaooo.github.io/2015/12/31/hello-world.html</url>
+      <url>http://chaooo.github.io/article/20151231.html</url>
       <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
 <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
 

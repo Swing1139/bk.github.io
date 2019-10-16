@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://chaooo.github.io/"/>
-  <updated>2019-09-17T08:04:29.878Z</updated>
+  <updated>2019-10-16T09:10:27.301Z</updated>
   <id>http://chaooo.github.io/</id>
   
   <author>
@@ -17,9 +17,33 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>MySQL索引的使用及优化</title>
+    <link href="http://chaooo.github.io/article/20191016.html"/>
+    <id>http://chaooo.github.io/article/20191016.html</id>
+    <published>2019-10-16T09:04:12.000Z</published>
+    <updated>2019-10-16T09:10:27.301Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="1-索引的基本概念"><a href="#1-索引的基本概念" class="headerlink" title="1. 索引的基本概念"></a>1. 索引的基本概念</h3><p>索引是一种<strong>数据结构</strong>。对数据库表中一列或多列的值进行排序的数据结构。<br>根据数据库的功能，可以在数据库设计器中创建三种索引：唯一索引、主键索引和聚集索引。<a id="more"></a><br>提示：尽管唯一索引有助于定位信息，但为获得最佳性能结果，建议改用主键或唯一约束。</p><ol><li>索引的作用<ol><li>快速检索数据，降低数据库的IO成本；</li><li>保证数据记录的唯一性；</li><li>实现表与表之间的参照完整性；</li><li>在使用order by、group by子句进行数据检索时，利用索引可以减少排序和分组的时间，降低CPU的消耗；</li></ol></li><li>索引的缺点<ol><li>索引的缺点是创建和维护索引需要耗费时间和空间</li><li>索引可以提高查询速度，会减慢写入速度</li><li>索引并不是越多越好，索引固然可以提高相应的 select 的效率，但同时也降低了 insert 及 update 的效率，因为 insert 或 update 时有可能会重建索引，所以怎样建索引需要慎重考虑，视具体情况而定。一个表的索引数最好不要超过6个，若太多则应考虑一些不常使用到的列上建的索引是否有必要。</li></ol></li></ol><h3 id="2-索引的适用场景"><a href="#2-索引的适用场景" class="headerlink" title="2. 索引的适用场景"></a>2. 索引的适用场景</h3><p>适合建索引的场景</p><ol><li>主键自动建立唯一索引</li><li>频繁作为查询条件的字段应该创建索引</li><li>查询中与其他标关联的字段，外检关联建立索引</li><li>频繁更新的字段不适合创建索引（更新字段不仅要更新数据本身，而且还要更新索引树）</li><li>where条件里用不到的字段不创建索引</li><li>单键/组合索引的选择问题（在高并发下倾向创建组合索引）</li><li>查询中排序的字段，排序的字段若通过索引去访问将大大提高排序速度（索引主要干两件事：检索、排序。）</li><li>查询中统计或者分组的字段（）<br>不适合建索引的场景</li><li>表记录太少（300万左右性能开始逐渐下降，虽然官方文档说撑得住5-8百万以上，但是根本也不能等到这个时候再去优化，性能肯定会受到影响）</li><li>经常增删改的表（why：提高了查询速度，同事却会降低了更新表的速度，入队表进行INSERT,UPDATE和DELETE。因为更新表时，MySQL不仅要保存数据，还要保存下索引文件）。</li><li>数据重复切分布平均的表字段，因此应该只为最经常查询和最经常排序的数据建立索引。注意，如果某个数据列包括许多重复的内容，为他建立索引就没有太大的实际效果了。（加入一个表有10万行的记录，有一个字段A只有True和False两个值，且每个值的分布概率大约为50%，那么对这种表的A字段建立索引一般不会提高数据库的查询速度。再比如对银行卡建立索引，毕竟银行卡没有重复的。索引的选择性是指索引列中不同值的数据与表中的记录数的比，如果一个表中有2000条记录，表索引列就有1980个不同的值，那么这个索引的选择性就是1980/2000=0.99。一个索引的选择性越接近于1，这个索引的效率就越高。）</li></ol><h3 id="3-MySQl中索引的结构（B-树）"><a href="#3-MySQl中索引的结构（B-树）" class="headerlink" title="3. MySQl中索引的结构（B+树）"></a>3. MySQl中索引的结构（B+树）</h3><p>基本概念：</p><ol><li>二叉树：一个节点最多两个子节点，一个节点只存储一个关键字，等于则命中，小于走左节点，大于走右节点；</li><li>B-树：多路搜索树，每个节点存储M/2到M个关键字，所有关键字在整颗树中出现，且只出现一次，非叶子节点可以命中；</li><li>B+树：在B-树基础上，为叶子节点增加链表指针，所有关键字都在叶子节点中出现(有序)，叶子节点才命中；</li><li>B*树：在B+树基础上，为非叶子节点也增加兄弟链表指针，将节点的最低利用率从1/2提高到2/3；</li></ol><p>B+树的特性：</p><ol><li>所有关键字都出现在叶子结点的链表中（稠密索引），且链表中的关键字恰好是有序的；</li><li>不可能在非叶子结点命中；</li><li>非叶子结点相当于是叶子结点的索引（稀疏索引），叶子结点相当于是存储（关键字）数据的数据层；</li><li>更适合文件索引系统；</li></ol><p>B+树的三个特点：</p><ol><li>关键字数和子树相同<ul><li>在 B+ 树中，节点的关键字代表子树的最大值，因此关键字数等于子树数。</li></ul></li><li>非叶子节点仅用作索引，它的关键字和子节点有重复元素<ul><li>除叶子节点外的所有节点的关键字，都在它的下一级子树中同样存在，最后所有数据都存储在叶子节点中。</li><li>根节点的最大关键字其实就表示整个 B+ 树的最大元素。</li></ul></li><li>叶子节点用指针连在一起<ul><li>叶子节点包含了全部的数据，并且按顺序排列，B+ 树使用一个链表将它们排列起来，这样在查询时效率更快。</li></ul></li></ol><blockquote><p>由于 B+ 树的中间节点不含有实际数据，只有子树的最大数据和子树指针，因此磁盘页中可以容纳更多节点元素，也就是说同样数据情况下，B+ 树会 B 树更加“矮胖”，因此查询效率更快。<br>B+ 树的查找必会查到叶子节点，更加稳定。<br>有时候需要查询某个范围内的数据，由于 B+ 树的叶子节点是一个有序链表，只需在叶子节点上遍历即可，不用像 B 树那样挨个中序遍历比较大小。</p></blockquote><p>B+ 树的三个优点：</p><ul><li>层级更低，IO 次数更少</li><li>每次都需要查询到叶子节点，查询性能稳定</li><li>叶子节点形成有序链表，范围查询方便</li></ul><h3 id="4-索引的优化"><a href="#4-索引的优化" class="headerlink" title="4. 索引的优化"></a>4. 索引的优化</h3><p>优化法则（口诀）：</p><ul><li>全值匹配我最爱，最左前缀要遵守</li><li>带头大哥不能死，中间兄弟不能断</li><li>索引列上无计算，范围之后全失效</li><li>like百分写最右，覆盖索引不写星</li><li>不等控制还有or，索引失效要少用</li><li>var引号不能丢，SQL优化也不难</li></ul><ol><li>全值匹配<ul><li>怎么建索引就怎么用索引，where后面的条件越来越多精度越来越高，精度越来越高带来的就是长度和花费的代价也就越来越多</li></ul></li><li>最佳左前缀法则<ul><li>指的是查询从索引的最左前列开始并且不跳过索引中的列。</li><li>例如：复合索引<code>A-&gt;B-&gt;C</code>，如果把开头A去掉的话，B，C也就都失效了（带头大哥不能死）；如果把中间B去掉的话，则只会走索引A，而C就失效了（中间兄弟不能断）。</li></ul></li><li>不在索引列上做任何操作(计算、函数、(自动or手动)类型转换)，会导致索引失效而转向全表扫描</li><li>存储引擎不能使用索引中范围条件右面的列<ul><li>例如：<code>select t from test where A=1 and B&gt;2 and C=3</code>，那么B&gt;2后的查询条件失效。</li></ul></li><li>尽量使用覆盖索引(只访问索引的查询（索引列和查询列一直))，减少<code>select *</code>。</li><li>MySQL在使用不等于(<code>!=</code> 或<code>&lt;&gt;</code>)的时候无法使用索引会导致全表扫描</li><li><code>is null</code>，<code>is not null</code> 也无法使用索引</li><li>like以通配符开头<code>(&#39;%abc...&#39;)</code>mysql索引失效回变成全表扫描的操作（使用覆盖索引可解决），只有通配符在右面<code>(&#39;abc...%&#39;)</code>的才能避免索引失效。</li><li>字符串不加单引号索引失效</li><li>少用or，用它来连接时会索引失效</li></ol><h3 id="5-in-和-exists区别及应用场景"><a href="#5-in-和-exists区别及应用场景" class="headerlink" title="5. in 和 exists区别及应用场景"></a>5. in 和 exists区别及应用场景</h3><p>in 和 exists的区别: </p><ul><li>如果子查询得出的结果集记录较少，主查询中的表较大且又有索引时应该用in, 反之如果外层的主查询记录较少，子查询中的表大，又有索引时使用exists。</li><li>其实我们区分in和exists主要是造成了驱动顺序的改变(这是性能变化的关键)，如果是exists，那么以外层表为驱动表，先被访问，如果是IN，那么先执行子查询，所以我们会以驱动表的快速返回为目标，那么就会考虑到索引及结果集的关系了 ，另外IN时不对NULL进行处理。</li><li>in 是把外表和内表作hash 连接，而exists是对外表作loop循环，每次loop循环再对内表进行查询。一直以来认为exists比in效率高的说法是不准确的。</li></ul><p>not in 和not exists</p><ul><li>如果查询语句使用了not in 那么内外表都进行全表扫描，没有用到索引；</li><li>而not extsts 的子查询依然能用到表上的索引。</li><li>所以无论那个表大，用not exists都比not in要快</li></ul><h3 id="6-order-by-和-group-by-优化"><a href="#6-order-by-和-group-by-优化" class="headerlink" title="6. order by 和 group by 优化"></a>6. order by 和 group by 优化</h3><p>索引的主要作用就是查找和排序，ORDER BY 子句尽量使用Index方式排序，能避免使用FileSort方式排序，尽可能在索引列上外城排序操作，遵照索引键的最佳左前缀。</p><p>提高ORDER BY速度的技巧</p><ol><li>ORDER BY时不要使用SELECT *，只查需要的字段。</li><li>增大<code>sort_buffer_size</code>参数大小（根据系统能力去提高，因为这个参数是针对每个进程的）</li><li>增大<code>max_length_for_sort_data</code>参数大小</li></ol><p>GROUP BY的优化</p><ol><li>GROUP BY实质上是先排序后进行分组，遵照索引的最佳左前缀。</li><li>当无法使用索引列，考虑增大<code>max_length_for_sort_data</code>和<code>sort_buffer_size</code>的参数设置。</li><li>WHERE 高于 HAVING，能写在WHERE解决的条件就不要去HAVING限定了。</li></ol><blockquote><p>注意：group by 表面上叫分组，但是分组之前比排序。所以说group by和order by两者排序的法则和索引优化的原则几乎是一致的。当然也有不一样的地方，group by 还有having的存在。如果group by错乱，会导致临时表的产生。(就是说group by的顺序不对，建好的索引我用不上，我内部使用了内排序产生了filesort，为了把这些数据挪出来内部建了一张临时表来进行分组)</p></blockquote><p>一般性建议：</p><ul><li>对于单值索引，尽量选择针对query过滤性更好的索引</li><li>在选择组合索引的时候，当前Query中过滤性最好的字段在索引字段的顺序中，位置越靠左越好。</li><li>在选择组合索引的时候，尽量选择可能包含当前query中的where子句中更多字段的索引</li><li>尽可能通过分析统计信息和调整query的写法来达到选择合适索引的目的。</li></ul><blockquote><p>参考链接：<a href="https://www.zhihu.com/people/hen-six-49/activities" target="_blank" rel="noopener">https://www.zhihu.com/people/hen-six-49/activities</a></p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;1-索引的基本概念&quot;&gt;&lt;a href=&quot;#1-索引的基本概念&quot; class=&quot;headerlink&quot; title=&quot;1. 索引的基本概念&quot;&gt;&lt;/a&gt;1. 索引的基本概念&lt;/h3&gt;&lt;p&gt;索引是一种&lt;strong&gt;数据结构&lt;/strong&gt;。对数据库表中一列或多列的值进行排序的数据结构。&lt;br&gt;根据数据库的功能，可以在数据库设计器中创建三种索引：唯一索引、主键索引和聚集索引。
+    
+    </summary>
+    
+      <category term="数据库系统" scheme="http://chaooo.github.io/categories/dbms/"/>
+    
+    
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
+    
+      <category term="数据库" scheme="http://chaooo.github.io/tags/db/"/>
+    
+  </entry>
+  
+  <entry>
     <title>JWT(JSON Web Token)安全认证</title>
-    <link href="http://chaooo.github.io/2019/09/17/JWT%E5%AE%89%E5%85%A8%E8%AE%A4%E8%AF%81.html"/>
-    <id>http://chaooo.github.io/2019/09/17/JWT安全认证.html</id>
+    <link href="http://chaooo.github.io/article/20190917.html"/>
+    <id>http://chaooo.github.io/article/20190917.html</id>
     <published>2019-09-17T07:50:53.000Z</published>
     <updated>2019-09-17T08:04:29.878Z</updated>
     
@@ -31,17 +55,17 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
   </entry>
   
   <entry>
     <title>MD5算法加盐实现用户密码加密</title>
-    <link href="http://chaooo.github.io/2019/09/08/MD5%E7%AE%97%E6%B3%95%E5%8A%A0%E7%9B%90%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86.html"/>
-    <id>http://chaooo.github.io/2019/09/08/MD5算法加盐实现用户密码加密.html</id>
+    <link href="http://chaooo.github.io/article/20190908.html"/>
+    <id>http://chaooo.github.io/article/20190908.html</id>
     <published>2019-09-08T13:49:28.000Z</published>
     <updated>2019-09-17T08:04:54.911Z</updated>
     
@@ -53,17 +77,17 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
   </entry>
   
   <entry>
     <title>嵌入式SQL语言</title>
-    <link href="http://chaooo.github.io/2019/09/02/03-%E5%B5%8C%E5%85%A5%E5%BC%8FSQL%E8%AF%AD%E8%A8%80.html"/>
-    <id>http://chaooo.github.io/2019/09/02/03-嵌入式SQL语言.html</id>
+    <link href="http://chaooo.github.io/article/20190902.html"/>
+    <id>http://chaooo.github.io/article/20190902.html</id>
     <published>2019-09-02T06:32:28.000Z</published>
     <updated>2019-09-02T06:37:43.809Z</updated>
     
@@ -77,19 +101,19 @@
     
     </summary>
     
-      <category term="数据库系统" scheme="http://chaooo.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F/"/>
+      <category term="数据库系统" scheme="http://chaooo.github.io/categories/dbms/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
-      <category term="数据库" scheme="http://chaooo.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="http://chaooo.github.io/tags/db/"/>
     
   </entry>
   
   <entry>
     <title>数据库语言SQL</title>
-    <link href="http://chaooo.github.io/2019/09/01/02-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%AD%E8%A8%80SQL.html"/>
-    <id>http://chaooo.github.io/2019/09/01/02-数据库语言SQL.html</id>
+    <link href="http://chaooo.github.io/article/20190901.html"/>
+    <id>http://chaooo.github.io/article/20190901.html</id>
     <published>2019-09-01T11:36:31.000Z</published>
     <updated>2019-09-03T14:05:36.170Z</updated>
     
@@ -103,19 +127,19 @@
     
     </summary>
     
-      <category term="数据库系统" scheme="http://chaooo.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F/"/>
+      <category term="数据库系统" scheme="http://chaooo.github.io/categories/dbms/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
-      <category term="数据库" scheme="http://chaooo.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="http://chaooo.github.io/tags/db/"/>
     
   </entry>
   
   <entry>
     <title>二十三、SpringBoot MVC应用</title>
-    <link href="http://chaooo.github.io/2019/08/31/23-SpringBoot-MVC%E5%BA%94%E7%94%A8.html"/>
-    <id>http://chaooo.github.io/2019/08/31/23-SpringBoot-MVC应用.html</id>
+    <link href="http://chaooo.github.io/article/20190831.html"/>
+    <id>http://chaooo.github.io/article/20190831.html</id>
     <published>2019-08-31T09:31:30.000Z</published>
     <updated>2019-08-31T09:32:41.043Z</updated>
     
@@ -127,10 +151,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -142,8 +166,8 @@
   
   <entry>
     <title>二十二、SpringBoot数据库访问</title>
-    <link href="http://chaooo.github.io/2019/08/31/22-SpringBoot%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BF%E9%97%AE.html"/>
-    <id>http://chaooo.github.io/2019/08/31/22-SpringBoot数据库访问.html</id>
+    <link href="http://chaooo.github.io/article/20190831.html"/>
+    <id>http://chaooo.github.io/article/20190831.html</id>
     <published>2019-08-31T09:29:31.000Z</published>
     <updated>2019-08-31T09:30:33.757Z</updated>
     
@@ -155,10 +179,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -170,8 +194,8 @@
   
   <entry>
     <title>二十一、SpringBoot入门</title>
-    <link href="http://chaooo.github.io/2019/08/27/21-SpringBoot%E5%85%A5%E9%97%A8.html"/>
-    <id>http://chaooo.github.io/2019/08/27/21-SpringBoot入门.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T15:06:01.000Z</published>
     <updated>2019-08-27T15:07:05.281Z</updated>
     
@@ -186,10 +210,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -201,8 +225,8 @@
   
   <entry>
     <title>二十、SSM框架整合(Spring+SpringMVC+MyBatis)</title>
-    <link href="http://chaooo.github.io/2019/08/27/20-SSM%E6%A1%86%E6%9E%B6%E6%95%B4%E5%90%88.html"/>
-    <id>http://chaooo.github.io/2019/08/27/20-SSM框架整合.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T14:52:55.000Z</published>
     <updated>2019-08-27T14:56:39.909Z</updated>
     
@@ -214,10 +238,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -227,8 +251,8 @@
   
   <entry>
     <title>十九、Java持久层框架Mybatis</title>
-    <link href="http://chaooo.github.io/2019/08/27/19-Java%E6%8C%81%E4%B9%85%E5%B1%82%E6%A1%86%E6%9E%B6Mybatis.html"/>
-    <id>http://chaooo.github.io/2019/08/27/19-Java持久层框架Mybatis.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T14:51:34.000Z</published>
     <updated>2019-08-27T14:55:08.273Z</updated>
     
@@ -240,10 +264,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -253,8 +277,8 @@
   
   <entry>
     <title>十八、Spring MVC框架</title>
-    <link href="http://chaooo.github.io/2019/08/27/18-SpringMVC%E6%A1%86%E6%9E%B6.html"/>
-    <id>http://chaooo.github.io/2019/08/27/18-SpringMVC框架.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T14:50:22.000Z</published>
     <updated>2019-08-27T14:55:17.931Z</updated>
     
@@ -266,10 +290,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -279,8 +303,8 @@
   
   <entry>
     <title>十七、Spring面向切面编程(AOP模块)</title>
-    <link href="http://chaooo.github.io/2019/08/27/17-Spring%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8BAOP.html"/>
-    <id>http://chaooo.github.io/2019/08/27/17-Spring面向切面编程AOP.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T14:48:36.000Z</published>
     <updated>2019-08-27T14:55:22.336Z</updated>
     
@@ -292,10 +316,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -305,8 +329,8 @@
   
   <entry>
     <title>十六、Spring事务管理</title>
-    <link href="http://chaooo.github.io/2019/08/27/16-Spring%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86.html"/>
-    <id>http://chaooo.github.io/2019/08/27/16-Spring事务管理.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T14:47:30.000Z</published>
     <updated>2019-08-27T14:55:34.127Z</updated>
     
@@ -318,10 +342,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -331,8 +355,8 @@
   
   <entry>
     <title>十五、SpringJDBC详解</title>
-    <link href="http://chaooo.github.io/2019/08/27/15-SpringJDBC%E8%AF%A6%E8%A7%A3.html"/>
-    <id>http://chaooo.github.io/2019/08/27/15-SpringJDBC详解.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T14:46:07.000Z</published>
     <updated>2019-08-27T14:55:39.395Z</updated>
     
@@ -344,10 +368,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -357,8 +381,8 @@
   
   <entry>
     <title>十四、Spring IoC注解实现</title>
-    <link href="http://chaooo.github.io/2019/08/27/14-SpringIoC%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0.html"/>
-    <id>http://chaooo.github.io/2019/08/27/14-SpringIoC注解实现.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T14:44:07.000Z</published>
     <updated>2019-08-27T14:55:45.009Z</updated>
     
@@ -377,10 +401,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -390,8 +414,8 @@
   
   <entry>
     <title>十三、Spring基础和IoC控制反转</title>
-    <link href="http://chaooo.github.io/2019/08/27/13-Spring%E5%9F%BA%E7%A1%80%E5%92%8CIoC%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC.html"/>
-    <id>http://chaooo.github.io/2019/08/27/13-Spring基础和IoC控制反转.html</id>
+    <link href="http://chaooo.github.io/article/20190827.html"/>
+    <id>http://chaooo.github.io/article/20190827.html</id>
     <published>2019-08-27T14:38:23.000Z</published>
     <updated>2019-08-27T14:55:50.125Z</updated>
     
@@ -405,10 +429,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -418,8 +442,8 @@
   
   <entry>
     <title>数据库系统基础</title>
-    <link href="http://chaooo.github.io/2019/07/22/01-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80.html"/>
-    <id>http://chaooo.github.io/2019/07/22/01-数据库系统基础.html</id>
+    <link href="http://chaooo.github.io/article/20190722.html"/>
+    <id>http://chaooo.github.io/article/20190722.html</id>
     <published>2019-07-22T12:20:19.000Z</published>
     <updated>2019-09-02T06:28:59.440Z</updated>
     
@@ -436,19 +460,19 @@
     
     </summary>
     
-      <category term="数据库系统" scheme="http://chaooo.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F/"/>
+      <category term="数据库系统" scheme="http://chaooo.github.io/categories/dbms/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
-      <category term="数据库" scheme="http://chaooo.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="http://chaooo.github.io/tags/db/"/>
     
   </entry>
   
   <entry>
     <title>十二、JavaWeb编程基础</title>
-    <link href="http://chaooo.github.io/2019/07/20/12_JavaWeb%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.html"/>
-    <id>http://chaooo.github.io/2019/07/20/12_JavaWeb编程基础.html</id>
+    <link href="http://chaooo.github.io/article/20190720.html"/>
+    <id>http://chaooo.github.io/article/20190720.html</id>
     <published>2019-07-20T12:59:40.000Z</published>
     <updated>2019-09-03T15:25:01.750Z</updated>
     
@@ -460,10 +484,10 @@
     
     </summary>
     
-      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/JavaWeb%E7%BC%96%E7%A8%8B/"/>
+      <category term="JavaWeb编程" scheme="http://chaooo.github.io/categories/java-web/"/>
     
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
       <category term="javaEE" scheme="http://chaooo.github.io/tags/javaEE/"/>
     
@@ -471,8 +495,8 @@
   
   <entry>
     <title>十一、JavaSE数据结构与算法入门</title>
-    <link href="http://chaooo.github.io/2019/07/15/11_JavaSE%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%85%A5%E9%97%A8.html"/>
-    <id>http://chaooo.github.io/2019/07/15/11_JavaSE数据结构与算法入门.html</id>
+    <link href="http://chaooo.github.io/article/20190715.html"/>
+    <id>http://chaooo.github.io/article/20190715.html</id>
     <published>2019-07-15T10:12:38.000Z</published>
     <updated>2019-07-20T15:08:05.419Z</updated>
     
@@ -484,19 +508,19 @@
     
     </summary>
     
-      <category term="javaSE知识梳理" scheme="http://chaooo.github.io/categories/javaSE%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+      <category term="javaSE知识梳理" scheme="http://chaooo.github.io/categories/java/"/>
     
     
       <category term="javaSE" scheme="http://chaooo.github.io/tags/javaSE/"/>
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
   </entry>
   
   <entry>
     <title>十、JavaSE常用设计模式</title>
-    <link href="http://chaooo.github.io/2019/07/15/10_JavaSE%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.html"/>
-    <id>http://chaooo.github.io/2019/07/15/10_JavaSE常用设计模式.html</id>
+    <link href="http://chaooo.github.io/article/20190715.html"/>
+    <id>http://chaooo.github.io/article/20190715.html</id>
     <published>2019-07-15T00:34:55.000Z</published>
     <updated>2019-07-20T15:03:36.395Z</updated>
     
@@ -508,36 +532,12 @@
     
     </summary>
     
-      <category term="javaSE知识梳理" scheme="http://chaooo.github.io/categories/javaSE%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+      <category term="javaSE知识梳理" scheme="http://chaooo.github.io/categories/java/"/>
     
     
       <category term="javaSE" scheme="http://chaooo.github.io/tags/javaSE/"/>
     
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>九、JavaSE网络编程</title>
-    <link href="http://chaooo.github.io/2019/07/12/09_JavaSE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.html"/>
-    <id>http://chaooo.github.io/2019/07/12/09_JavaSE网络编程.html</id>
-    <published>2019-07-12T03:59:46.000Z</published>
-    <updated>2019-07-20T15:01:52.870Z</updated>
-    
-    <content type="html"><![CDATA[<p>网络编程是指编写运行在多个设备（计算机）的程序，这些设备都通过网络连接起来。<br>java.net 包中的类和接口，它们提供低层次的通信细节。你可以直接使用这些类和接口，来专注于解决问题，而不用关注通信细节。</p><a id="more"></a><ol><li><a href="#id1">网络编程常识</a></li><li><a href="#id2">基于tcp协议的编程模型</a></li><li><a href="#id3">基于udp协议的编程模型</a></li></ol><p><span id="id1"><span></span></span></p><h3 id="1-网络编程常识"><a href="#1-网络编程常识" class="headerlink" title="1. 网络编程常识"></a>1. 网络编程常识</h3><h4 id="1-1-七层网络模型"><a href="#1-1-七层网络模型" class="headerlink" title="1.1 七层网络模型"></a>1.1 七层网络模型</h4><p>为了保证数据传输的可靠和安全，ISO(国际标准委员会组织)将数据的传递从逻辑上划分为以下7层：<br><br>应用层、表示层、会话层、传输层、网络层、数据链路层、物理层</p><ul><li>当发送数据时，需要按照上述七层模型从上到下层层加包再发送出去；</li><li>当接收数据时，需要按照上述七层模型从下到上层层拆包再显示出来；</li></ul><h4 id="1-2-IP地址"><a href="#1-2-IP地址" class="headerlink" title="1.2 IP地址"></a>1.2 IP地址</h4><ul><li>IP地址：是互联网中的唯一地址标识，也就是根据IP地址可以定位到具体某一台设备，IP地址本质上是32位二进制组成的整数叫做IPv4，当然也有128位二进制组成的整数叫做IPv6，目前主流的还是IPv4。</li><li>日常生活中采用<strong>点分十进制</strong>表示法进行IP地址的描述，也就是将每个字节的二进制转换为一个十进制整数，不同的十进制整数之间采用小数点隔开。如：192.168.1.1</li></ul><h4 id="1-3-端口号"><a href="#1-3-端口号" class="headerlink" title="1.3 端口号"></a>1.3 端口号</h4><ul><li>根据IP地址可以定位到具体某一台设备，而该设备中启动的进程可能很多，此时可以使用端口号来定位该设备中的具体某一个进程。</li><li>网络编程需要提供：IP地址 和 端口号</li><li>端口号是16位二进制组成的整数，表示范围是：0 ~ 65535，其中0 ~ 1024之间通常被系统占用，因此网络编程需要从1025开始使用。</li></ul><h4 id="1-4-tcp协议与udp协议"><a href="#1-4-tcp协议与udp协议" class="headerlink" title="1.4 tcp协议与udp协议"></a>1.4 tcp协议与udp协议</h4><ul><li>TCP（Transmission Control Protocol，传输控制协议） 是面向连接的协议，也就是说，在收发数据前，必须和对方建立可靠的连接。一个TCP连接必须要经过三次“握手”才能建立起来。</li><li>UDP（User Data Protocol，用户数据报协议） 是一个非连接的协议，传输数据之前源端和终端不建立连接，当它想传送时就简单地去抓取来自应用程序的数据，并尽可能快地把它扔到网络上。在发送端，UDP传送数据的速度仅仅是受应用程序生成数据的速度、计算机的能力和传输带宽的限制；在接收端，UDP把每个消息段放在队列中，应用程序每次从队列中读一个消息段。</li><li>tcp协议与udp协议比较：</li></ul><table><thead><tr><th>tcp协议</th><th>udp协议</th></tr></thead><tbody><tr><td>传输控制协议，面向连接</td><td>用户数据报协议，非面向连接</td></tr><tr><td>通信过程全程保持连接</td><td>通信过程不需要全程连接</td></tr><tr><td>保证了数据传输的可靠性和有序性</td><td>不保证数据传输的可靠性和有序性</td></tr><tr><td>全双工的字节流的通信方式</td><td>全双工的数据报的通信方式</td></tr><tr><td>服务器的资源消耗多，压力大，效率低</td><td>服务器资源消耗少，压力小，效率高</td></tr></tbody></table><p><span id="id2"><span></span></span></p><h3 id="2-基于tcp协议的编程模型"><a href="#2-基于tcp协议的编程模型" class="headerlink" title="2. 基于tcp协议的编程模型"></a>2. 基于tcp协议的编程模型</h3><h4 id="2-1-编程模型"><a href="#2-1-编程模型" class="headerlink" title="2.1 编程模型"></a>2.1 编程模型</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">服务器端                         客户端</span><br><span class="line"></span><br><span class="line">创建监听服务</span><br><span class="line">等待连接    &lt;----建立连接------  连接服务器           </span><br><span class="line">进行通讯    &lt;----进行通讯-----&gt;  进行通讯</span><br><span class="line">关闭连接                        关闭连接</span><br></pre></td></tr></table></figure><ul><li>服务器：<ol><li>创建ServerSocket类型的对象并提供端口号；</li><li>等待客户端的连接请求，调用accept方法；</li><li>使用输入输出流进行通信；</li><li>关闭Socket；</li></ol></li><li>客户端：<ol><li>创建Socket类型的对象并提供服务器的通信地址和端口号；</li><li>使用输入输出流进行通信；</li><li>关闭Socket；</li></ol></li></ul><h4 id="2-2-ServerSocket类和Socket类"><a href="#2-2-ServerSocket类和Socket类" class="headerlink" title="2.2 ServerSocket类和Socket类"></a>2.2 ServerSocket类和Socket类</h4><ul><li>java.net.ServerSocket类主要用于描述服务器套接字信息。</li></ul><table><thead><tr><th>常用方法</th><th></th></tr></thead><tbody><tr><td>ServerSocket(int port)</td><td>根据参数指定的端口号来构造对象</td></tr><tr><td>Socket accept()</td><td>监听并接收到此套接字的连接请求</td></tr><tr><td>void close()</td><td>用于关闭套接字</td></tr></tbody></table><ul><li>java.net.Socket类主要用于描述客户端套接字，是两台机器间通信的端点。</li></ul><table><thead><tr><th>常用方法</th><th></th></tr></thead><tbody><tr><td>Socket(String host, int port)</td><td>根据指定主机名和端口号来构造对象</td></tr><tr><td>InputStream getInputStream()</td><td>用于获取当前套接字的输入流</td></tr><tr><td>OutputStream getOutputStream()</td><td>用于获取当前套接字的输出流</td></tr><tr><td>void close()</td><td>用于关闭套接字</td></tr></tbody></table><p><span id="id3"><span></span></span></p><h3 id="3-客户端与服务端通信演示："><a href="#3-客户端与服务端通信演示：" class="headerlink" title="3.客户端与服务端通信演示："></a>3.客户端与服务端通信演示：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//服务端线程</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> Socket s;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">ServerThread</span><span class="params">(Socket s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.s = s;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 3.使用输入输出流进行通信</span></span><br><span class="line">      BufferedReader br = <span class="keyword">new</span> BufferedReader(</span><br><span class="line">          <span class="keyword">new</span> InputStreamReader(s.getInputStream()));</span><br><span class="line">      PrintStream ps = <span class="keyword">new</span> PrintStream(s.getOutputStream());</span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 实现服务器接收到字符串内容后打印出来</span></span><br><span class="line">        <span class="comment">// 当客户端没有发送数据时，服务器会在这里阻塞</span></span><br><span class="line">        String str = br.readLine();</span><br><span class="line">        <span class="comment">//System.out.println("服务器接收到的数据是：" + str);</span></span><br><span class="line">        <span class="comment">// 当服务器接收到"bye"后，则聊天结束</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"bye"</span>.equalsIgnoreCase(str)) &#123;</span><br><span class="line">          System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() + <span class="string">"已下线！"</span>);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() </span><br><span class="line">          + <span class="string">"发来的消息是："</span> + str);  </span><br><span class="line">        <span class="comment">// 当服务器接收到客户端发来的消息后，向客户端回发消息"I received!"</span></span><br><span class="line">        ps.println(<span class="string">"I received!"</span>);</span><br><span class="line">        <span class="comment">//System.out.println("服务器发送数据成功！");</span></span><br><span class="line">      &#125; </span><br><span class="line">      <span class="comment">// 4.关闭Socket</span></span><br><span class="line">      ps.close();</span><br><span class="line">      br.close();</span><br><span class="line">      s.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//服务端测试</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerStringTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 1.创建ServerSocket类型的对象并提供端口号</span></span><br><span class="line">      ServerSocket ss = <span class="keyword">new</span> ServerSocket(<span class="number">8888</span>);</span><br><span class="line">      <span class="comment">// 2.等待客户端的连接请求，调用accept方法</span></span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">"等待客户端的连接请求..."</span>);</span><br><span class="line">        <span class="comment">// 当没有客户端连接时，阻塞在accept方法的调用这里</span></span><br><span class="line">        Socket s = ss.accept();</span><br><span class="line">        <span class="comment">// 获取连接成功的客户端通信地址</span></span><br><span class="line">        System.out.println(<span class="string">"客户端"</span> + s.getInetAddress() + <span class="string">"连接成功！"</span>);</span><br><span class="line">        <span class="comment">// 当有客户端连接成功后，则启动一个新的线程为之服务</span></span><br><span class="line">        <span class="keyword">new</span> ServerThread(s).start();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//ss.close();</span></span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//客户端测试</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientStringTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 1.创建Socket类型的对象并提供服务器的通信地址和端口号</span></span><br><span class="line">      Socket s = <span class="keyword">new</span> Socket(<span class="string">"XDL-20170621QCO"</span>, <span class="number">8888</span>);</span><br><span class="line">      System.out.println(<span class="string">"连接服务器成功！"</span>);</span><br><span class="line">      <span class="comment">// 2.使用输入输出流进行通信</span></span><br><span class="line">      Scanner sc = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">      PrintStream ps = <span class="keyword">new</span> PrintStream(s.getOutputStream());</span><br><span class="line">      BufferedReader br = <span class="keyword">new</span> BufferedReader(</span><br><span class="line">          <span class="keyword">new</span> InputStreamReader(s.getInputStream()));</span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 希望客户端连接服务器成功后睡眠10秒再发送数据，测试服务器是否阻塞</span></span><br><span class="line">        <span class="comment">//Thread.sleep(10000);</span></span><br><span class="line">        <span class="comment">// 练习：实现客户端向服务器发送的内容由用户从键盘输入</span></span><br><span class="line">        System.out.println(<span class="string">"请输入要发送的内容："</span>);</span><br><span class="line">        <span class="comment">//String msg = sc.next(); // 读取字符串内容时，遇到空格停止</span></span><br><span class="line">        String msg = sc.nextLine();</span><br><span class="line">        <span class="comment">// 实现客户端向服务器发送字符串内容"hello"</span></span><br><span class="line">        <span class="comment">//ps.println("hello");</span></span><br><span class="line">        ps.println(msg);</span><br><span class="line">        System.out.println(<span class="string">"客户端发送数据成功！"</span>);</span><br><span class="line">        <span class="comment">// 判断客户端发送的内容是否为"bye"，若是则聊天结束</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"bye"</span>.equalsIgnoreCase(msg)) &#123;</span><br><span class="line">          System.out.println(<span class="string">"聊天结束！"</span>);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 实现服务器回发消息的接收</span></span><br><span class="line">        <span class="comment">// 当客户端没有发送数据时，服务器会在这里阻塞</span></span><br><span class="line">        String str = br.readLine();</span><br><span class="line">        System.out.println(<span class="string">"客户端接收到的数据是："</span> + str);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 3.关闭Socket</span></span><br><span class="line">      br.close();</span><br><span class="line">      sc.close();</span><br><span class="line">      ps.close();</span><br><span class="line">      s.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><span id="id4"><span></span></span></p><h3 id="4-基于udp协议的编程模型"><a href="#4-基于udp协议的编程模型" class="headerlink" title="4. 基于udp协议的编程模型"></a>4. 基于udp协议的编程模型</h3><h4 id="4-1-编程模型"><a href="#4-1-编程模型" class="headerlink" title="4.1 编程模型"></a>4.1 编程模型</h4><ul><li>主机A(接收方):<ol><li>创建DatagramSocket类型的对象，并提供端口号；</li><li>创建DatagramPacket类型的对象，用于接收发来的数据；</li><li>从Socket中接收数据，调用<strong>receive()</strong>方法；</li><li>关闭Socket并释放有关的资源；</li></ol></li><li>主机B(发送方)<ol><li>创建DatagramSocket类型的对象；</li><li>创建DatagramPacket类型的对象，并提供接收方的IP地址和端口号；</li><li>通过Socket发送数据，调用<strong>send()</strong>方法；</li><li>关闭Socket并释放有关的资源；</li></ol></li></ul><h4 id="4-2-DatagramSocket类"><a href="#4-2-DatagramSocket类" class="headerlink" title="4.2 DatagramSocket类"></a>4.2 DatagramSocket类</h4><ul><li>java.net.DatagramSocket类用于描述发送或接受数据报的套接字(邮局点);</li></ul><table><thead><tr><th>常用方法</th><th></th></tr></thead><tbody><tr><td>DatagramSocket()</td><td>无参的方式构造对象。</td></tr><tr><td>DatagramSocket(int port)</td><td>根据参数指定的端口号来构造对象。</td></tr><tr><td>void receive(DatagramPacket p)</td><td>用于接收数据并存放到参数指定的变量中。</td></tr><tr><td>void send(DatagramPacket p)</td><td>用于将参数指定的数据发送出去。</td></tr><tr><td>void close()</td><td></td></tr></tbody></table><h4 id="4-3-DatagramPacket类"><a href="#4-3-DatagramPacket类" class="headerlink" title="4.3 DatagramPacket类"></a>4.3 DatagramPacket类</h4><ul><li>java.net.DatagramPacket类用于描述数据报信息(信件)；</li></ul><table><thead><tr><th>常用方法</th><th></th></tr></thead><tbody><tr><td>DatagramPacket(byte[] buf, int length)</td><td>用于接收数据包并记录到参数变量中；</td></tr><tr><td>DatagramPacket(byte[] buf, int length, InetAddress address, int port)</td><td>用于将参数指定的数据发送到参数指定的位置</td></tr><tr><td>InetAddress getAddress()</td><td>用于获取发送方或接收方的通信地址信息。</td></tr><tr><td>int getPort()</td><td>用于获取发送方或接收方的端口信息。</td></tr><tr><td>int getLength()</td><td>用于获取发送或接收数据的长度。</td></tr></tbody></table><h4 id="4-4-InetAddress类"><a href="#4-4-InetAddress类" class="headerlink" title="4.4 InetAddress类"></a>4.4 InetAddress类</h4><ul><li>java.net.InetAddress类用于描述互联网协议地址。</li></ul><table><thead><tr><th>常用方法</th><th></th></tr></thead><tbody><tr><td>static InetAddress getLocalHost()</td><td>用于获取本地主机的通信地址信息。</td></tr><tr><td>static InetAddress getByName(String host)</td><td>根据参数指定的主机名来获取通信地址。</td></tr><tr><td>String getHostName()</td><td>用于获取通信地址中的主机名信息。</td></tr><tr><td>String getHostAddress()</td><td>用于获取通信地址中的IP地址信息。</td></tr></tbody></table>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;网络编程是指编写运行在多个设备（计算机）的程序，这些设备都通过网络连接起来。&lt;br&gt;java.net 包中的类和接口，它们提供低层次的通信细节。你可以直接使用这些类和接口，来专注于解决问题，而不用关注通信细节。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="javaSE知识梳理" scheme="http://chaooo.github.io/categories/javaSE%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
-    
-    
-      <category term="javaSE" scheme="http://chaooo.github.io/tags/javaSE/"/>
-    
-      <category term="后端开发" scheme="http://chaooo.github.io/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"/>
+      <category term="后端开发" scheme="http://chaooo.github.io/tags/back-end/"/>
     
   </entry>
   
