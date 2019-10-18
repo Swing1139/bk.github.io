@@ -89,7 +89,7 @@
 </ul>
 <h3 id="16-HTTP-请求-响应的步骤"><a href="#16-HTTP-请求-响应的步骤" class="headerlink" title="16. HTTP 请求/响应的步骤"></a>16. HTTP 请求/响应的步骤</h3><ol>
 <li>客户端连接到Web服务器<ul>
-<li>一个HTTP客户端，通常是浏览器，与Web服务器的HTTP端口（默认为80）建立一个TCP套接字连接。例如，<a href="http://www.oakcms.cn。" target="_blank" rel="noopener">http://www.oakcms.cn。</a></li>
+<li>一个HTTP客户端，通常是浏览器，与Web服务器的HTTP端口（默认为80）建立一个TCP套接字连接。例如，<a href="https://chaooo.github.io">https://chaooo.github.io</a>。</li>
 </ul>
 </li>
 <li>发送HTTP请求<ul>
