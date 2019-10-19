@@ -694,7 +694,7 @@
 </ul>
 </li>
 </ol>
-<h3 id="4-全局查询日志"><a href="#4-全局查询日志" class="headerlink" title="4. 全局查询日志"></a>4. 全局查询日志</h3><p>切记：<strong>永远不要再生产环境开启这个功能</strong>。<br>全局查询日志有时也能帮助我们来调SQL。但是，切记，这家伙只能在测试环境使用，绝不可以在生产环境使用。</p>
+<h3 id="5-全局查询日志"><a href="#5-全局查询日志" class="headerlink" title="5. 全局查询日志"></a>5. 全局查询日志</h3><p>切记：<strong>永远不要再生产环境开启这个功能</strong>。<br>全局查询日志有时也能帮助我们来调SQL。但是，切记，这家伙只能在测试环境使用，绝不可以在生产环境使用。</p>
 <ol>
 <li><p>命令启用</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; set global general_log=1; #开启后会把所有的SQL偷偷的记录</span><br><span class="line">mysql&gt; set global log_output='TABLE';</span><br></pre></td></tr></table></figure>
