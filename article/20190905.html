@@ -17,7 +17,7 @@
 <h3 id="2-索引的适用场景"><a href="#2-索引的适用场景" class="headerlink" title="2. 索引的适用场景"></a>2. 索引的适用场景</h3><h4 id="2-1-适合建索引的场景"><a href="#2-1-适合建索引的场景" class="headerlink" title="2.1 适合建索引的场景"></a>2.1 适合建索引的场景</h4><ol>
 <li>主键自动建立唯一索引</li>
 <li>频繁作为查询条件的字段应该创建索引</li>
-<li>查询中与其他标关联的字段，外检关联建立索引</li>
+<li>查询中与其他表关联的字段，外键关联建立索引</li>
 <li>频繁更新的字段不适合创建索引（更新字段不仅要更新数据本身，而且还要更新索引树）</li>
 <li>where条件里用不到的字段不创建索引</li>
 <li>单键/组合索引的选择问题（在高并发下倾向创建组合索引）</li>
@@ -87,7 +87,7 @@
 <li>例如：<code>select t from test where A=1 and B&gt;2 and C=3</code>，那么B&gt;2后的查询条件失效。</li>
 </ul>
 </li>
-<li>尽量使用覆盖索引(只访问索引的查询（索引列和查询列一直))，减少<code>select *</code>。</li>
+<li>尽量使用覆盖索引—只访问索引的查询（索引列和查询列一致），减少 <code>SELECT *</code>。</li>
 <li>MySQL在使用不等于(<code>!=</code> 或<code>&lt;&gt;</code>)的时候无法使用索引会导致全表扫描</li>
 <li><code>is null</code>，<code>is not null</code> 也无法使用索引</li>
 <li>like以通配符开头<code>(&#39;%abc...&#39;)</code>mysql索引失效回变成全表扫描的操作（使用覆盖索引可解决），只有通配符在右面<code>(&#39;abc...%&#39;)</code>的才能避免索引失效。</li>
