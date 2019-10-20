@@ -87,7 +87,7 @@
 <li>例如：<code>select t from test where A=1 and B&gt;2 and C=3</code>，那么B&gt;2后的查询条件失效。</li>
 </ul>
 </li>
-<li>尽量使用覆盖索引—只访问索引的查询（索引列和查询列一致），减少 <code>SELECT *</code>。</li>
+<li>尽量使用覆盖索引————只访问索引的查询（索引列和查询列一致），减少 <code>SELECT *</code>。</li>
 <li>MySQL在使用不等于(<code>!=</code> 或<code>&lt;&gt;</code>)的时候无法使用索引会导致全表扫描</li>
 <li><code>is null</code>，<code>is not null</code> 也无法使用索引</li>
 <li>like以通配符开头<code>(&#39;%abc...&#39;)</code>mysql索引失效回变成全表扫描的操作（使用覆盖索引可解决），只有通配符在右面<code>(&#39;abc...%&#39;)</code>的才能避免索引失效。</li>
