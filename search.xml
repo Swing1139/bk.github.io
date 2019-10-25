@@ -748,7 +748,29 @@
     </entry>
     
     <entry>
-      <title><![CDATA[【Java知识梳理】深入JVM]]></title>
+      <title><![CDATA[【Java知识梳理】深入JVM(二)]]></title>
+      <url>http://chaooo.github.io/article/20190825.html</url>
+      <content type="html"><![CDATA[<h3 id="1-类文件结构"><a href="#1-类文件结构" class="headerlink" title="1. 类文件结构"></a>1. 类文件结构</h3><h3 id="2-字节码指令"><a href="#2-字节码指令" class="headerlink" title="2. 字节码指令"></a>2. 字节码指令</h3><h3 id="3-编译期处理"><a href="#3-编译期处理" class="headerlink" title="3. 编译期处理"></a>3. 编译期处理</h3><h3 id="4-类加载阶段"><a href="#4-类加载阶段" class="headerlink" title="4. 类加载阶段"></a>4. 类加载阶段</h3><h3 id="5-类加载器"><a href="#5-类加载器" class="headerlink" title="5. 类加载器"></a>5. 类加载器</h3><h3 id="6-运行期优化"><a href="#6-运行期优化" class="headerlink" title="6. 运行期优化"></a>6. 运行期优化</h3>]]></content>
+      
+        <categories>
+            
+            <category> Java知识梳理 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 后端开发 </tag>
+            
+            <tag> java </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[【Java知识梳理】深入JVM(一)]]></title>
       <url>http://chaooo.github.io/article/20190823.html</url>
       <content type="html"><![CDATA[<h3 id="Java虚拟机运行时数据区"><a href="#Java虚拟机运行时数据区" class="headerlink" title="Java虚拟机运行时数据区"></a>Java虚拟机运行时数据区</h3><ol>
 <li>程序计数器（Program Counter Register）</li>
@@ -776,6 +798,7 @@
 <li>存储栈帧，支撑Java方法的调用、执行和退出</li>
 <li>可能出现OutOfMemoryError异常（如果被设计成动态扩展，而扩展又未申请到足够的内存抛出）和StackOverflowError异常（如线程请求的栈深度大于最大深度抛出）</li>
 </ul>
+<p><img src="http://cdn.chaooo.top/blog/JVM-Stack.png" alt></p>
 <h4 id="2-1-栈帧（Frame）"><a href="#2-1-栈帧（Frame）" class="headerlink" title="2.1 栈帧（Frame）"></a>2.1 栈帧（Frame）</h4><ul>
 <li>Java虚拟机栈中存储的内容，它被用于存储数据和部分过程结构的数据结构，同时也被用来处理动态链接、方法返回值 和 异常分派</li>
 <li>一个完整的栈帧包含：<strong>局部变量表</strong>、<strong>操作数栈</strong>、动态连接信息、方法正常完成和异常完成的信息</li>
@@ -828,6 +851,7 @@
 <li>作用是作为Java对象的主要存储区域（通过new创建的对象都会使用堆内存）</li>
 <li>有垃圾回收机制</li>
 </ul>
+<p><img src="http://cdn.chaooo.top/blog/JVM-heap.png" alt></p>
 <h4 id="4-1-Java堆可能发生的异常"><a href="#4-1-Java堆可能发生的异常" class="headerlink" title="4.1 Java堆可能发生的异常"></a>4.1 Java堆可能发生的异常</h4><ul>
 <li>如果实际所需的堆超过了自动内存管理系统能提供的最大容量，那Java虚拟机将会抛出一个OutOfMemoryError异常。</li>
 </ul>
@@ -843,6 +867,11 @@
 <li>用jvirsualvm抓取堆dump(快照，抓取堆里面有哪些类型的对象及个数等信息)</li>
 </ul>
 </li>
+</ul>
+<h4 id="4-3-字符串常量池-StringTable"><a href="#4-3-字符串常量池-StringTable" class="headerlink" title="4.3 字符串常量池 (StringTable)"></a>4.3 字符串常量池 (StringTable)</h4><ul>
+<li>在JDK6.0及之前版本，字符串常量池是放在Perm Gen区(也就是方法区)中；</li>
+<li>在JDK7.0版本，字符串常量池被移到了堆中</li>
+<li>字符串手动入池:  调用<code>String.intern()</code></li>
 </ul>
 <h3 id="5-方法区（Method-Area）"><a href="#5-方法区（Method-Area）" class="headerlink" title="5.方法区（Method Area）"></a>5.方法区（Method Area）</h3><ul>
 <li>全局共享</li>
@@ -866,7 +895,7 @@
 </ul>
 <h3 id="6-直接内存"><a href="#6-直接内存" class="headerlink" title="6.直接内存"></a>6.直接内存</h3><ul>
 <li>全局共享</li>
-<li>并非JVMS定义的标准Java运行时内存区域</li>
+<li>并非JVMS定义的标准Java运行时内存区域, 属于操作系统内存</li>
 <li>JDK1.4引入NIO，目的是避免Java堆 和 Native堆 中来回 复制数据 带来的性能损耗。</li>
 <li>能被自动管理，但是在检测手段上可能会由一些简陋</li>
 <li>可能出现OutOfMemoryError异常</li>
