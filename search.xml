@@ -748,7 +748,7 @@
     </entry>
     
     <entry>
-      <title><![CDATA[【Java知识梳理】深入JVM(二)]]></title>
+      <title><![CDATA[【Java知识梳理】深入JVM(二)-类文件结构与类加载机制]]></title>
       <url>http://chaooo.github.io/article/20190825.html</url>
       <content type="html"><![CDATA[<h3 id="1-类文件结构"><a href="#1-类文件结构" class="headerlink" title="1. 类文件结构"></a>1. 类文件结构</h3><p>Class文件是一组以 <strong>8 位字节</strong>为基础单位的二进制流，各个数据<strong>严格按照顺序紧凑的排列</strong>在 Class 文件中，中间无任何分隔符，这使得整个 Class 文件中存储的内容几乎全部都是程序运行的必要数据，没有空隙存在。当遇到需要占用 8 位字节以上空间的数据项时，会按照高位在前的方式分割成若干个 8 位字节进行存储。<br>Java 虚拟机规范规定 Class 文件格式采用一种类似与 C 语言结构体的微结构体来存储数据，这种伪结构体中只有两种数据类型：<strong>无符号数</strong>和<strong>表</strong>。</p>
 <ul>
@@ -834,28 +834,171 @@
 </ul>
 <h3 id="3-编译期处理-语法糖"><a href="#3-编译期处理-语法糖" class="headerlink" title="3. 编译期处理(语法糖)"></a>3. 编译期处理(语法糖)</h3><p><strong>语法糖</strong>: 指Java编译器把.java源码编译为.class字节码过程中,自动生成和转换的一些代码. 如:默认构造器,自动拆装箱等.</p>
 <ol>
-<li>默认构造器: <code>public class Candy{}</code> 编译后为: <code>public class Candy{public Candy(){super();}}</code> </li>
-<li>自动拆装箱: <code>Integer x=1;int y=x;</code> 编译后为: <code>Integer x=Integer.valueOf(1);int y=x.intValue();</code></li>
-<li>泛型擦除: 擦除的是字节码上的泛型信息.</li>
-<li>泛型反射: 通过反射获得泛型信息</li>
-<li>可变参数: <code>String... args</code> 可以是一个<code>String[] args</code></li>
-<li>foreach: 集合相当于获取迭代器Iterator</li>
-<li>switch: Jdk7开始可以配合String和枚举<ul>
+<li><strong>默认构造器</strong>: <code>public class Candy{}</code> 编译后为: <code>public class Candy{public Candy(){super();}}</code> </li>
+<li><strong>自动拆装箱</strong>: <code>Integer x=1;int y=x;</code> 编译后为: <code>Integer x=Integer.valueOf(1);int y=x.intValue();</code></li>
+<li><strong>泛型擦除</strong>: 擦除的是字节码上的泛型信息.</li>
+<li><strong>泛型反射</strong>: 通过反射获得泛型信息</li>
+<li><strong>可变参数</strong>: <code>String... args</code> 可以是一个<code>String[] args</code></li>
+<li><strong>foreach</strong>: 集合相当于获取迭代器Iterator</li>
+<li><strong>switch</strong>: Jdk7开始可以配合String和枚举<ul>
 <li>switch-String: 执行了两遍switch,第一遍根据字符串的hashCode和equals将字符串转换为相应的byte类型,第二遍利用byte执行比较.</li>
 <li>switch-枚举: 会为当前类生成一个静态内部类(合成类,仅JVM使用,对我们不可见),用来映射枚举类的枚举编号(从0开始)与数组元素的关系,数组大小即为枚举元素的个数,里面存储case用来对比的数字,根据这个数字执行switch</li>
 </ul>
 </li>
-<li>枚举类: 继承Enum并且用final修饰类,构造方法私有,枚举量被编译成本类的final类变量,定义私有静态枚举量数组$VALUES,静态方法values()用来返回定义的枚举量数组的clone(),静态方法valueOf()调用父类valueOf(本类.class,名称)根据类型和名称得到相应实例</li>
-<li>try-with-resources: 无论try块的异常还是关闭资源时的异常都不会丢。可以在 try-with-resources 语句中同时处理多个资源。<ul>
+<li><strong>枚举类</strong>: 继承Enum并且用final修饰类,构造方法私有,枚举量被编译成本类的final类变量,定义私有静态枚举量数组$VALUES,静态方法values()用来返回定义的枚举量数组的clone(),静态方法valueOf()调用父类valueOf(本类.class,名称)根据类型和名称得到相应实例</li>
+<li><strong>try-with-resources</strong>: 无论try块的异常还是关闭资源时的异常都不会丢。可以在 try-with-resources 语句中同时处理多个资源。<ul>
 <li>在 Java 7/8 ，try-with-resources 语句中必须声明要关闭的资源。通过这种方式声明的资源属于隐式 final。</li>
 <li>Java 9 中甚至能使用预先创建的资源，只要所引用的资源声明为 final 或者是 effective final。</li>
 <li>在幕后施展魔法的是 AutoCloseable 或者 Closeable 接口，它们与 try-with-resources 语句协同工作。</li>
 </ul>
 </li>
-<li>重写桥接: 子类重写方法返回值可以是父类返回值的子类,JVM内部使用了桥接方法(synthetic bridge修饰)重写父类方法并返回子类重写的同名方法,并且没有命名冲突,仅对jvm可见.</li>
-<li>匿名内部类: 内部创建了final修饰的实现类, 匿名内部类引用局部变量时,局部变量必须是final的:因为内部创建实现类时,将值赋给其对象的valx属性,valx属性没有机会再跟着一起变化.</li>
+<li><strong>重写桥接</strong>: 子类重写方法返回值可以是父类返回值的子类,JVM内部使用了桥接方法(synthetic bridge修饰)重写父类方法并返回子类重写的同名方法,并且没有命名冲突,仅对jvm可见.</li>
+<li><strong>匿名内部类</strong>: 内部创建了final修饰的实现类, 匿名内部类引用局部变量时,局部变量必须是final的:因为内部创建实现类时,将值赋给其对象的valx属性,valx属性没有机会再跟着一起变化.</li>
 </ol>
-<h3 id="4-类加载阶段"><a href="#4-类加载阶段" class="headerlink" title="4. 类加载阶段"></a>4. 类加载阶段</h3><h3 id="5-类加载器"><a href="#5-类加载器" class="headerlink" title="5. 类加载器"></a>5. 类加载器</h3><h3 id="6-运行期优化"><a href="#6-运行期优化" class="headerlink" title="6. 运行期优化"></a>6. 运行期优化</h3>]]></content>
+<h3 id="4-类加载阶段"><a href="#4-类加载阶段" class="headerlink" title="4. 类加载阶段"></a>4. 类加载阶段</h3><ol>
+<li>隐式加载：new</li>
+<li>显式加载：loadClass、forName等(需要调用Class的newInstance方法获取实例)</li>
+<li>类的装载阶段：<strong><code>加载 --&gt; 链接 --&gt; 初始化</code></strong><ul>
+<li>加载：通过Classloader加载class文件字节码，生成class对象</li>
+<li>链接：校验–&gt;准备–&gt;解析<ul>
+<li>校验：检查加载的Class的正确性和安全性</li>
+<li>准备：为变量分配存储空间并设置类变量初始值</li>
+<li>解析：JVM将常量池内的符号引用转换为直接引用</li>
+</ul>
+</li>
+<li>初始化：执行类变量赋值和静态代码块</li>
+</ul>
+</li>
+</ol>
+<h4 id="4-1-加载"><a href="#4-1-加载" class="headerlink" title="4.1 加载"></a>4.1 加载</h4><ul>
+<li>将类的字节码载入方法区中,内部采用C++的instanceKlass描述java类, 它的重要field有:<ul>
+<li><code>_java_mirror</code>:Java类的镜像, <code>_super</code>:父类, <code>_field</code>:成员变量, <code>_methods</code>:方法, <code>_constants</code>:常量池, <code>_class_loader</code>:类加载器, <code>_vtable</code>:虚方法表, <code>_itable</code>:接口方法表</li>
+</ul>
+</li>
+<li>如果这个类还有父类没加载,先加载父类</li>
+<li><strong>加载和链接可能是交替运行的</strong></li>
+</ul>
+<blockquote>
+<p><code>instanceKlass</code>这样的元数据是存储在方法区(元空间),但<code>_java_mirror</code>存储在堆中; 可通过HSDB工具查看.</p>
+</blockquote>
+<h4 id="4-2-链接"><a href="#4-2-链接" class="headerlink" title="4.2 链接"></a>4.2 链接</h4><ol>
+<li>验证: 验证类是否符合JVM规范,安全性检查</li>
+<li>准备: 为static变量分配空间,设置默认值<ul>
+<li>jdk7开始, static变量存储于<code>_java_mirror</code>末尾, jdk7之前是instanceKlass末尾.</li>
+<li>static变量分配空间和赋值是两个步骤, 分配空间在准备阶段完成,赋值在初始化阶段完成</li>
+<li>如果static变量是final的<strong>基本类型或字符串常量</strong>,那么编译阶段值就确定了,赋值在准备阶段完成</li>
+<li>如果static变量是final的<strong>引用类型</strong>,那么赋值还是会在初始化阶段完成</li>
+</ul>
+</li>
+<li>解析: 将常量池中的符号引用解析为直接引用(确切知道类,方法,属性在内存中的位置)</li>
+</ol>
+<h4 id="4-3-初始化"><a href="#4-3-初始化" class="headerlink" title="4.3 初始化"></a>4.3 初始化</h4><ul>
+<li>初始化即调用<code>&lt;cinit&gt;()V</code>方法,虚拟机会<strong>保证</strong>这个类的[<strong>构造方法</strong>]<strong>线程安全</strong></li>
+<li><strong>发生的时机</strong>: 概括的说,类初始化是[<strong>懒惰的</strong>]<ul>
+<li>main方法所在的类的,总会被首先初始化</li>
+<li>首次访问这个类的静态变量或静态方法时</li>
+<li>子类初始化, 如果父类没有初始化,会引发</li>
+<li>子类访问父类静态变量, 只会触发父类的初始化</li>
+<li>Class.forName 和 new操作 导致初始化</li>
+</ul>
+</li>
+<li><strong>不会</strong>导致类初始化的情况<ul>
+<li>访问类的static final 静态常量(基本类型和字符串常量)<strong>不会</strong>触发初始化</li>
+<li>类对象.class 不会</li>
+<li>创建该类的数组 不会</li>
+<li>类加载器的loadClass方法 不会</li>
+<li>Class.forName的第二个参数为false时 不会</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-4-应用实例-懒惰初始化单例模式-线程安全"><a href="#4-4-应用实例-懒惰初始化单例模式-线程安全" class="headerlink" title="4.4 应用实例-懒惰初始化单例模式(线程安全)"></a>4.4 应用实例-懒惰初始化单例模式(线程安全)</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="comment">// 内部类中保存单例</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LazyHolder</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton SINGLETON = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第一次调用getInstance,才会导致内部类加载和初始化其静态成员</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> LazyHolder.SINGLETON;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-类加载器"><a href="#5-类加载器" class="headerlink" title="5. 类加载器"></a>5. 类加载器</h3><p>以JDK8为例:</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>加载哪的类</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bootstrap ClassLoader</td>
+<td>JAVA_HOME/jre/lib</td>
+<td>启动类加载器, 最顶层, 打印显示为null</td>
+</tr>
+<tr>
+<td>Extension ClassLoader</td>
+<td>JAVA_HOME/jre/lib/ext</td>
+<td>扩展类加载器, 第二级, 打印显示为$ExtClassLoader</td>
+</tr>
+<tr>
+<td>Application ClassLoader</td>
+<td>classpath</td>
+<td>应用程序类加载器, 第三级, 打印显示为$AppClassLoader</td>
+</tr>
+<tr>
+<td>自定义类加载器</td>
+<td>自定义</td>
+<td>上级为Application</td>
+</tr>
+</tbody></table>
+<h4 id="5-1-类加载器-双亲委派机制"><a href="#5-1-类加载器-双亲委派机制" class="headerlink" title="5.1 类加载器-双亲委派机制"></a>5.1 类加载器-双亲委派机制</h4><ul>
+<li>类加载器在接到加载类的请求时，首先将加载任务<strong>委托给上级加载器</strong>，依次递归，如果上级加载器可以完成类加载任务，就成功返回；只有上级加载器无法完成此加载任务时，才自己去加载。</li>
+<li>这种双亲委派模式的好处，一个可以避免类的重复加载，另外也避免了java的核心API被篡改。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * loadClass方法的实现方式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="keyword">boolean</span> resolve)</span><br><span class="line">    <span class="keyword">throws</span> ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (getClassLoadingLock(name)) &#123;</span><br><span class="line">        <span class="comment">// First, check if the class has already been loaded</span></span><br><span class="line">        <span class="comment">//【1】 检查该类是否已经加载</span></span><br><span class="line">        Class c = findLoadedClass(name);</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">long</span> t0 = System.nanoTime();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">//【2】 有上级的话,委派上级 loadClass</span></span><br><span class="line">                    c = parent.loadClass(name, <span class="keyword">false</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">//【3】 如果没有上级了(ExtClassLoader),则委派BootstrapClassLoader</span></span><br><span class="line">                    c = findBootstrapClassOrNull(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">                <span class="comment">// ClassNotFoundException thrown if class not found</span></span><br><span class="line">                <span class="comment">// from the non-null parent class loader</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// If still not found, then invoke findClass in order to find the class.</span></span><br><span class="line">                <span class="keyword">long</span> t1 = System.nanoTime();</span><br><span class="line">                <span class="comment">//【4】 每一级都找不到,调用findClass(每个类加载器自己扩展)来加载</span></span><br><span class="line">                c = findClass(name);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// this is the defining class loader; record the stats</span></span><br><span class="line">                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                sun.misc.PerfCounter.getFindClasses().increment();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (resolve) &#123;</span><br><span class="line">            resolveClass(c);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-2-线程上下文类加载器"><a href="#5-2-线程上下文类加载器" class="headerlink" title="5.2 线程上下文类加载器"></a>5.2 线程上下文类加载器</h4><ul>
+<li>Java 提供了很多服务提供者接口(Service Provider Interface，SPI),允许第三方为这些接口提供实现(常见的 SPI 有 JDBC、JCE、JNDI、JAXP 和 JBI 等)。</li>
+<li>SPI接口中的代码经常需要加载具体的实现类; SPI的接口由Java核心库来提供，实现类可能是作为Java应用所依赖的jar包被包含进来，可以通过类路径（CLASSPATH）来找到。</li>
+<li>SPI的接口是Java核心库的一部分，是由引导类加载器来加载的；引导类加载器是无法找到SPI的实现类的,这时候需要抛弃双亲委派加载链模式，使用线程上下文里的类加载器加载类。</li>
+<li>类 java.lang.Thread中的方法 getContextClassLoader()和 setContextClassLoader(ClassLoader cl)用来获取和设置线程的上下文类加载器。</li>
+<li>Java默认的 线程上下文类加载器 是 应用程序类加载器(AppClassLoader)。</li>
+</ul>
+<h4 id="5-3-何时使用Thread-getContextClassLoader"><a href="#5-3-何时使用Thread-getContextClassLoader" class="headerlink" title="5.3 何时使用Thread.getContextClassLoader()?"></a>5.3 何时使用Thread.getContextClassLoader()?</h4><ul>
+<li>总的说来动态加载资源时，一般只有两种选择，当前类加载器和线程上下文类加载器。当前类加载器是指当前方法所在类的加载器。这个类加载器是运行时类解析使用的加载器，Class.forName(String)和Class.getResource(String)也使用该类加载器。代码中X.class的写法使用的类加载器也是这个类加载器。</li>
+<li>该如何选择类加载器？<ul>
+<li>如若代码是限于某些特定框架，这些框架有着特定加载规则，则不要做任何改动，让框架开发者来保证其工作（比如应用服务器提供商，尽管他们并不能总是做对）。如在Web应用和EJB中，要使用Class.gerResource来加载资源。</li>
+<li>在其他情况下，我们可以自己来选择最合适的类加载器。可以使用策略模式来设计选择机制。其思想是将“总是使用上下文类加载器”或者“总是使用当前类加载器”的决策同具体实现逻辑分离开。往往设计之初是很难预测何种类加载策略是合适的，该设计能够让你可以后来修改类加载策略。</li>
+<li>一般来说，上下文类加载器要比当前类加载器更适合于框架编程，而当前类加载器则更适合于业务逻辑编程。</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-4-类加载器与Web容器"><a href="#5-4-类加载器与Web容器" class="headerlink" title="5.4 类加载器与Web容器"></a>5.4 类加载器与Web容器</h4><p>以 Apache Tomcat 来说，每个 Web 应用都有一个对应的类加载器实例。<strong>该类加载器也使用代理模式，所不同的是它是首先尝试去加载某个类，如果找不到再代理给父类加载器。这与一般类加载器的顺序是相反的。这是 Java Servlet 规范中的推荐做法，其目的是使得 Web 应用自己的类的优先级高于 Web 容器提供的类</strong>。这种代理模式的一个例外是：Java 核心库的类是不在查找范围之内的。这也是为了保证 Java 核心库的类型安全。</p>
+<ul>
+<li>绝大多数情况下，Web 应用的开发人员不需要考虑与类加载器相关的细节。下面给出几条简单的原则：<ol>
+<li>每个 Web 应用自己的 Java 类文件和使用的库的 jar 包，分别放在 WEB-INF/classes和 WEB-INF/lib目录下面。</li>
+<li>多个应用共享的 Java 类文件和 jar 包，分别放在 Web 容器指定的由所有 Web 应用共享的目录下面。</li>
+<li>当出现找不到类的错误时，检查当前类的类加载器和当前线程的上下文类加载器是否正确。</li>
+</ol>
+</li>
+</ul>
+<h4 id="5-5-自定义类加载器"><a href="#5-5-自定义类加载器" class="headerlink" title="5.5 自定义类加载器"></a>5.5 自定义类加载器</h4><ol>
+<li>什么时候需要自定义类加载器<ul>
+<li>加载非classpath路径的任意路径类文件</li>
+<li>都是通过接口来使用实现,希望解耦时,常用于框架设计</li>
+<li>这些类希望予以隔离,不同应用的同名类都可以加载,不冲突,常见于tomcat容器</li>
+</ul>
+</li>
+<li>如何自定义类加载器<ol>
+<li>继承ClassLoader类</li>
+<li>重写findClass(String className)方法</li>
+<li>读取(加载)类文件的字节码。</li>
+<li>调用ClassLoader超类的defineClass方法，向虚拟机提供字节码。</li>
+<li>使用者调用该自定义类加载器的loadClass方法</li>
+</ol>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyClassLoader</span> <span class="keyword">extends</span> <span class="title">ClassLoader</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> name 类名称</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt; findClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            String cname = <span class="string">"E:\\myclasspath\\"</span> + name.replace(<span class="string">'.'</span>, <span class="string">'/'</span>) + <span class="string">".class"</span>;</span><br><span class="line">            <span class="keyword">byte</span>[] classBytes = Files.readAllBytes(Paths.get(cname));</span><br><span class="line">            Class&lt;?&gt; cl = defineClass(name, classBytes, <span class="number">0</span>, classBytes.length);</span><br><span class="line">            <span class="keyword">if</span> (cl == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ClassNotFoundException(name);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> cl;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            System.out.print(e);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ClassNotFoundException(name);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-运行期优化"><a href="#6-运行期优化" class="headerlink" title="6. 运行期优化"></a>6. 运行期优化</h3><ol>
+<li>逃逸分析</li>
+<li>方法内联</li>
+<li>字段优化</li>
+<li>反射优化</li>
+</ol>
+]]></content>
       
         <categories>
             
@@ -875,7 +1018,7 @@
     </entry>
     
     <entry>
-      <title><![CDATA[【Java知识梳理】深入JVM(一)]]></title>
+      <title><![CDATA[【Java知识梳理】深入JVM(一)-运行时数据区与垃圾回收机制]]></title>
       <url>http://chaooo.github.io/article/20190823.html</url>
       <content type="html"><![CDATA[<h3 id="Java虚拟机运行时数据区"><a href="#Java虚拟机运行时数据区" class="headerlink" title="Java虚拟机运行时数据区"></a>Java虚拟机运行时数据区</h3><ol>
 <li>程序计数器（Program Counter Register）</li>
