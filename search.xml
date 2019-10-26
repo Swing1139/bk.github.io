@@ -750,7 +750,112 @@
     <entry>
       <title><![CDATA[【Java知识梳理】深入JVM(二)]]></title>
       <url>http://chaooo.github.io/article/20190825.html</url>
-      <content type="html"><![CDATA[<h3 id="1-类文件结构"><a href="#1-类文件结构" class="headerlink" title="1. 类文件结构"></a>1. 类文件结构</h3><h3 id="2-字节码指令"><a href="#2-字节码指令" class="headerlink" title="2. 字节码指令"></a>2. 字节码指令</h3><h3 id="3-编译期处理"><a href="#3-编译期处理" class="headerlink" title="3. 编译期处理"></a>3. 编译期处理</h3><h3 id="4-类加载阶段"><a href="#4-类加载阶段" class="headerlink" title="4. 类加载阶段"></a>4. 类加载阶段</h3><h3 id="5-类加载器"><a href="#5-类加载器" class="headerlink" title="5. 类加载器"></a>5. 类加载器</h3><h3 id="6-运行期优化"><a href="#6-运行期优化" class="headerlink" title="6. 运行期优化"></a>6. 运行期优化</h3>]]></content>
+      <content type="html"><![CDATA[<h3 id="1-类文件结构"><a href="#1-类文件结构" class="headerlink" title="1. 类文件结构"></a>1. 类文件结构</h3><p>Class文件是一组以 <strong>8 位字节</strong>为基础单位的二进制流，各个数据<strong>严格按照顺序紧凑的排列</strong>在 Class 文件中，中间无任何分隔符，这使得整个 Class 文件中存储的内容几乎全部都是程序运行的必要数据，没有空隙存在。当遇到需要占用 8 位字节以上空间的数据项时，会按照高位在前的方式分割成若干个 8 位字节进行存储。<br>Java 虚拟机规范规定 Class 文件格式采用一种类似与 C 语言结构体的微结构体来存储数据，这种伪结构体中只有两种数据类型：<strong>无符号数</strong>和<strong>表</strong>。</p>
+<ul>
+<li><strong>无符号数</strong>：属于基本数据类型，以u1、u2、u4、u8来代表1个字节、2个字节、4个字节、8个字节的无符号数， 无符号数可以用来描述数字、索引引用、数量值或者按照UTF-8编码构成字符串值。</li>
+<li><strong>表</strong>：由多个无符号数或者其他表作为数据项构成的复合数据类型，所有表都习惯性地以「_info」结尾。表用于描述有层次关系的复合结构的数据，整个 Class 文件就是一张表。</li>
+</ul>
+<p>根据 Java 虚拟机规范，类文件由单个 ClassFile 结构组成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ClassFile &#123;</span><br><span class="line">    u4             magic;                <span class="comment">//Class文件的标志(魔数)</span></span><br><span class="line">    u2             minor_version;        <span class="comment">//Class的小版本号</span></span><br><span class="line">    u2             major_version;        <span class="comment">//Class的大版本号</span></span><br><span class="line">    u2             constant_pool_count;  <span class="comment">//常量池的数量</span></span><br><span class="line">    cp_info        constant_pool[constant_pool_count-<span class="number">1</span>];<span class="comment">//常量池</span></span><br><span class="line">    u2             access_flags;         <span class="comment">//Class的访问标记</span></span><br><span class="line">    u2             this_class;           <span class="comment">//当前类</span></span><br><span class="line">    u2             super_class;          <span class="comment">//父类</span></span><br><span class="line">    u2             interfaces_count;     <span class="comment">//接口</span></span><br><span class="line">    u2             interfaces[interfaces_count];<span class="comment">//一个类可以实现多个接口</span></span><br><span class="line">    u2             fields_count;          <span class="comment">//Class文件的字段属性</span></span><br><span class="line">    field_info     fields[fields_count];  <span class="comment">//一个类会可以有个字段</span></span><br><span class="line">    u2             methods_count;         <span class="comment">//Class文件的方法数量</span></span><br><span class="line">    method_info    methods[methods_count];<span class="comment">//一个类可以有个多个方法</span></span><br><span class="line">    u2             attributes_count;      <span class="comment">//此类的属性表中的属性数</span></span><br><span class="line">    attribute_info attributes[attributes_count];<span class="comment">//属性表集合</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://cdn.chaooo.top/blog/JVM-class.png" alt></p>
+<h4 id="1-1-魔数-Magic-Number"><a href="#1-1-魔数-Magic-Number" class="headerlink" title="1.1 魔数 (Magic Number)"></a>1.1 魔数 (Magic Number)</h4><ul>
+<li>Class文件的<strong>0~3字节</strong>(前四个字节: ca fe ba be)</li>
+<li>作用: 确定这个文件是否为一个能被虚拟机接收的Class文件</li>
+</ul>
+<h4 id="1-2-Class文件版本"><a href="#1-2-Class文件版本" class="headerlink" title="1.2 Class文件版本"></a>1.2 Class文件版本</h4><ul>
+<li><strong>4~7字节</strong>, 其中4<del>5次版本号,6</del>7主版本号(如jdk8主版本号是: 00 34)</li>
+</ul>
+<h4 id="1-3-常量池"><a href="#1-3-常量池" class="headerlink" title="1.3 常量池"></a>1.3 常量池</h4><ul>
+<li><strong>8~9字节</strong>表示16进制常量池数量,其后紧跟具体常量池, 常量池的数量是 <code>constant_pool_count-1</code>（<strong>常量池计数器是从1开始计数的，将第0项常量空出来是有特殊考虑的，索引值为0代表“不引用任何一个常量池项”</strong>）</li>
+<li>常量池主要存放两大常量: <strong>字面量</strong>和<strong>符号引用</strong><ul>
+<li>字面量: Java语言层面的常量概念(String,final等)</li>
+<li>符号引用: 编译原理方面的概念(类和接口的全限定名\字段的名称和描述符\方法的名称和描述符)</li>
+</ul>
+</li>
+<li>常量池中每一项常量都是一个表，这<strong>14种表</strong>有一个共同的特点：<strong>开始的第一位是一个 u1 类型的标志位 -tag 来标识常量的类型，代表当前这个常量属于哪种常量类型</strong></li>
+<li>.class文件可以通过<code>javap -v class类名</code> 指令来看一下其常量池中的信息(<code>javap -v class类名-&gt; temp.txt</code> ：将结果输出到 temp.txt 文件)</li>
+</ul>
+<h4 id="1-4-类的访问标志与继承信息"><a href="#1-4-类的访问标志与继承信息" class="headerlink" title="1.4 类的访问标志与继承信息"></a>1.4 类的访问标志与继承信息</h4><ul>
+<li>在常量池结束之后，紧接着的<strong>两个字节</strong>代表访问标志，这个标志用于识别一些类或者接口层次的访问信息，包括：这个 Class 是类还是接口，是否为 public 或者 abstract 类型，如果是类的话是否声明为 final 等等.</li>
+<li>access_flags中一共有16个标志位可以使用，当前之定义了其中的8个，没用使用到的标志位要求一律为0。</li>
+</ul>
+<h4 id="1-5-当前类索引-this-父类索引-super-与接口索引集合-interfaces"><a href="#1-5-当前类索引-this-父类索引-super-与接口索引集合-interfaces" class="headerlink" title="1.5 当前类索引(this),父类索引(super)与接口索引集合(interfaces)"></a>1.5 当前类索引(<code>this</code>),父类索引(<code>super</code>)与接口索引集合(<code>interfaces</code>)</h4><ul>
+<li>类索引用于确定这个类的全限定名，父类索引用于确定这个类的父类的全限定名，由于 Java 语言的单继承，所以父类索引只有一个，除了 java.lang.Object 之外，所有的 java 类都有父类，因此除了 java.lang.Object 外，所有 Java 类的父类索引都不为 0。</li>
+<li>接口索引集合用来描述这个类实现了那些接口，这些被实现的接口将按implents(如果这个类本身是接口的话则是extends) 后的接口顺序从左到右排列在接口索引集合中。</li>
+</ul>
+<h4 id="1-6-成员变量信息-Feild"><a href="#1-6-成员变量信息-Feild" class="headerlink" title="1.6 成员变量信息(Feild)"></a>1.6 成员变量信息(Feild)</h4><ul>
+<li>字段表（field info）用于描述接口或类中声明的变量。字段包括类级变量以及实例变量，但不包括在方法内部声明的局部变量。</li>
+<li>字段信息包括：字段的作用域（public、private、protected修饰符）、是实例变量还是类变量（static修饰符）、可变性（final）、并发可见性（volatile修饰符，是否强制从主内存读写）、可否被序列化（transient修饰符）、字段数据类型（基本类型、对象、数组）、字段名称，以上修饰符都是布尔类型。</li>
+<li>方法和字段的描述符作用是用来描述字段的数据类型、方法的参数列表（包括数量、类型以及顺序）和返回值。</li>
+<li>根描述规则，基本数据类型（byte、char、double、float、int、long、short、boolean）以及代表无返回值的void类型都用一个大写字符来表示，对象类型使用字符L加对象的全限定名来表示。<ul>
+<li>B: 基本类型byte</li>
+<li>C: 基本类型char</li>
+<li>D: 基本类型double</li>
+<li>F: 基本类型float</li>
+<li>I: 基本类型</li>
+<li>J: 基本类型long</li>
+<li>S: 基本类型short</li>
+<li>Z: 基本类型boolean</li>
+<li>V: 特殊类型void</li>
+<li>L: 对象类型，如Ljava/lang/Object</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-7-方法信息-Method"><a href="#1-7-方法信息-Method" class="headerlink" title="1.7 方法信息(Method)"></a>1.7 方法信息(Method)</h4><ul>
+<li><code>methods_count</code> 表示方法的数量，而 <code>method_info</code> 表示的方法表。</li>
+<li>Class 文件存储格式中对方法的描述与对字段的描述几乎采用了完全一致的方式。方法表的结构如同字段表一样，依次包括了访问标志、名称索引、描述符索引、属性表集合几项。</li>
+</ul>
+<h4 id="1-8-附加属性信息"><a href="#1-8-附加属性信息" class="headerlink" title="1.8 附加属性信息"></a>1.8 附加属性信息</h4><ul>
+<li><code>attributes_count</code>表示属性表中的属性个数, <code>attribute_info</code> 表示属性表</li>
+<li>在 Class 文件，字段表，方法表中都可以携带自己的属性表集合，以用于描述某些场景专有的信息。与 Class 文件中其它的数据项目要求的顺序、长度和内容不同，属性表集合的限制稍微宽松一些，不再要求各个属性表具有严格的顺序，并且只要不与已有的属性名重复，任何人实现的编译器都可以向属性表中写 入自己定义的属性信息，Java 虚拟机运行时会忽略掉它不认识的属性。</li>
+</ul>
+<h3 id="2-字节码指令"><a href="#2-字节码指令" class="headerlink" title="2. 字节码指令"></a>2. 字节码指令</h3><p>Java字节码指令就是Java虚拟机能够识别、可执行的指令，可以说是Jvm的最小执行单元。javac命令会将Java源文件编译成字节码文件，即.class文件，其中就包含了大量的字节码指令，javap命令可以解析字节码(.class文件)，将字节码内部逻辑以可读的方式呈现出来 (<code>javap -v -p HelloWorld</code>)。</p>
+<ul>
+<li>按指令的功能分为如下几类：<ol>
+<li><strong>存储和加载类指令</strong>：主要包括load系列(将一个局部变量加载到操作数栈)、store系列(将一个数值从操作数栈存储到局部变量表)和ldc/push/const系列(将一个常量加载到操作数栈)，主要用于在<strong>局部变量表</strong>、<strong>操作数栈</strong>和<strong>常量池</strong>三者之间进行<strong>数据调度</strong>；<ul>
+<li>例如: <code>iload_0</code>表示从当前栈帧局部变量表中0号位置取int类型的数值加载到操作数栈</li>
+</ul>
+</li>
+<li><strong>对象操作指令</strong>（创建与读写访问）：比如我们刚刚的putfield和getfield就属于读写访问的指令，此外还有putstatic/getstatic，还有new系列指令，以及instanceof等指令。</li>
+<li><strong>操作数栈管理指令</strong>：如pop和dup，他们只对操作数栈进行操作。</li>
+<li>类型转换指令和运算指令：如add(加)/sub(减)/mul(乘)/div(除)/l2i/d2f等系列指令，实际上这类指令一般也只对操作数栈进行操作。</li>
+<li>控制跳转指令：这类里包含常用的if系列指令以及goto类指令。</li>
+<li><strong>方法调用和返回指令</strong>：主要包括invoke系列指令和return系列指令。这类指令也意味这一个方法空间的开辟和结束，即invoke会唤醒一个新的java方法小宇宙（新的栈和局部变量表），而return则意味着这个宇宙的结束回收。</li>
+</ol>
+</li>
+<li>从指令操作的数据类型来讲：指令开头或尾部的一些字母，就往往表明了它所能操作的数据类型：<ul>
+<li>a对应对象，表示指令操作对象性数据，比如aload和astore、areturn等等。</li>
+<li>i对应整形。也就有iload，istore等i系列指令。</li>
+<li>f对应浮点型，l对应long，b对应byte，d对应double，c对应char。</li>
+<li>ia对应int array，aa对应object array，da对应double array。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-编译期处理-语法糖"><a href="#3-编译期处理-语法糖" class="headerlink" title="3. 编译期处理(语法糖)"></a>3. 编译期处理(语法糖)</h3><p><strong>语法糖</strong>: 指Java编译器把.java源码编译为.class字节码过程中,自动生成和转换的一些代码. 如:默认构造器,自动拆装箱等.</p>
+<ol>
+<li>默认构造器: <code>public class Candy{}</code> 编译后为: <code>public class Candy{public Candy(){super();}}</code> </li>
+<li>自动拆装箱: <code>Integer x=1;int y=x;</code> 编译后为: <code>Integer x=Integer.valueOf(1);int y=x.intValue();</code></li>
+<li>泛型擦除: 擦除的是字节码上的泛型信息.</li>
+<li>泛型反射: 通过反射获得泛型信息</li>
+<li>可变参数: <code>String... args</code> 可以是一个<code>String[] args</code></li>
+<li>foreach: 集合相当于获取迭代器Iterator</li>
+<li>switch: Jdk7开始可以配合String和枚举<ul>
+<li>switch-String: 执行了两遍switch,第一遍根据字符串的hashCode和equals将字符串转换为相应的byte类型,第二遍利用byte执行比较.</li>
+<li>switch-枚举: 会为当前类生成一个静态内部类(合成类,仅JVM使用,对我们不可见),用来映射枚举类的枚举编号(从0开始)与数组元素的关系,数组大小即为枚举元素的个数,里面存储case用来对比的数字,根据这个数字执行switch</li>
+</ul>
+</li>
+<li>枚举类: 继承Enum并且用final修饰类,构造方法私有,枚举量被编译成本类的final类变量,定义私有静态枚举量数组$VALUES,静态方法values()用来返回定义的枚举量数组的clone(),静态方法valueOf()调用父类valueOf(本类.class,名称)根据类型和名称得到相应实例</li>
+<li>try-with-resources: 无论try块的异常还是关闭资源时的异常都不会丢。可以在 try-with-resources 语句中同时处理多个资源。<ul>
+<li>在 Java 7/8 ，try-with-resources 语句中必须声明要关闭的资源。通过这种方式声明的资源属于隐式 final。</li>
+<li>Java 9 中甚至能使用预先创建的资源，只要所引用的资源声明为 final 或者是 effective final。</li>
+<li>在幕后施展魔法的是 AutoCloseable 或者 Closeable 接口，它们与 try-with-resources 语句协同工作。</li>
+</ul>
+</li>
+<li>重写桥接: 子类重写方法返回值可以是父类返回值的子类,JVM内部使用了桥接方法(synthetic bridge修饰)重写父类方法并返回子类重写的同名方法,并且没有命名冲突,仅对jvm可见.</li>
+<li>匿名内部类: 内部创建了final修饰的实现类, 匿名内部类引用局部变量时,局部变量必须是final的:因为内部创建实现类时,将值赋给其对象的valx属性,valx属性没有机会再跟着一起变化.</li>
+</ol>
+<h3 id="4-类加载阶段"><a href="#4-类加载阶段" class="headerlink" title="4. 类加载阶段"></a>4. 类加载阶段</h3><h3 id="5-类加载器"><a href="#5-类加载器" class="headerlink" title="5. 类加载器"></a>5. 类加载器</h3><h3 id="6-运行期优化"><a href="#6-运行期优化" class="headerlink" title="6. 运行期优化"></a>6. 运行期优化</h3>]]></content>
       
         <categories>
             
