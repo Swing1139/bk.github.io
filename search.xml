@@ -748,7 +748,7 @@
     </entry>
     
     <entry>
-      <title><![CDATA[【Java知识梳理】深入JVM(三)-内存模型JMM]]></title>
+      <title><![CDATA[【Java知识梳理】深入JVM(三)-内存模型JMM 与 锁机制]]></title>
       <url>http://chaooo.github.io/article/20190827.html</url>
       <content type="html"><![CDATA[<h3 id="Java内存模型-Java-Memory-Model"><a href="#Java内存模型-Java-Memory-Model" class="headerlink" title="Java内存模型(Java Memory Model)"></a>Java内存模型(Java Memory Model)</h3><p>Java Memory Model(JMM)描述了Java程序中各种变量(线程共享变量)的访问规则，以及在JVM中将变量存储到内存中和从内存中读取变量这样的底层细节(可见性,有序性,原子性)。</p>
 <ul>
@@ -981,7 +981,7 @@
     </entry>
     
     <entry>
-      <title><![CDATA[【Java知识梳理】深入JVM(二)-类文件结构与类加载机制]]></title>
+      <title><![CDATA[【Java知识梳理】深入JVM(二)-类文件结构 与 类加载机制]]></title>
       <url>http://chaooo.github.io/article/20190825.html</url>
       <content type="html"><![CDATA[<h3 id="1-类文件结构"><a href="#1-类文件结构" class="headerlink" title="1. 类文件结构"></a>1. 类文件结构</h3><p>Class文件是一组以 <strong>8 位字节</strong>为基础单位的二进制流，各个数据<strong>严格按照顺序紧凑的排列</strong>在 Class 文件中，中间无任何分隔符，这使得整个 Class 文件中存储的内容几乎全部都是程序运行的必要数据，没有空隙存在。当遇到需要占用 8 位字节以上空间的数据项时，会按照高位在前的方式分割成若干个 8 位字节进行存储。<br>Java 虚拟机规范规定 Class 文件格式采用一种类似与 C 语言结构体的微结构体来存储数据，这种伪结构体中只有两种数据类型：<strong>无符号数</strong>和<strong>表</strong>。<a id="more"></a></p>
 <ul>
@@ -1329,7 +1329,7 @@
     </entry>
     
     <entry>
-      <title><![CDATA[【Java知识梳理】深入JVM(一)-运行时数据区与垃圾回收机制]]></title>
+      <title><![CDATA[【Java知识梳理】深入JVM(一)-运行时数据区 与 垃圾回收机制]]></title>
       <url>http://chaooo.github.io/article/20190823.html</url>
       <content type="html"><![CDATA[<h3 id="Java虚拟机运行时数据区"><a href="#Java虚拟机运行时数据区" class="headerlink" title="Java虚拟机运行时数据区"></a>Java虚拟机运行时数据区</h3><ol>
 <li>程序计数器（Program Counter Register）</li>
