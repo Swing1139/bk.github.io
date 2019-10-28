@@ -825,7 +825,7 @@
 </ol>
 </li>
 </ul>
-<h4 id="2-1-happens-before"><a href="#2-1-happens-before" class="headerlink" title="2.1 happens-before"></a>2.1 happens-before</h4><p>在JMM中，如果一个操作执行的结果需要对另一个操作可见，那么这2个操作之间必须要存在happens-before关系。</p>
+<h4 id="2-1-happens-before规则"><a href="#2-1-happens-before规则" class="headerlink" title="2.1 happens-before规则"></a>2.1 happens-before规则</h4><p>在JMM中，如果一个操作执行的结果需要对另一个操作可见，那么这2个操作之间必须要存在happens-before关系。</p>
 <ul>
 <li>定义: 如果一个操作在另一个操作之前发生(happens-before),那么第一个操作的执行结果将对第二个操作可见, 而且第一个操作的执行顺序排在第二个操作之前。</li>
 <li>两个操作之间存在happens-before关系，并不意味着一定要按照happens-before原则制定的顺序来执行。如果重排序之后的执行结果与按照happens-before关系来执行的结果一致，那么这种重排序并不非法。</li>
@@ -865,6 +865,11 @@
 </ul>
 </li>
 </ul>
+<h4 id="3-2-著名的双检锁-double-checked-locking-模式实现单例"><a href="#3-2-著名的双检锁-double-checked-locking-模式实现单例" class="headerlink" title="3.2 著名的双检锁(double-checked locking)模式实现单例"></a>3.2 著名的双检锁(double-checked locking)模式实现单例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="comment">// volatile保证happens-before规则,重排序被禁止</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton INSTANCE = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 实例没创建,才进入内部的synchronized代码块</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == INSTANCE) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">                <span class="comment">// 判断其他线程是否已经创建实例</span></span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == INSTANCE) &#123;</span><br><span class="line">                    INSTANCE = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果不用volatile修饰INSTANCE,可能造成访问的是一个初始化未完成的对象; 使用了volatile关键字后，重排序被禁止，所有的写（write）操作都将发生在读（read）操作之前。</p>
+</blockquote>
 <h3 id="4-锁机制"><a href="#4-锁机制" class="headerlink" title="4. 锁机制"></a>4. 锁机制</h3><ul>
 <li>锁的状态总共有四种：无锁状态、偏向锁、轻量级锁和重量级锁。随着锁的竞争，锁可以从偏向锁升级到轻量级锁，再升级的重量级锁（但是<strong>锁的升级是单向的</strong>，也就是说只能从低到高升级，不会出现锁的降级）。</li>
 <li>锁的状态是通过对象监视器在<strong>对象头</strong>中的字段来表明的。 四种状态会随着竞争的情况逐渐升级，而且是不可逆的过程，即不可降级。 这四种状态都不是Java语言中的锁，而是Jvm为了提高锁的获取与释放效率而做的优化(<strong>使用synchronized时</strong>)。</li>
@@ -961,7 +966,46 @@
 </ul>
 </li>
 </ol>
-<h3 id="6-CAS与原子类"><a href="#6-CAS与原子类" class="headerlink" title="6. CAS与原子类"></a>6. CAS与原子类</h3>]]></content>
+<h3 id="6-CAS与原子类"><a href="#6-CAS与原子类" class="headerlink" title="6. CAS与原子类"></a>6. CAS与原子类</h3><p>CAS即<code>Compare and Swap</code>翻译过来就是比较并替换, 它体现了一种乐观锁的思想 (synchronized为悲观锁思想); </p>
+<ul>
+<li>结合CAS和volatile可以实现<strong>无锁并发</strong>(非阻塞同步),适用于竞争不激烈,多核CPU的场景下(竞争激烈,重试频繁发生会影响效率);</li>
+<li>CAS算法涉及到三个操作数: 内存值V, 旧值A, 新值B; 当且仅当V==A时，CAS用新值B来更新V，否则不会执行任何操作（比较和替换是一个原子操作）。一般情况下是一个自旋操作，即不断的重试。</li>
+<li>CAS底层依赖一个Unsafe类来直接调用操作系统底层的CAS指令;</li>
+</ul>
+<h4 id="6-1-Unsafe类"><a href="#6-1-Unsafe类" class="headerlink" title="6.1 Unsafe类"></a>6.1 Unsafe类</h4><p>java中CAS操作依赖于Unsafe类，Unsafe类所有方法都是native的，直接调用操作系统底层资源执行相应任务，它可以像C一样操作内存指针，是非线程安全的。</p>
+<ul>
+<li>Unsafe里的CAS 操作相关实现: compareAndSwapObject,compareAndSwapInt,compareAndSwapLong<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一个参数o为给定对象，offset为对象内存的偏移量，通过这个偏移量迅速定位字段并设置或获取该字段的值，</span></span><br><span class="line"><span class="comment">//expected表示期望值，x表示要设置的值，下面3个方法都通过CAS原子指令执行操作。</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapObject</span><span class="params">(Object o, <span class="keyword">long</span> offset,Object expected, Object x)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object o, <span class="keyword">long</span> offset,<span class="keyword">int</span> expected,<span class="keyword">int</span> x)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapLong</span><span class="params">(Object o, <span class="keyword">long</span> offset,<span class="keyword">long</span> expected,<span class="keyword">long</span> x)</span></span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="6-2-原子操作类"><a href="#6-2-原子操作类" class="headerlink" title="6.2 原子操作类"></a>6.2 原子操作类</h4><p>并发包JUC(java.util.concurrent)中的原子操作类(Atomic系列),底层是基于<code>CAS + volatile</code>实现的.</p>
+<ul>
+<li>AtomicBoolean：原子更新布尔类型</li>
+<li>AtomicInteger：原子更新整型</li>
+<li>AtomicLong：原子更新长整型</li>
+</ul>
+<p>下面看AtomicInteger类的部分源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicInteger</span> <span class="keyword">extends</span> <span class="title">Number</span> <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line">    <span class="comment">//获取指针类Unsafe    </span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Unsafe unsafe = Unsafe.getUnsafe(); </span><br><span class="line">    <span class="comment">//省略...获取内存偏移量等</span></span><br><span class="line">    <span class="comment">//如果当前值为expect，则设置为update(当前值指的是value变量)    </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> unsafe.compareAndSwapInt(<span class="keyword">this</span>, valueOffset, expect, update);    </span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="comment">//当前值加1返回旧值，底层CAS操作    </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndIncrement</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> unsafe.getAndAddInt(<span class="keyword">this</span>, valueOffset, <span class="number">1</span>);   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略...其他方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再看Unsafe类中的getAndAddInt()方法，该方法执行一个CAS操作，保证线程安全。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Unsafe类中的getAndAddInt方法(JDK8)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAddInt</span><span class="params">(Object o, <span class="keyword">long</span> offset, <span class="keyword">int</span> delta)</span> </span>&#123;        </span><br><span class="line">    <span class="keyword">int</span> v;        </span><br><span class="line">    <span class="keyword">do</span> &#123;            </span><br><span class="line">        v = getIntVolatile(o, offset);        </span><br><span class="line">    &#125; <span class="keyword">while</span> (!compareAndSwapInt(o, offset, v, v + delta));        </span><br><span class="line">    <span class="keyword">return</span> v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可看出getAndAddInt通过一个while循环不断的重试更新要设置的值，直到成功为止，调用的是Unsafe类中的compareAndSwapInt方法，是一个CAS操作方法。</p>
+<h4 id="6-3-CAS操作中可能会带来的ABA问题"><a href="#6-3-CAS操作中可能会带来的ABA问题" class="headerlink" title="6.3 CAS操作中可能会带来的ABA问题"></a>6.3 CAS操作中可能会带来的ABA问题</h4><p>ABA问题是指在CAS操作时，其他线程将变量值A改为了B，但是又被改回了A，等到本线程使用期望值A与当前变量进行比较时，发现变量A没有变，于是CAS就将A值进行了交换操作，但是实际上该值已经被其他线程改变过，这与乐观锁的设计思想不符合。</p>
+<ul>
+<li><strong>无法正确判断这个变量是否已被修改过</strong>，一般称这种情况为ABA问题。</li>
+<li>ABA问题一般不会有太大影响，产生几率也比较小。但是并不排除极特殊场景下会造成影响，因此需要解决方法：<ul>
+<li>AtomicStampedReference类</li>
+<li>AtomicMarkableReference类</li>
+</ul>
+</li>
+<li><strong>AtomicStampedReference类</strong>: 一个带有时间戳的对象引用，每次修改时，不但会设置新的值，还会记录修改时间。在下一次更新时，不但会对比当前值和期望值，还会对比当前时间和期望值对应的修改时间，只有二者都相同，才会做出更新。解决了反复读写时，无法预知值是否已被修改的窘境。<ul>
+<li>底层实现为：一个键值对Pair存储数据和时间戳，并构造volatile修饰的私有实例；两者都符合预期才会调用Unsafe的compareAndSwapObject方法执行数值和时间戳替换。</li>
+</ul>
+</li>
+<li>AtomicMarkableReference类: 一个boolean值的标识，true和false两种切换状态表示是否被修改。不靠谱。</li>
+</ul>
+]]></content>
       
         <categories>
             
