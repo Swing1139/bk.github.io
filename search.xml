@@ -6,12 +6,12 @@
     <entry>
       <title><![CDATA[【Java知识梳理】常见集合类 的 数据结构]]></title>
       <url>http://chaooo.github.io/article/20191003.html</url>
-      <content type="html"><![CDATA[<h3 id="集合-Collection-Map"><a href="#集合-Collection-Map" class="headerlink" title="集合(Collection/Map)"></a>集合(Collection/Map)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Collection接口</span><br><span class="line">    |———— List接口</span><br><span class="line">        |———— ArrayList类</span><br><span class="line">        |———— Vector类</span><br><span class="line">        |———— LinkedList类</span><br><span class="line">        |———— Stack类</span><br><span class="line">    |———— Set接口</span><br><span class="line">        |———— HashSet类</span><br><span class="line">        |———— TreeSet类</span><br><span class="line">        |———— LinkedHashSet类</span><br><span class="line">Map接口</span><br><span class="line">    |———— HashMap类</span><br><span class="line">    |———— TreeMap类</span><br><span class="line">    |———— LinkedHashMap类</span><br><span class="line">    |———— Hashtable类</span><br></pre></td></tr></table></figure>
+      <content type="html"><![CDATA[<h3 id="集合-Collection-Map"><a href="#集合-Collection-Map" class="headerlink" title="集合(Collection/Map)"></a>集合(Collection/Map)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Collection接口</span><br><span class="line">    |———— List接口</span><br><span class="line">        |———— ArrayList类</span><br><span class="line">        |———— Vector类</span><br><span class="line">        |———— LinkedList类</span><br><span class="line">        |———— Stack类</span><br><span class="line">    |———— Set接口</span><br><span class="line">        |———— HashSet类</span><br><span class="line">        |———— TreeSet类</span><br><span class="line">        |———— LinkedHashSet类</span><br><span class="line">    |———— Queue接口</span><br><span class="line">        |———— LinkedList类</span><br><span class="line">Map接口</span><br><span class="line">    |———— HashMap类</span><br><span class="line">    |———— TreeMap类</span><br><span class="line">    |———— LinkedHashMap类</span><br><span class="line">    |———— Hashtable类</span><br></pre></td></tr></table></figure>
 
 <h4 id="0-1-List"><a href="#0-1-List" class="headerlink" title="0.1 List"></a>0.1 List</h4><ul>
-<li>Arraylist： 数组队列</li>
-<li>Vector： 数组队列(线程安全)</li>
-<li>LinkedList： 双向链表(JDK1.6之前为循环链表，JDK1.7取消了循环)</li>
+<li><strong>Arraylist</strong>： 动态数组</li>
+<li>Vector： 动态数组(线程安全)</li>
+<li><strong>LinkedList</strong>： 双向链表(JDK1.6之前为循环链表，JDK1.7取消了循环)</li>
 </ul>
 <h4 id="0-2-Set"><a href="#0-2-Set" class="headerlink" title="0.2 Set"></a>0.2 Set</h4><ul>
 <li>HashSet（无序，唯一）：基于 HashMap 实现的，底层采用 HashMap 来保存元素</li>
@@ -19,12 +19,16 @@
 <li>TreeSet（有序，唯一）：红黑树(自平衡的排序二叉树)</li>
 </ul>
 <h4 id="0-3-Map"><a href="#0-3-Map" class="headerlink" title="0.3 Map"></a>0.3 Map</h4><ul>
-<li>HashMap： JDK1.8之前HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的（“拉链法”解决冲突）。JDK1.8以后在解决哈希冲突时有了较大的变化，当链表长度大于阈值（默认为8）时，将链表转化为<strong>红黑树</strong>，以减少搜索时间</li>
+<li><strong>HashMap</strong>： JDK1.8之前HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的（“拉链法”解决冲突）。JDK1.8以后在解决哈希冲突时有了较大的变化，当链表长度大于阈值（默认为8）时，将链表转化为<strong>红黑树</strong>，以减少搜索时间</li>
 <li>LinkedHashMap： LinkedHashMap 继承自 HashMap，所以它的底层仍然是基于拉链式散列结构即由数组和链表或红黑树组成。另外，LinkedHashMap 在上面结构的基础上，<strong>增加了一条双向链表</strong>，使得上面的结构可以保持键值对的插入顺序。同时通过对链表进行相应的操作，实现了访问顺序相关逻辑。</li>
 <li>Hashtable： 数组+链表(线程安全)，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突而存在的</li>
 <li>TreeMap： 红黑树（自平衡的排序二叉树）</li>
 </ul>
-<h4 id="0-4-如何选用集合"><a href="#0-4-如何选用集合" class="headerlink" title="0.4 如何选用集合?"></a>0.4 如何选用集合?</h4><p>主要根据集合的特点来选用，比如我们需要根据键值获取到元素值时就选用Map接口下的集合，需要排序时选择TreeMap,不需要排序时就选择HashMap,需要保证线程安全就选用ConcurrentHashMap.当我们只需要存放元素值时，就选择实现Collection接口的集合，需要保证元素唯一时选择实现Set接口的集合比如TreeSet或HashSet，不需要就选择实现List接口的比如ArrayList或LinkedList，然后再根据实现这些接口的集合的特点来选用。</p>
+<h4 id="0-4-如何选用集合"><a href="#0-4-如何选用集合" class="headerlink" title="0.4 如何选用集合"></a>0.4 如何选用集合</h4><p>主要根据集合的特点来选用：</p>
+<ul>
+<li>键值对就选用Map接口下的集合，需要排序时选择TreeMap，不需要排序时就选择HashMap,需要保证线程安全就选用ConcurrentHashMap.</li>
+<li>只需要存放元素值时，就选用Collection接口下的集合，需要保证元素唯一时选择实现Set接口的集合（TreeSet或HashSet），不需要就选择实现List接口的ArrayList或LinkedList</li>
+</ul>
 <h4 id="0-5-对数公式log-与-时空复杂度"><a href="#0-5-对数公式log-与-时空复杂度" class="headerlink" title="0.5 对数公式log 与 时空复杂度"></a>0.5 对数公式log 与 时空复杂度</h4><ul>
 <li>若<code>a^n = b</code> (a&gt;0,a≠1) 则 <code>n = log(a)b</code> , 如<code>log(2)8 = 3</code>; Java数据结构中log默认以2为底(个人理解,有待考证)</li>
 <li>常用O(1), O(n), O(logn)表示对应算法的时间复杂度, 也用于表示空间复杂度。<ul>
@@ -36,7 +40,27 @@
 </ul>
 </li>
 </ul>
-<h3 id="1-Arraylist分析"><a href="#1-Arraylist分析" class="headerlink" title="1. Arraylist分析"></a>1. Arraylist分析</h3><p>ArrayList 的底层是数组队列，相当于<strong>动态数组</strong>。与数组相比，它的容量能动态增长。在添加大量元素前，应用程序使用ensureCapacity操作来增加 ArrayList 实例的容量。这可以减少递增式再分配的数量。<br>它继承于 AbstractList，实现了 List, RandomAccess, Cloneable, java.io.Serializable 这些接口。</p>
+<h4 id="0-6-移位运算符"><a href="#0-6-移位运算符" class="headerlink" title="0.6  移位运算符"></a>0.6  移位运算符</h4><p>按照平移的方向和填充数字的规则分为三种:&lt;&lt;(左移)、&gt;&gt;(带符号右移) 和 &gt;&gt;&gt;(无符号右移)</p>
+<ul>
+<li><code>左移 &lt;&lt;</code> : 丢弃最高位,0补最低位；左移n位就相当于乘以2的n次方</li>
+<li><code>右移 &gt;&gt;</code> : 符号位不变,高位补上符号位(正数0, 负数1)；右移n位相当于除以2的n次方</li>
+<li><code>无符号右移 &gt;&gt;&gt;</code> : 忽略符号位，0补最高位(补码移位所得)</li>
+</ul>
+<blockquote>
+<ul>
+<li>正数的左移与右移，负数的无符号右移，就是相应的补码移位所得，在高位补0即可。</li>
+<li>负数的右移，就是补码高位补1,然后按位取反加1即可。</li>
+</ul>
+</blockquote>
+<ul>
+<li>运算规则：<ul>
+<li>左移：高位移出(舍弃)，低位的空位补零；int类型时，每移动1位它的第31位就要被移出并且丢弃；long类型时，每移动1位它的第63位就要被移出并且丢弃；byte和short类型时，将自动把这些类型扩大为int型。</li>
+<li>右移：低位移出(舍弃)，高位的空位补符号位，即正数补0，负数补1；当右移的运算数是byte 和short类型时，将自动把这些类型扩大为 int 型。</li>
+<li>无符号右移：补码移位，高位补0；正数和右移表现一致，负数变成了很大的正数；</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-Arraylist"><a href="#1-Arraylist" class="headerlink" title="1. Arraylist"></a>1. Arraylist</h3><p>ArrayList的底层是数组队列，相当于<strong>动态数组</strong>。与数组相比，它的容量能动态增长。在添加大量元素前，应用程序使用ensureCapacity操作来增加 ArrayList 实例的容量。这可以减少递增式再分配的数量。<br>它继承于 AbstractList，实现了 List, RandomAccess, Cloneable, java.io.Serializable 这些接口。</p>
 <ul>
 <li><strong>数组</strong>时间复杂度: <strong>插入/删除:O(n)</strong>，<strong>增加(末尾)/随机访问: O(1)</strong></li>
 <li>ArrayList 继承了AbstractList，实现了List。它是一个数组队列，提供了相关的<strong>添加、删除、修改、遍历</strong>等功能</li>
@@ -45,20 +69,29 @@
 <li>ArrayList 实现java.io.Serializable 接口，这意味着ArrayList<strong>支持序列化</strong>，能通过序列化去传输。</li>
 <li>和 Vector 不同，ArrayList 中的操作<strong>不是线程安全的</strong>！所以，建议在单线程中才使用 ArrayList，而在多线程中可以选择 Vector 或者 CopyOnWriteArrayList。</li>
 </ul>
-<h4 id="1-1-ArrayList-部分-源码分析"><a href="#1-1-ArrayList-部分-源码分析" class="headerlink" title="1.1 ArrayList 部分 源码分析:"></a>1.1 ArrayList 部分 源码分析:</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayList</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">RandomAccess</span>, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 【初始容量】默认 10</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_CAPACITY = <span class="number">10</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 如有必要，增加此ArrayList实例的容量，以确保它至少能容纳元素的数量</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>   minCapacity   所需的最小容量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ensureCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> minExpand = (elementData != DEFAULTCAPACITY_EMPTY_ELEMENTDATA)</span><br><span class="line">            <span class="comment">// any size if not default element table</span></span><br><span class="line">            ? <span class="number">0</span></span><br><span class="line">            <span class="comment">// larger than default for default empty table. It's already</span></span><br><span class="line">            <span class="comment">// supposed to be at default size.</span></span><br><span class="line">            : DEFAULT_CAPACITY;</span><br><span class="line">        <span class="keyword">if</span> (minCapacity &gt; minExpand) &#123;</span><br><span class="line">            ensureExplicitCapacity(minCapacity);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 得到最小扩容量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">        ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">calculateCapacity</span><span class="params">(Object[] elementData, <span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</span><br><span class="line">            <span class="keyword">return</span> Math.max(DEFAULT_CAPACITY, minCapacity);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> minCapacity;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断是否需要扩容,上面两个方法都要调用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">        modCount++;</span><br><span class="line">        <span class="comment">// overflow-conscious code</span></span><br><span class="line">        <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</span><br><span class="line">            grow(minCapacity);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *  【扩容】核心方法。</span></span><br><span class="line"><span class="comment">     * elementData 为保存ArrayList数据的数组</span></span><br><span class="line"><span class="comment">     * elementData.length 求数组长度</span></span><br><span class="line"><span class="comment">     * elementData.size 求数组中的元素个数</span></span><br><span class="line"><span class="comment">     * oldCapacity为旧容量，newCapacity为新容量</span></span><br><span class="line"><span class="comment">     * oldCapacity&gt;&gt;1:将oldCapacity右移一位(oldCapacity/2)</span></span><br><span class="line"><span class="comment">     * 其效果相当于oldCapacity+oldCapacity/2(扩容1.5倍)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// overflow-conscious code</span></span><br><span class="line">        <span class="keyword">int</span> oldCapacity = elementData.length;</span><br><span class="line">        <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</span><br><span class="line">            newCapacity = minCapacity;</span><br><span class="line">        <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">            newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">        <span class="comment">// minCapacity is usually close to size, so this is a win:</span></span><br><span class="line">        elementData = Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="1-2-System-arraycopy-和Arrays-copyOf-方法"><a href="#1-2-System-arraycopy-和Arrays-copyOf-方法" class="headerlink" title="1.2 System.arraycopy()和Arrays.copyOf()方法"></a>1.2 System.arraycopy()和Arrays.copyOf()方法</h4><p>通过源码发现这两个实现数组复制的方法被广泛使用而且很多地方都特别巧妙。比如插入操作add(int index, E element)方法就很巧妙的用到了arraycopy()方法让数组自己复制自己实现让index开始之后的所有成员后移一个位置</p>
+<h4 id="1-1-ArrayList扩容机制-（重点）"><a href="#1-1-ArrayList扩容机制-（重点）" class="headerlink" title="1.1 ArrayList扩容机制*（重点）"></a>1.1 ArrayList扩容机制*（重点）</h4><ul>
+<li>以无参数构造方法创建ArrayList时，实际上初始化赋值的是一个空数组；当add第一个元素时，才真正分配容量(<strong>默认10</strong>)</li>
+<li>ArrayList在每次增加元素(1个或一组)时，都要调用<code>ensureCapacityInternal()</code>方法来确保足够的容量</li>
+<li>当容量不足以容纳当前的元素个数时，进入<code>grow()</code>方法进行扩容，首先设置新的容量为旧容量的<strong>1.5倍</strong></li>
+<li>若设置后的新容量还不够，则设置新容量为<code>minCapacity</code>(所需最小容量)</li>
+<li>比较新容量是否大于<code>MAX_ARRAY_SIZE</code>(Integer最大值减8)，若大于，再比较<code>minCapacity</code>是否大于<code>MAX_ARRAY_SIZE</code>，若大于，设置新的容量为<code>Integer.MAX_VALUE</code>(Integer最大值)，否则设置新的容量为<code>MAX_ARRAY_SIZE</code>(Integer最大值减8)</li>
+<li>最后用<code>Arrays.copyof()</code>方法将元素拷贝到新的数组</li>
+<li>(第<code>Integer.MAX_VALUE+1</code>次添加元素时，抛出<code>OutOfMemoryError</code>异常)</li>
+</ul>
+<blockquote>
+<p><strong>System.arraycopy()和Arrays.copyOf()方法</strong><br>通过源码发现这两个实现数组复制的方法被广泛使用, 比如插入操作add(int index, E element)方法就很巧妙的用到了 System.arraycopy()方法让数组自己复制自己实现让index开始之后的所有成员后移一个位置</p>
 <ul>
 <li>Arrays.copyOf()内部也是调用了System.arraycopy()方法 </li>
 <li>Arrays.copyOf()是系统自动在内部新建一个数组，并返回该数组</li>
 <li>System.arraycopy()需要目标数组，将原数组拷贝到你自己定义的数组里，而且可以选择拷贝的起点和长度以及放入新数组中的位置</li>
 </ul>
-<h4 id="1-3-移位运算符"><a href="#1-3-移位运算符" class="headerlink" title="1.3 移位运算符"></a>1.3 移位运算符</h4><p>按照平移的方向和填充数字的规则分为三种:&lt;&lt;(左移)、&gt;&gt;(带符号右移)和&gt;&gt;&gt;(无符号右移)</p>
+</blockquote>
+<h4 id="1-2-ensureCapacity"><a href="#1-2-ensureCapacity" class="headerlink" title="1.2 ensureCapacity"></a>1.2 ensureCapacity</h4><p>ArrayList对外提供了一个<code>ensureCapacity(int n)</code>方法</p>
 <ul>
-<li>作用: 对于大数据的2进制运算,位移运算符比那些普通运算符的运算要快很多,因为程序仅仅移动一下而已,不去计算,这样提高了效率,节省了资源 </li>
-<li>比如：int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1); 右移一位相当于除2，右移n位相当于除以 2 的 n 次方。</li>
+<li>最好在<code>add</code>大量元素之前用ensureCapacity方法，以<strong>减少增量重新分配的次数</strong></li>
+<li>ensureCapacity一次性扩容到位，否则在添加大量元素的过程中，一点一点的进行扩容</li>
 </ul>
-<h4 id="1-4-内部类"><a href="#1-4-内部类" class="headerlink" title="1.4 内部类"></a>1.4 内部类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Itr</span> <span class="keyword">implements</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt;</span>&#123;...&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ListItr</span> <span class="keyword">extends</span> <span class="title">Itr</span> <span class="keyword">implements</span> <span class="title">ListIterator</span>&lt;<span class="title">E</span>&gt;</span>&#123;...&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">SubList</span> <span class="keyword">extends</span> <span class="title">AbstractList</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">RandomAccess</span></span>&#123;...&#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListSpliterator</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">Spliterator</span>&lt;<span class="title">E</span>&gt;</span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="1-3-内部类"><a href="#1-3-内部类" class="headerlink" title="1.3 内部类"></a>1.3 内部类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Itr</span> <span class="keyword">implements</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt;</span>&#123;...&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ListItr</span> <span class="keyword">extends</span> <span class="title">Itr</span> <span class="keyword">implements</span> <span class="title">ListIterator</span>&lt;<span class="title">E</span>&gt;</span>&#123;...&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">SubList</span> <span class="keyword">extends</span> <span class="title">AbstractList</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">RandomAccess</span></span>&#123;...&#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListSpliterator</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">Spliterator</span>&lt;<span class="title">E</span>&gt;</span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
 
 <p>ArrayList有四个内部类</p>
 <ul>
@@ -69,27 +102,7 @@
 </ul>
 </li>
 </ul>
-<h4 id="1-5-扩容机制"><a href="#1-5-扩容机制" class="headerlink" title="1.5 扩容机制"></a>1.5 扩容机制</h4><p>以无参数构造方法创建 ArrayList 时，实际上初始化赋值的是一个空数组。<br>当真正对数组进行添加元素操作时，才真正分配容量。即向数组中添加第一个元素时，数组容量扩为10。</p>
-<ul>
-<li><p>当我们要 add 进第1个元素到 ArrayList 时，elementData.length 为0 （因为还是一个空的 list），因为执行了 ensureCapacityInternal() 方法 ，所以 minCapacity 此时为10。此时，minCapacity - elementData.length &gt; 0 成立，所以会进入 grow(minCapacity) 方法。</p>
-</li>
-<li><p>当add第2个元素时，minCapacity 为2，此时e lementData.length(容量)在添加第一个元素后扩容成 10 了。此时，minCapacity - elementData.length &gt; 0 不成立，所以不会进入 （执行）grow(minCapacity) 方法。</p>
-</li>
-<li><p>添加第3、4···到第10个元素时，依然不会执行grow方法，数组容量都为10。</p>
-</li>
-<li><p>直到添加第11个元素，minCapacity(为11)比elementData.length（为10）要大。进入grow方法进行扩容。</p>
-</li>
-<li><p>int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1),所以 ArrayList 每次扩容之后容量都会变为原来的 1.5 倍</p>
-</li>
-<li><p>grow() 方法 ：</p>
-<ul>
-<li>当add第1个元素时，oldCapacity 为0，经比较后第一个if判断成立，newCapacity = minCapacity(为10)。但是第二个if判断不会成立，即newCapacity 不比 MAX_ARRAY_SIZE大，则不会进入 hugeCapacity 方法。数组容量为10，add方法中 return true,size增为1。</li>
-<li>当add第11个元素进入grow方法时，newCapacity为15，比minCapacity（为11）大，第一个if判断不成立。新容量没有大于数组最大size，不会进入hugeCapacity方法。数组容量扩为15，add方法中return true,size增为11。</li>
-<li>以此类推······</li>
-</ul>
-</li>
-</ul>
-<h3 id="2-LinkedList分析"><a href="#2-LinkedList分析" class="headerlink" title="2. LinkedList分析"></a>2. LinkedList分析</h3><p>LinkedList是基于<strong>双向链表</strong>实现的, 可以在任何位置进行高效地插入和移除操作的有序序列。</p>
+<h3 id="2-LinkedList"><a href="#2-LinkedList" class="headerlink" title="2. LinkedList"></a>2. LinkedList</h3><p>LinkedList是基于<strong>双向链表</strong>实现的, 可以在任何位置进行高效地插入和移除操作的有序序列。</p>
 <ul>
 <li>复杂度: <strong>增加(末尾)/删除:O(1)</strong>，<strong>插入/获取: O(n)</strong></li>
 <li>LinkedList 继承AbstractSequentialList的<strong>双向链表</strong>。它也可以被当作堆栈、队列或双端队列进行操作。</li>
@@ -99,24 +112,54 @@
 <li>LinkedList 实现java.io.Serializable接口，这意味着LinkedList<strong>支持序列化</strong>，能通过序列化去传输。</li>
 <li>LinkedList <strong>不是线程安全的</strong>，如果想使LinkedList变成线程安全的，可以调用静态类Collections类中的synchronizedList方法</li>
 </ul>
-<h4 id="2-1-LinkedList-部分-源码分析"><a href="#2-1-LinkedList-部分-源码分析" class="headerlink" title="2.1 LinkedList 部分 源码分析:"></a>2.1 LinkedList 部分 源码分析:</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractSequentialList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">Deque</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">transient</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">transient</span> Node&lt;E&gt; first; <span class="comment">//头指针</span></span><br><span class="line">    <span class="keyword">transient</span> Node&lt;E&gt; last; <span class="comment">//尾指针</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 存储对象的结构 Node, LinkedList的内部类</span></span><br><span class="line"><span class="comment">     * linkedList的奥秘就在这里</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        E item; <span class="comment">// 数据域（当前节点的值）</span></span><br><span class="line">        Node&lt;E&gt; next; <span class="comment">// 后继（指向当前一个节点的后一个节点）</span></span><br><span class="line">        Node&lt;E&gt; prev; <span class="comment">// 前驱（指向当前节点的前一个节点）</span></span><br><span class="line">        <span class="comment">// 构造函数，赋值前驱后继</span></span><br><span class="line">        Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">            <span class="keyword">this</span>.item = element;</span><br><span class="line">            <span class="keyword">this</span>.next = next;</span><br><span class="line">            <span class="keyword">this</span>.prev = prev;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-1-LinkedList底层分析"><a href="#2-1-LinkedList底层分析" class="headerlink" title="2.1 LinkedList底层分析:"></a>2.1 LinkedList底层分析:</h4><p>LinkedList的底层是一个双向链表，链表中挂载着一个个的Node元素；可以从LinkedList的Node内部类看出奥秘：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">transient</span> Node&lt;E&gt; first; <span class="comment">//头指针</span></span><br><span class="line"><span class="keyword">transient</span> Node&lt;E&gt; last; <span class="comment">//尾指针</span></span><br><span class="line"><span class="comment">//内部类</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    E item; <span class="comment">// 数据域（当前节点的值）</span></span><br><span class="line">    Node&lt;E&gt; next; <span class="comment">// 后继（指向当前一个节点的后一个节点）</span></span><br><span class="line">    Node&lt;E&gt; prev; <span class="comment">// 前驱（指向当前节点的前一个节点）</span></span><br><span class="line">    <span class="comment">// 构造函数，赋值前驱后继</span></span><br><span class="line">    Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">        <span class="keyword">this</span>.item = element;</span><br><span class="line">        <span class="keyword">this</span>.next = next;</span><br><span class="line">        <span class="keyword">this</span>.prev = prev;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>LinkedList 是基于链表结构实现，所以在类中包含了 first 和 last 两个指针(Node)。</li>
 <li>Node 中包含了上一个节点和下一个节点的引用，这样就构成了双向的链表。</li>
 </ul>
-<h4 id="2-2-ArrayList和LinkedList"><a href="#2-2-ArrayList和LinkedList" class="headerlink" title="2.2 ArrayList和LinkedList"></a>2.2 ArrayList和LinkedList</h4><p>ArrayList和LinkedList在性能上各有优缺点，都有各自所适用的地方，总的说来可以描述如下： </p>
-<ol>
-<li>对ArrayList和LinkedList而言，在列表末尾增加一个元素所花的开销都是固定的。<ul>
-<li>对ArrayList而言，主要是在内部数组中增加一项，指向所添加的元素，偶尔可能会导致对数组重新进行分配；</li>
-<li>而对LinkedList而言，这个开销是统一的，分配一个内部Entry对象。</li>
+<h4 id="2-2-LinkedList增删改查"><a href="#2-2-LinkedList增删改查" class="headerlink" title="2.2 LinkedList增删改查"></a>2.2 LinkedList增删改查</h4><ul>
+<li>链表批量增加，是靠for循环遍历原数组，依次执行插入节点操作。增加一定会修改modCount。</li>
+<li>通过下标获取某个node的时候(add select)，会根据index处于前半段还是后半段<strong>进行一个折半</strong>，以提升查询效率</li>
+<li>删也一定会修改modCount。 <ul>
+<li>按下标删，也是先根据index找到Node，然后去链表上unlink掉这个Node。 </li>
+<li>按元素删，会先去遍历链表寻找是否有该Node，如果有，去链表上unlink掉这个Node。</li>
 </ul>
 </li>
-<li>在ArrayList的中间插入或删除一个元素意味着这个列表中剩余的元素都会被移动；而在LinkedList的中间插入或删除一个元素的开销是固定的。</li>
-<li>LinkedList不支持高效的随机元素访问。</li>
-<li>ArrayList的空间浪费主要体现在在list列表的结尾预留一定的容量空间，而LinkedList的空间花费则体现在它的每一个元素都需要消耗相当的空间</li>
-</ol>
-<h3 id="3-HashMap分析"><a href="#3-HashMap分析" class="headerlink" title="3. HashMap分析"></a>3. HashMap分析</h3><p>HashMap是<strong>数组+链表+红黑树</strong>（JDK1.8增加了红黑树部分）实现的, 用于存储Key-Value键值对的集合，每一个键值对也叫做一个Entry。这些Entry分散存储在一个数组当中，这个数组就是HashMap的主干。</p>
+<li>改也是先根据index找到Node，然后替换值。不修改modCount。</li>
+<li>CRUD操作里，都涉及到根据index去找到Node的操作。</li>
+</ul>
+<h4 id="2-2-unlink原理"><a href="#2-2-unlink原理" class="headerlink" title="2.2 unlink原理"></a>2.2 unlink原理</h4><ul>
+<li>先判断该节点是否存在上一个节点，即是否有前驱节点。<ul>
+<li>无前驱节点则说明要删除的节点为链表的第一节点，那么只需要把该节点的下一个节点设置为链表的第一个节点。</li>
+<li>有前驱节点则需要把前驱节点的尾部引用指向该节点的下一个节点。</li>
+</ul>
+</li>
+<li>再判断该节点是否存在下一个节点，即是否有后继节点。<ul>
+<li>无后继节点则说明该节点是链表的最后一个节点，那么只需要把该节点前驱节点设置成链表的最后一个节点即可。</li>
+<li>有后继节点则需要把后继节点的头部引用指向该节点的上一个节点。</li>
+</ul>
+</li>
+<li>核心就是在于将要删除的节点的前驱节点尾部指向该节点的后继节点，将要删除的节点的后继节点的头部指向该节点的前驱节点。这样便完成了链表的删除操作。</li>
+</ul>
+<blockquote>
+<p>删除和新增方法的实现基本是对该节点的上一个节点和下一个节点的引用设置，不需要操作其他节点，效率相对较高</p>
+</blockquote>
+<h4 id="2-3-offer与add的区别"><a href="#2-3-offer与add的区别" class="headerlink" title="2.3 offer与add的区别"></a>2.3 offer与add的区别</h4><ul>
+<li>offer属于 offer in interface <strong>Deque</strong>。</li>
+<li>add 属于 add in interface <strong>Collection</strong>。</li>
+<li>当队列为空时候，使用add方法会报错，而offer方法会返回false。</li>
+<li>作为List使用时,一般采用add / get方法来 压入/获取对象。</li>
+<li>作为Queue使用时,才会采用 offer/poll/take等方法作为链表对象时,offer等方法相对来说没有什么意义这些方法是用于支持队列应用的。</li>
+</ul>
+<h4 id="2-2-对比Vector、ArrayList、LinkedList有何区别"><a href="#2-2-对比Vector、ArrayList、LinkedList有何区别" class="headerlink" title="2.2 对比Vector、ArrayList、LinkedList有何区别"></a>2.2 对比Vector、ArrayList、LinkedList有何区别</h4><p>这三者都是实现集合框架中的 List，也就是所谓的有序集合，因此具体功能也比较近似，比如都提供按照位置进行定位、添加或者删除的操作，都提供迭代器以遍历其内容等。但因为具体的设计区别，在行为、性能、线程安全等方面，表现又有很大不同。</p>
+<ul>
+<li>Vector 是 Java 早期提供的<strong>线程安全</strong>的动态数组，如果不需要线程安全，并不建议选择，毕竟同步是有额外开销的。Vector 内部是使用对象数组来保存数据，可以根据需要自动的增加容量，当数组已满时，会创建新的数组，并拷贝原有数组数据扩容为旧容量的<strong>2倍</strong>。</li>
+<li>ArrayList 是应用更加广泛的动态数组实现，它本身不是线程安全的，所以性能要好很多。ArrayList 也是可以根据需要调整容量，在扩容为旧容量的<strong>1.5倍</strong>。</li>
+<li>LinkedList 顾名思义是 Java 提供的双向链表，<strong>不需要扩容</strong>，它也不是线程安全的。LinkedList不支持高效的随机元素访问。</li>
+</ul>
+<h3 id="3-HashMap"><a href="#3-HashMap" class="headerlink" title="3. HashMap"></a>3. HashMap</h3><p>HashMap是<strong>数组+链表+红黑树</strong>（JDK1.8增加了红黑树部分）实现的, 用于存储Key-Value键值对的集合，每一个键值对也叫做一个Entry。这些Entry分散存储在一个数组当中，这个数组就是HashMap的主干。</p>
 <ul>
 <li>HashMap继承了AbstractMap类，实现了Map，Cloneable，Serializable接口</li>
 <li>继承 abstractMap，也就是用来减轻实现Map接口的编写负担。</li>
@@ -126,7 +169,7 @@
 <blockquote>
 <p>JDK1.8 之前 HashMap 由 数组+链表 组成的，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突而存在的（“拉链法”解决冲突）.JDK1.8 以后在解决哈希冲突时有了较大的变化，<strong>当链表长度大于阈值（默认为 8）时，将链表转化为红黑树</strong>，以实现O(logn)时间复杂读查找。</p>
 </blockquote>
-<p>HashMap类中有一个非常重要的字段，就是 Node[] table，即哈希桶数组，明显它是一个Node的数组。</p>
+<p>HashMap类中有一个非常重要的字段，就是 Node[] table，即<strong>哈希桶数组</strong>，明显它是一个Node的数组。</p>
 <ul>
 <li>HashMap的实例有两个参数影响其性能:<ul>
 <li>初始容量(默认16)：哈希表中桶的数量</li>
@@ -135,37 +178,101 @@
 </li>
 <li>当哈希表中条目数超出了当前容量*加载因子(其实就是HashMap的实际容量)时，则对该哈希表进行rehash操作，将哈希表扩充至两倍的桶数。</li>
 </ul>
-<h4 id="3-1-源码分析"><a href="#3-1-源码分析" class="headerlink" title="3.1 源码分析"></a>3.1 源码分析</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Map</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;, <span class="title">Cloneable</span>, <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 序列号</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">362498820763181265L</span>;    </span><br><span class="line">    <span class="comment">// 默认的初始容量是16</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="number">1</span> &lt;&lt; <span class="number">4</span>;   </span><br><span class="line">    <span class="comment">// 最大容量</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAXIMUM_CAPACITY = <span class="number">1</span> &lt;&lt; <span class="number">30</span>; </span><br><span class="line">    <span class="comment">// 默认的填充因子</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">float</span> DEFAULT_LOAD_FACTOR = <span class="number">0.75f</span>;</span><br><span class="line">    <span class="comment">// 当桶(bucket)上的结点数大于这个值时会转成红黑树</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TREEIFY_THRESHOLD = <span class="number">8</span>; </span><br><span class="line">    <span class="comment">// 当桶(bucket)上的结点数小于这个值时树转链表</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> UNTREEIFY_THRESHOLD = <span class="number">6</span>;</span><br><span class="line">    <span class="comment">// 桶中结构转化为红黑树对应的table的最小大小</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MIN_TREEIFY_CAPACITY = <span class="number">64</span>;</span><br><span class="line">    <span class="comment">// 存储元素的数组，总是2的幂次倍</span></span><br><span class="line">    <span class="keyword">transient</span> Node&lt;k,v&gt;[] table; </span><br><span class="line">    <span class="comment">// 存放具体元素的集</span></span><br><span class="line">    <span class="keyword">transient</span> Set&lt;map.entry&lt;k,v&gt;&gt; entrySet;</span><br><span class="line">    <span class="comment">// 存放元素的个数，注意这个不等于数组的长度。</span></span><br><span class="line">    <span class="keyword">transient</span> <span class="keyword">int</span> size;</span><br><span class="line">    <span class="comment">// 每次扩容和更改map结构的计数器</span></span><br><span class="line">    <span class="keyword">transient</span> <span class="keyword">int</span> modCount;   </span><br><span class="line">    <span class="comment">// 临界值 当实际大小(容量*填充因子)超过临界值时，会进行扩容</span></span><br><span class="line">    <span class="keyword">int</span> threshold;</span><br><span class="line">    <span class="comment">// 加载因子</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">float</span> loadFactor;</span><br><span class="line">    <span class="comment">// loadFactor的默认值为0.75f</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">()</span> </span>&#123;<span class="keyword">this</span>.loadFactor = DEFAULT_LOAD_FACTOR;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h4 id="3-1-HashMap的-put-方法过程"><a href="#3-1-HashMap的-put-方法过程" class="headerlink" title="3.1 HashMap的 put 方法过程"></a>3.1 HashMap的 put 方法过程</h4><p>put方法内部是一个 <code>putVal</code> 的调用：</p>
 <ol>
-<li><p>loadFactor加载因子</p>
-<ul>
-<li>loadFactor加载因子是控制数组存放数据的疏密程度，loadFactor越趋近于1，那么 数组中存放的数据(entry)也就越多，也就越密，也就是会让链表的长度增加，loadFactor越小，也就是趋近于0，数组中存放的数据(entry)也就越少，也就越稀疏。</li>
-<li>loadFactor太大导致查找元素效率低，太小导致数组的利用率低，存放的数据会很分散。loadFactor的默认值为0.75f是官方给出的一个比较好的临界值。</li>
-<li>给定的默认容量为 16，负载因子为 0.75。Map 在使用过程中不断的往里面存放数据，当数量达到了 16 * 0.75 = 12 就需要将当前 16 的容量进行扩容，而扩容这个过程涉及到 rehash、复制数据等操作，所以非常消耗性能。</li>
-</ul>
-</li>
-<li><p>threshold</p>
-<ul>
-<li>threshold = capacity * loadFactor，当Size&gt;=threshold的时候，那么就要考虑对数组的扩增了，也就是说，这个的意思就是 衡量数组是否需要扩增的一个标准。</li>
-</ul>
-</li>
-<li><p>put方法过程</p>
-<ol>
-<li>对 Key 求 Hash 值，然后再计算下标((key.hashCode() ^ (key.hashCode() &gt;&gt;&gt; 16)) &amp; (table.length - 1))。</li>
+<li>对 Key 求 Hash 值，然后再计算下标。</li>
 <li>如果没有碰撞，直接放入桶中，</li>
-<li>如果碰撞了，以链表的方式链接到后面，</li>
-<li>如果链表长度超过阀值（TREEIFY_THRESHOLD == 8），就把链表转成红黑树。</li>
+<li>如果碰撞了，若是树节点，就<code>putTreeVal</code>添加元素，若不是就遍历链表插入。</li>
+<li>如果链表长度超过阀值（TREEIFY_THRESHOLD==8），就把链表转成红黑树。</li>
 <li>如果节点已经存在就替换旧值，若未找到则继续</li>
 <li>如果桶满了（容量 * 加载因子），就需要 resize(扩容为原来2倍并重新散列,元素的下标要么不变，要么变为【原下标+原容量】)。</li>
 </ol>
-</li>
-<li><p>hash函数的是实现</p>
-<ul>
-<li>高 16bit 不变，低 16bit 和高 16bit 做了一个异或（n - 1） &amp; hash –&gt; 得到下标</li>
+<h4 id="3-2-HashMap-桶下标计算"><a href="#3-2-HashMap-桶下标计算" class="headerlink" title="3.2 HashMap 桶下标计算"></a>3.2 HashMap 桶下标计算</h4><ul>
+<li><strong>下标</strong>：<code>hash(key) &amp; (table.length - 1)</code></li>
+<li>扰动函数<strong>hash(key)</strong>：(key==null) ? 0 : <code>(key.hashCode()^(key.hashCode() &gt;&gt;&gt; 16))</code></li>
+<li>低16位 和 高 16位 做了一个<strong>异或</strong>得到 hash值 与 (容器长度-1)进行<strong>取模(%)</strong>运算,得到下标。<ul>
+<li>利用位运算代替取模运算，提高程序的计算效率：（当 b=2^n 时，a%b = a &amp; (b-1) ），也是因此，HashMap 才将初始长度设置为 16，且扩容只能是以 2 的倍数（2^n）扩容。</li>
 </ul>
 </li>
+<li>有些数据计算出的哈希值差异主要在高位，而HashMap里的哈希寻址是忽略容量以上的高位的，那么这种处理就可以尽可能有效的避免哈希碰撞。</li>
+</ul>
+<blockquote>
+<p>HashMap 的性能表现非常依赖于哈希码的有效性: equals相等，hashCode一定要相等。重写了 hashCode 也要重写 equals。hashCode 需要保持一致性，状态改变返回的哈希值仍然要一致。</p>
+</blockquote>
+<h4 id="3-3-HashMap-容量、负载因子和树化"><a href="#3-3-HashMap-容量、负载因子和树化" class="headerlink" title="3.3 HashMap 容量、负载因子和树化"></a>3.3 HashMap 容量、负载因子和树化</h4><ul>
+<li>容量和负载系数决定了可用的桶的数量，空桶太多会浪费空间，如果使用的太满则会严重影响操作的性能。</li>
+<li>如果能够知道 HashMap 要存取的键值对数量，可以考虑预先设置合适的容量大小。</li>
+<li>计算条件：<strong>负载因子 * 容量 &gt; 元素数量</strong>；所以，预先设置的容量需要满足，大于“预估元素数量/负载因子”，同时它是<strong>2的幂数</strong></li>
+<li>容量理论最大极限由 MAXIMUM_CAPACITY 指定，数值为 <strong>1&lt;&lt;30</strong>，也就是2的30次方</li>
+</ul>
+<h5 id="3-3-1-HashMap-负载因子loadFactor"><a href="#3-3-1-HashMap-负载因子loadFactor" class="headerlink" title="3.3.1 HashMap 负载因子loadFactor"></a>3.3.1 HashMap 负载因子loadFactor</h5><ul>
+<li>loadFactor加载因子是控制数组存放数据的疏密程度，越大越密，越小越稀疏。</li>
+<li>loadFactor太大导致查找元素效率低，太小导致数组的利用率低，存放的数据会很分散。loadFactor的<strong>默认值为0.75f</strong>是官方给出的一个比较好的临界值。</li>
+<li>给定的默认容量为16，负载因子为0.75。当数量达到了 16*0.75 = 12 就需要将当前16的容量进行扩容，而扩容这个过程涉及到 rehash、复制数据等操作，所以非常消耗性能。</li>
+<li>而对于负载因子，建议：<ul>
+<li>如果没有特别需求，不要轻易进行更改，因为 JDK 自身的默认负载因子是非常符合通用场景的需求的。</li>
+<li>如果确实需要调整，建议不要设置超过 0.75 的数值，因为会显著增加冲突，降低 HashMap 的性能。</li>
+<li>如果使用太小的负载因子，按照上面的公式，预设容量值也进行调整，否则可能会导致更加频繁的扩容，增加无谓的开销，本身访问性能也会受影响。</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-3-2-HashMap-门限值threshold"><a href="#3-3-2-HashMap-门限值threshold" class="headerlink" title="3.3.2 HashMap 门限值threshold"></a>3.3.2 HashMap 门限值threshold</h5><p><code>threshold = capacity * loadFactor</code>，当<code>Size&gt;=threshold</code>的时候，那么就要考虑对数组的扩增了，也就是说，这个的意思就是 衡量数组是否需要扩增的一个标准。</p>
+<ul>
+<li>门限值等于(负载因子 x 容量)，如果构建 HashMap 的时候没有指定它们，那么就是依据相应的默认常量值。</li>
+<li>门限通常是以倍数进行调整 （newThr = oldThr &lt;&lt; 1），根据 putVal 中的逻辑，当元素个数超过门限大小时，则调整 Map 大小。</li>
+<li>扩容后，需要将老的数组中的元素重新放置到新的数组，这是扩容的一个主要开销来源。</li>
+</ul>
+<h5 id="3-3-2-HashMap-树化改造"><a href="#3-3-2-HashMap-树化改造" class="headerlink" title="3.3.2 HashMap 树化改造"></a>3.3.2 HashMap 树化改造</h5><p>树化改造逻辑主要在 putVal 和 <code>treeifyBin</code> 中。</p>
+<ul>
+<li>链表结构（这里叫 bin）的数量大于 <code>TREEIFY_THRESHOLD</code>(默认为8) 时：<ul>
+<li>如果容量小于 <code>MIN_TREEIFY_CAPACITY</code>(默认为64) ，只会进行简单的扩容。</li>
+<li>如果容量大于 <code>MIN_TREEIFY_CAPACITY</code>(默认为64)，则会进行树化改造。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-4-HashMap-扩容resize"><a href="#3-4-HashMap-扩容resize" class="headerlink" title="3.4 HashMap 扩容resize"></a>3.4 HashMap 扩容resize</h4><ul>
+<li>HashMap扩容条件：<ul>
+<li>元素个数超出了加载因子与当前容量的乘积，并且发生了Hash碰撞</li>
+</ul>
+</li>
+<li>HashMap扩容步骤：<ol>
+<li>创建一个新的Entry空数组，长度是原来的2倍。</li>
+<li>遍历原Entry数组，把所有的Entry重新Hash到新数组里。</li>
+<li>重新散列的元素下标要么【不变】，要么变为【原下标+原容量】，取决于位运算((n - 1) &amp; hash)</li>
 </ol>
+</li>
+</ul>
+<blockquote>
+<p>经过一次扩容处理后，元素会更加均匀的分布在各个桶中，会提升访问效率。<br>但会遍历所有的元素，时间复杂度很高；遍历元素所带来的坏处大于元素在桶中均匀分布所带来的好处。<br>尽量避免进行扩容处理。</p>
+</blockquote>
+<h4 id="3-5-常见的hash算法及冲突的解决"><a href="#3-5-常见的hash算法及冲突的解决" class="headerlink" title="3.5 常见的hash算法及冲突的解决"></a>3.5 常见的hash算法及冲突的解决</h4><p>hash函数，即散列函数。它可以将不定长的输入，通过散列算法转换成一个定长的输出，这个输出就是散列值(不保证唯一)。</p>
+<ul>
+<li>常见Hash算法：<ol>
+<li>直接定址法：直接以关键字k或者k加上某个常数（k+c）作为哈希地址（H(k)=ak+b）。</li>
+<li>数字分析法：提取关键字中取值比较均匀的数字作为哈希地址（如一组出生日期，相较于年-月，月-日的差别要大得多，可以降低冲突概率）</li>
+<li>分段叠加法：按照哈希表地址位数将关键字分成位数相等的几部分，其中最后一部分可以比较短。然后将这几部分相加，舍弃最高进位后的结果就是该关键字的哈希地址。</li>
+<li>平方取中法：如果关键字各个部分分布都不均匀的话，可以先求出它的平方值，然后按照需求取中间的几位作为哈希地址。</li>
+<li>伪随机数法：选择一随机函数，取关键字的随机值作为散列地址，通常用于关键字长度不同的场合。</li>
+<li>除留余数法：用关键字k除以某个不大于哈希表长度m的数p，将所得余数作为哈希表地址（H(k)=k%p, p&lt;=m; p一般取m或素数）。</li>
+</ol>
+</li>
+<li>常见解决hash冲突的方法<ol>
+<li>链地址法：将哈希表的每个单元作为链表的头结点，所有哈希地址为 i 的元素构成一个同义词链表。即发生冲突时就把该关键字链在以该单元为头结点的链表的尾部。</li>
+<li>开放定址法：即发生冲突时，去寻找下一个空的哈希地址。只要哈希表足够大，总能找到空的哈希地址。</li>
+<li>再哈希法：即发生冲突时，由其他的函数再计算一次哈希值。</li>
+<li>建立公共溢出区：将哈希表分为基本表和溢出表，发生冲突时，将冲突的元素放入溢出表。</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>HashMap就是使用链地址法来解决冲突的（JDK1.8增加了红黑树）</p>
+</blockquote>
+<h4 id="3-6-对比Hashtable、HashMap、TreeMap有什么不同"><a href="#3-6-对比Hashtable、HashMap、TreeMap有什么不同" class="headerlink" title="3.6 对比Hashtable、HashMap、TreeMap有什么不同"></a>3.6 对比Hashtable、HashMap、TreeMap有什么不同</h4><p>Hashtable、HashMap、TreeMap 都是最常见的一些 Map 实现，是以键值对的形式存储和操作数据的容器类型。</p>
+<ul>
+<li>Hashtable 是早期 Java 类库提供的一个哈希表实现，本身是同步的，不支持 null 键和值，由于同步导致的性能开销，所以已经很少被推荐使用。</li>
+<li>HashMap 是应用更加广泛的哈希表实现，行为上大致上与 HashTable 一致，主要区别在于 HashMap 不是同步的，支持 null 键和值等。通常情况下，HashMap 进行 put 或者 get 操作，可以达到常数时间的性能，所以它是绝大部分利用键值对存取场景的首选，比如，实现一个用户 ID 和用户信息对应的运行时存储结构。</li>
+<li>TreeMap 则是基于红黑树的一种提供顺序访问的 Map，和 HashMap 不同，它的 get、put、remove 之类操作都是 O(log(n))的时间复杂度，具体顺序可以由指定的 Comparator 来决定，或者根据键的自然顺序来判断。</li>
+</ul>
 ]]></content>
       
         <categories>
@@ -1118,7 +1225,7 @@
 <li>LongAdder:实现思路也类似ConcurrentHashMap，LongAdder有一个根据当前并发状况动态改变的Cell数组，Cell对象里面有一个long类型的value用来存储值;开始没有并发争用的时候或者是cells数组正在初始化的时候，会使用cas来将值累加到成员变量的base上，在并发争用的情况下，LongAdder会初始化cells数组，在Cell数组中选定一个Cell加锁，数组有多少个cell，就允许同时有多少线程进行修改，最后将数组中每个Cell中的value相加，在加上base的值，就是最终的值；cell数组还能根据当前线程争用情况进行扩容，初始长度为2，每次扩容会增长一倍，直到扩容到大于等于cpu数量就不再扩容，这也就是为什么LongAdder比cas和AtomicInteger效率要高的原因，后面两者都是volatile+cas实现的，他们的竞争维度是1，LongAdder的竞争维度为“Cell个数+1”为什么要+1？因为它还有一个base，如果竞争不到锁还会尝试将数值加到base上；</li>
 </ul>
 </li>
-<li>拆锁的粒度不能无限拆，最多可以将一个锁拆为当前cup数量个锁即可；</li>
+<li>拆锁的粒度不能无限拆，最多可以将一个锁拆为当前CPU数量即可；</li>
 </ul>
 </li>
 <li><strong>锁粗化</strong><ul>
