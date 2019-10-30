@@ -178,7 +178,7 @@
 </li>
 <li>当哈希表中条目数超出了当前容量*加载因子(其实就是HashMap的实际容量)时，则对该哈希表进行rehash操作，将哈希表扩充至两倍的桶数。</li>
 </ul>
-<h4 id="3-1-HashMap的-put-方法过程"><a href="#3-1-HashMap的-put-方法过程" class="headerlink" title="3.1 HashMap的 put 方法过程"></a>3.1 HashMap的 put 方法过程</h4><p>put方法内部是一个 <code>putVal</code> 的调用：</p>
+<h4 id="3-1-HashMap的-put-方法过程-（重点）"><a href="#3-1-HashMap的-put-方法过程-（重点）" class="headerlink" title="3.1 HashMap的 put 方法过程*（重点）"></a>3.1 HashMap的 put 方法过程*（重点）</h4><p>put方法内部是一个 <code>putVal</code> 的调用：</p>
 <ol>
 <li>对 Key 求 Hash 值，然后再计算下标。</li>
 <li>如果没有碰撞，直接放入桶中，</li>
