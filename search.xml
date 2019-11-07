@@ -4,6 +4,668 @@
   
     
     <entry>
+      <title><![CDATA[【并发编程】阻塞队列 与 线程池]]></title>
+      <url>http://chaooo.github.io/article/20191014.html</url>
+      <content type="html"><![CDATA[<ul>
+<li>池和队列的关系<ul>
+<li>线程池或者数据库连接池，都有最大限制。如果超出了限制数量，则新进来的申请连接都要放入额外的<strong>队列里</strong>，等到池空出来时，从队列中取出连接放进池里。<a id="more"></a></li>
+</ul>
+</li>
+</ul>
+<h3 id="1-BlockingQueue（阻塞队列）"><a href="#1-BlockingQueue（阻塞队列）" class="headerlink" title="1. BlockingQueue（阻塞队列）"></a>1. BlockingQueue（阻塞队列）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Queue接口</span><br><span class="line">    |———— BlockingQueue接口</span><br><span class="line">        |———— ArrayBlockingQueue类</span><br><span class="line">        |———— DelayQueue类</span><br><span class="line">        |———— LinkedBlockingQueue类</span><br><span class="line">        |———— PriorityBlockingQueue类</span><br><span class="line">        |———— SynchronousQueue类</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>BlockingQueue继承了Queue接口，提供了一些阻塞方法，主要作用如下：<ul>
+<li>当线程向队列中插入元素时，如果队列已满，则阻塞线程，直到队列有空闲位置（非满）；</li>
+<li>当线程从队列中取元素（删除队列元素）时，如果队列未空，则阻塞线程，直到队列有元素；</li>
+</ul>
+</li>
+<li>BlockingQueue在Queue方法基础上增加了两类和阻塞相关的方法：put(e)、take()；offer(e, time, unit)、poll(time, unit)。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>操作类型</th>
+<th>抛出异常</th>
+<th>返回特殊值</th>
+<th>阻塞线程</th>
+<th>超时</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>插入</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+<td>put(e)</td>
+<td>offer(e, time, unit)</td>
+</tr>
+<tr>
+<td>删除</td>
+<td>remove()</td>
+<td>poll()</td>
+<td>take()</td>
+<td>poll(time, unit)</td>
+</tr>
+<tr>
+<td>读取</td>
+<td>element()</td>
+<td>peek()</td>
+<td>/</td>
+<td>/</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong><code>put(e)</code></strong>和<strong><code>take()</code></strong>方法会一直阻塞调用线程，直到线程被中断或队列状态可用；</li>
+<li><strong><code>offer(e, time, unit)</code></strong>和<strong><code>poll(time, unit)</code></strong>方法会限时阻塞调用线程，直到超时或线程被中断或队列状态可用。</li>
+<li>阻塞队列主要用在生产者/消费者的场景</li>
+</ul>
+<h4 id="1-1-ArrayBlockingQueue"><a href="#1-1-ArrayBlockingQueue" class="headerlink" title="1.1 ArrayBlockingQueue"></a>1.1 ArrayBlockingQueue</h4><p>ArrayBlockingQueue是一个有边界的阻塞队列，它的内部实现是一个数组。</p>
+<ul>
+<li>有边界的意思是它的容量是有限的，我们必须在其初始化的时候指定它的容量大小，容量大小一旦指定就不可改变。</li>
+<li>ArrayBlockingQueue是以先进先出的方式存储数据，最新插入的对象是尾部，最新移出的对象是头部。</li>
+</ul>
+<h4 id="1-2-DelayQueue"><a href="#1-2-DelayQueue" class="headerlink" title="1.2 DelayQueue"></a>1.2 DelayQueue</h4><p>DelayQueue阻塞的是其内部元素，DelayQueue中的元素必须实现java.util.concurrent.Delayed接口，Delayed 接口继承了Comparable接口，这是因为DelayedQueue中的元素需要进行排序，一般情况，我们都是按元素过期时间的优先级进行排序。</p>
+<ul>
+<li>DelayQueue应用场景：定时关闭连接、缓存对象，超时处理等</li>
+</ul>
+<h4 id="1-3-LinkedBlockingQueue"><a href="#1-3-LinkedBlockingQueue" class="headerlink" title="1.3 LinkedBlockingQueue"></a>1.3 LinkedBlockingQueue</h4><p>LinkedBlockingQueue阻塞队列大小的配置是可选的，如果我们初始化时指定一个大小，它就是有边界的，如果不指定，它就是无边界的。</p>
+<ul>
+<li>说是无边界，其实是采用了默认大小为Integer.MAX_VALUE的容量 。它的内部实现是一个链表。</li>
+<li>和ArrayBlockingQueue一样，LinkedBlockingQueue 也是以先进先出的方式存储数据，最新插入的对象是尾部，最新移出的对象是头部。</li>
+</ul>
+<h4 id="1-4-PriorityBlockingQueue"><a href="#1-4-PriorityBlockingQueue" class="headerlink" title="1.4 PriorityBlockingQueue"></a>1.4 PriorityBlockingQueue</h4><p>PriorityBlockingQueue是一个没有边界的队列，它的排序规则和 java.util.PriorityQueue一样。需要注意，PriorityBlockingQueue中允许插入null对象。</p>
+<ul>
+<li>所有插入PriorityBlockingQueue的对象必须实现 java.lang.Comparable接口，队列优先级的排序规则就是按照我们对这个接口的实现来定义的。</li>
+<li>从PriorityBlockingQueue获得一个迭代器Iterator，但这个迭代器并不保证按照优先级顺序进行迭代。</li>
+</ul>
+<h4 id="1-5-SynchronousQueue"><a href="#1-5-SynchronousQueue" class="headerlink" title="1.5 SynchronousQueue"></a>1.5 SynchronousQueue</h4><p>SynchronousQueue队列内部仅允许容纳一个元素。</p>
+<ul>
+<li>当一个线程插入一个元素后会被阻塞，除非这个元素被另一个线程消费。</li>
+</ul>
+<h3 id="2-Callable-amp-Future"><a href="#2-Callable-amp-Future" class="headerlink" title="2. Callable &amp; Future"></a>2. Callable &amp; Future</h3><p>Callable与Runnable的功能大致相似，Callable功能强大一些，就是被线程执行后，可以返回值，并且能抛出异常。</p>
+<ul>
+<li>Runnable接口只有一个run()方法，实现类重写run方法，把一些费时操作写在其中，然后使用某个线程去执行该Runnable实现类即可实现多线程。</li>
+<li>Callable是一个泛型接口只有一个call()方法，返回的类型就是创建Callable传进来的V类型。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Callable</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">V <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Callable一般是和ExecutorService配合来使用的，在ExecutorService接口中声明了若干个submit方法的重载版本</p>
+</blockquote>
+<h4 id="2-1-Future-amp-FutureTask"><a href="#2-1-Future-amp-FutureTask" class="headerlink" title="2.1 Future &amp; FutureTask"></a>2.1 Future &amp; FutureTask</h4><p>Future就是对于具体的Runnable或者Callable任务的<strong>执行结果</strong>进行取消、查询是否完成、获取结果。必要时可以通过get方法获取执行结果，该方法会阻塞直到任务返回结果。</p>
+<ul>
+<li>也就是说Future提供了三种功能：<ol>
+<li>判断任务是否完成；</li>
+<li>能够中断任务；</li>
+<li>能够获取任务执行结果。</li>
+</ol>
+</li>
+<li>在Future接口中声明了5个方法：<strong>cancel</strong>、<strong>isCancelled</strong>、<strong>isDone</strong>、<strong>get</strong><ul>
+<li>boolean <strong><code>cancel(boolean mayInterruptIfRunning)</code></strong>;//用来取消任务，参数mayInterruptIfRunning表示是否允许取消正在执行却没有执行完毕的任务。<ul>
+<li>如果取消已经完成的任务会返回false；如果任务还没有执行会返回true；</li>
+<li>如果任务正在执行，则返回mayInterruptIfRunning设置的值(true/false)；</li>
+</ul>
+</li>
+<li>boolean <strong><code>isCancelled()</code></strong>;//任务是否被取消成功，如果在任务正常完成前被取消成功，则返回 true。</li>
+<li>boolean <strong><code>isDone()</code></strong>;//任务是否已经完成，若任务完成，则返回true；</li>
+<li>V <strong><code>get()</code></strong>;//获取执行结果，这个方法会产生阻塞，会一直等到任务执行完毕才返回；</li>
+<li>V <strong><code>get(long timeout, TimeUnit unit)</code></strong>;//获取执行结果，如果在指定时间内，还没获取到结果，就直接返回null。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Future可以得到别的线程任务方法的返回值。Future是一个接口,引用对象指向的实际是<strong>FutureTask</strong>。</p>
+</blockquote>
+<h3 id="3-FutureTask"><a href="#3-FutureTask" class="headerlink" title="3. FutureTask"></a>3. FutureTask</h3><p><strong>FutureTask</strong>的父类是RunnableFuture，而RunnableFuture继承了Runnbale和Futrue这两个接口</p>
+<ul>
+<li>从FutureTask构造方法可以了解到：<ol>
+<li>FutureTask最终都是执行Callable类型的任务。</li>
+<li>如果构造函数参数是Runnable，会被Executors.callable方法转换为Callable类型。</li>
+<li>Executors.callable方法直接返回一个RunnableAdapter实例。</li>
+<li>RunnableAdapter是FutureTask的一个静态内部类并且实现了Callable，也就是说RunnableAdapter是Callable子类。</li>
+<li>RunnableAdapter的call方法实现代码是，执行Runnable的run方法，并返回构造FutureTask传入result参数。</li>
+</ol>
+</li>
+<li>FutureTask总结：<ul>
+<li>FutureTask实现了两个接口，Runnable和Future，所以它既可以作为Runnable被线程执行，又可以作为Future得到Callable的返回值，这个组合的好处：假设有一个很费时逻辑需要计算并且返回这个值，同时这个值不是马上需要，那么就可以使用这个组合，用另一个线程去计算返回值，而当前线程在使用这个返回值之前可以做其它的操作，等到需要这个返回值时，再通过Future得到！</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>注意：</p>
+<ul>
+<li>通过Executor执行线程任务都是以Callable形式，如果传入Runnable都会转化为Callable。</li>
+<li>通过new Thread(runnable)，只能是Runnable子类形式。</li>
+</ul>
+</blockquote>
+<h3 id="4-Fork-Join"><a href="#4-Fork-Join" class="headerlink" title="4. Fork/Join"></a>4. Fork/Join</h3><p>从JDK1.7开始，Java提供Fork/Join框架用于并行执行任务，它的思想就是讲一个大任务分割成若干小任务，最终汇总每个小任务的结果得到这个大任务的结果。</p>
+<ul>
+<li>主要有两步：任务切分 -&gt; 结果合并<ol>
+<li>第一步<strong>分割任务</strong>。首先我们需要有一个 fork 类来把大任务分割成子任务，有可能子任务还是很大，所以还需要不停的分割，直到分割出的子任务足够小。</li>
+<li>第二步执行任务并<strong>合并结果</strong>。分割的子任务分别放在<strong>双端队列</strong>里，然后几个启动线程分别从双端队列里获取任务执行。子任务执行完的结果都统一放在一个队列里，启动一个线程从队列里拿数据，然后合并这些数据。</li>
+</ol>
+</li>
+<li>工作窃取算法（work-stealing）是指某个线程从其他队列里窃取任务来执行。</li>
+<li>Fork/Join 使用两个类来完成以上两个步骤：<ol>
+<li><strong><code>ForkJoinTask</code></strong>：我们要使用 ForkJoin 框架，必须首先创建一个 ForkJoin 任务。它提供在任务中执行 fork() 和 join() 操作的机制，通常情况下我们不需要直接继承 ForkJoinTask 类，而只需要继承它的子类，Fork/Join 框架提供了以下两个子类：<ul>
+<li>RecursiveAction：用于没有返回结果的任务。</li>
+<li>RecursiveTask：用于有返回结果的任务。</li>
+</ul>
+</li>
+<li><strong><code>ForkJoinPool</code></strong>：ForkJoinTask 需要通过 ForkJoinPool 来执行，任务分割出的子任务会添加到当前工作线程所维护的双端队列中，进入队列的头部。当一个工作线程的队列里暂时没有任务时，它会随机从其他工作线程的队列的尾部获取一个任务。</li>
+</ol>
+</li>
+</ul>
+<h3 id="5-线程池"><a href="#5-线程池" class="headerlink" title="5. 线程池"></a>5. 线程池</h3><p>线程池可以看作是一个资源集，任何池的作用都大同小异，主要是用来减少资源创建、初始化的系统开销。</p>
+<ul>
+<li>一个线程池包括以下四个基本组成部分：<ol>
+<li>线程池管理器（ThreadPool）：用于创建并管理线程池，包括 创建线程池，销毁线程池，添加新任务；</li>
+<li>工作线程（PoolWorker）：线程池中线程，在没有任务时处于等待状态，可以循环的执行任务；</li>
+<li>任务接口（Task）：每个任务必须实现的接口，以供工作线程调度任务的执行，它主要规定了任务的入口，任务执行完后的收尾工作，任务的执行状态等；</li>
+<li>任务队列（taskQueue）：用于存放没有处理的任务。提供一种缓冲机制。</li>
+</ol>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Executor接口</span><br><span class="line">    |———— ExecutorService接口</span><br><span class="line">        |———— AbstractExecutorService抽象类</span><br><span class="line">            |———— ForkJoinPool类</span><br><span class="line">            |———— ThreadPoolExecutor类</span><br><span class="line">        |———— ScheduledExecutorService接口</span><br><span class="line">            |———— ScheduledThreadPoolExecutor类</span><br><span class="line">Executors类</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-1-通过Executors工厂类中的六个静态方法创建线程池"><a href="#5-1-通过Executors工厂类中的六个静态方法创建线程池" class="headerlink" title="5.1 通过Executors工厂类中的六个静态方法创建线程池"></a>5.1 通过Executors工厂类中的六个静态方法创建线程池</h4><p>六大静态方法创建的ThreadPoolExecutor对象，返回的父接口的引用，即返回的ExecutorService的引用。六大静态方法内部都是直接或间接调用ThreadPoolExecutor类的构造方法创建线程池对象。</p>
+<ol>
+<li><code>newCachedThreadPool(ThreadPoolExecutor)</code>：创建一个可缓存的线程池<ul>
+<li>如果线程池的大小超过了处理任务所需要的线程,那么就会回收部分空闲（60秒不执行任务）的线程，当任务数增加时，此线程池又可以智能的添加新线程来处理任务。此线程池不会对线程池大小做限制，线程池大小完全依赖于操作系统（或者说JVM）,<code>maximumPoolSize</code>最大可以至(<code>Integer.MAX_VALUE</code>),若达到该上限,直接OOM。</li>
+</ul>
+</li>
+<li><code>newFixedThreadPool(ThreadPoolExecutor)</code>：创建固定大小的线程池。<ul>
+<li>每次提交一个任务就创建一个线程，直到线程达到线程池的最大大小。线程池的大小一旦达到最大值就会保持不变，如果某个线程因为执行异常而结束，那么线程池会补充一个新线程。</li>
+</ul>
+</li>
+<li><code>newSingleThreadExecutor(ThreadPoolExecutor)</code>：创建一个单线程的线程池。<ul>
+<li>这个线程池只有一个线程在工作，也就是相当于单线程串行执行所有任务,保证按任务的提交顺序依次执行。如果这个唯一的线程因为异常结束，那么会有一个新的线程来替代它。此线程池保证所有任务的执行顺序按照任务的提交顺序执行。</li>
+</ul>
+</li>
+<li><code>newScheduledThreadPool(ScheduledThreadPoolExecutor)</code>：创建一个支持定时及周期性任务执行的线程池。<ul>
+<li>线程数最大至<code>Integer.MAX_ VALUE</code>,存在OOM风险,不回收工作线程.</li>
+</ul>
+</li>
+<li><code>newSingleThreadScheduledExecutor(ScheduledThreadPoolExecutor)</code>：创建一个单线程用于定时以及周期性执行任务的需求。</li>
+<li><code>newWorkStealingPool(ForkJoinPool)</code>：创建一个工作窃取<ul>
+<li>JDK8 引入,创建持有足够线程的线程池支持给定的并行度;并通过使用多个队列减少竞争;</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>Executors返回的线程池对象的弊端：</p>
+<ol>
+<li>FixedThreadPool和SingleThreadExecutor：<ul>
+<li>允许的<strong>请求队列长度</strong>为<code>Integer.MAX_VALUE</code>，可能会<strong>堆积大量的请求</strong>，从而导致OOM。</li>
+</ul>
+</li>
+<li>CachedThreadPool：<ul>
+<li>允许的<strong>创建线程数量</strong>为<code>Integer.MAX_VALUE</code>，可能会<strong>创建大量的线程</strong>，从而导致OOM。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h4 id="5-2-通过ThreadPoolExecutor构造方法创建线程池"><a href="#5-2-通过ThreadPoolExecutor构造方法创建线程池" class="headerlink" title="5.2 通过ThreadPoolExecutor构造方法创建线程池"></a>5.2 通过<code>ThreadPoolExecutor</code>构造方法创建线程池</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,   //核心线程数，包括空闲线程</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> maximumPoolSize,//最大线程数</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">long</span> keepAliveTime, //线程空闲时间</span></span></span><br><span class="line"><span class="function"><span class="params">                          TimeUnit unit,      //时间单位</span></span></span><br><span class="line"><span class="function"><span class="params">                          BlockingQueue&lt;Runnable&gt; workQueue,//缓存队列</span></span></span><br><span class="line"><span class="function"><span class="params">                          ThreadFactory threadFactory,      //线程工厂</span></span></span><br><span class="line"><span class="function"><span class="params">                          RejectedExecutionHandler handler  //拒绝策略</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (corePoolSize &lt; <span class="number">0</span> ||</span><br><span class="line">        maximumPoolSize &lt;= <span class="number">0</span> ||</span><br><span class="line">        maximumPoolSize &lt; corePoolSize ||</span><br><span class="line">        keepAliveTime &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">    <span class="keyword">if</span> (workQueue == <span class="keyword">null</span> || threadFactory == <span class="keyword">null</span> || handler == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    <span class="keyword">this</span>.acc = System.getSecurityManager() == <span class="keyword">null</span> ? </span><br><span class="line">        <span class="keyword">null</span> : AccessController.getContext();</span><br><span class="line">    <span class="keyword">this</span>.corePoolSize = corePoolSize;</span><br><span class="line">    <span class="keyword">this</span>.maximumPoolSize = maximumPoolSize;</span><br><span class="line">    <span class="keyword">this</span>.workQueue = workQueue;</span><br><span class="line">    <span class="keyword">this</span>.keepAliveTime = unit.toNanos(keepAliveTime);</span><br><span class="line">    <span class="keyword">this</span>.threadFactory = threadFactory;</span><br><span class="line">    <span class="keyword">this</span>.handler = handler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-2-1-corePoolSize-核心线程数量"><a href="#5-2-1-corePoolSize-核心线程数量" class="headerlink" title="5.2.1 corePoolSize(核心线程数量)"></a>5.2.1 corePoolSize(核心线程数量)</h5><ul>
+<li><code>corePoolSize</code>的设置非常关键：<ul>
+<li><code>=0</code>：则任务执行完之后,没有任何请求进入时销毁线程池的线程</li>
+<li><code>&gt;0</code>：即使本地任务执行完毕,核心线程也不会被销毁</li>
+<li>设置过大会浪费资源; 设置过小会导致线程频繁地创建或销毁</li>
+</ul>
+</li>
+<li>若设置了<code>allowCoreThreadTimeOut</code>这个参数,当提交一个任务到线程池时,若<code>线程数量(包括空闲线程)小于corePoolSize</code>,线程池会创建一个新线程放入<code>works(一个HashSet)</code>中执行任务,等到需要执行的任务数大于线程池基本大小时就不再创建,会尝试放入等待队列<code>workQueue</code>；如果调用线程池的<code>prestartAllCoreThreads()</code>,线程池会提前创建并启动所有核心线程</li>
+</ul>
+<h5 id="5-2-2-maximumPoolSize（线程池最大线程数）"><a href="#5-2-2-maximumPoolSize（线程池最大线程数）" class="headerlink" title="5.2.2 maximumPoolSize（线程池最大线程数）"></a>5.2.2 maximumPoolSize（线程池最大线程数）</h5><ul>
+<li><code>maximumPoolSize</code>表示线程池能够容纳同时执行的最大线程数,必须&gt;=1.</li>
+<li>若队列满,并且已创建的线程数小于最大线程数,则线程池会再创建新的线程放入<code>works</code>中执行任务,<code>CashedThreadPool</code>的关键,固定线程数的线程池无效</li>
+<li>如果<code>maximumPoolSize = corePoolSize</code>,即是固定大小线程池.</li>
+<li>若使用了无界任务队列,这个参数就没什么效果</li>
+</ul>
+<h5 id="5-2-3-keepAliveTime（线程池中的线程空闲时间）"><a href="#5-2-3-keepAliveTime（线程池中的线程空闲时间）" class="headerlink" title="5.2.3 keepAliveTime（线程池中的线程空闲时间）"></a>5.2.3 keepAliveTime（线程池中的线程空闲时间）</h5><ul>
+<li>线程没有任务执行时最多保持多久时间终止（线程池的工作线程空闲后，保持存活的时间)</li>
+<li>如果任务很多，并且每个任务执行的时间比较短，可以调大时间，提高线程的利用率</li>
+<li>当空闲时间达到<code>keepAliveTime</code>时,线程会被销毁,直到只剩下<code>corePoolSize</code>个线程;避免浪费内存和句柄资源.</li>
+<li>在默认情况下,当线程池的线程数大于<code>corePoolSize</code>时,<code>keepAliveTime</code>才起作用.</li>
+<li>但是当<code>ThreadPoolExecutor</code>的<code>allowCoreThreadTimeOut=true</code>时,核心线程超时后也会被回收.</li>
+</ul>
+<h5 id="5-2-4-TimeUnit（时间单位）"><a href="#5-2-4-TimeUnit（时间单位）" class="headerlink" title="5.2.4 TimeUnit（时间单位）"></a>5.2.4 TimeUnit（时间单位）</h5><ul>
+<li>keepAliveTime的时间单位通常是<code>TimeUnit.SECONDS</code></li>
+<li>可选的单位：天(<code>DAYS</code>)、小时(<code>HOURS</code>)、分钟(<code>MINUTES</code>)、毫秒(<code>MILLISECONDS</code>)、微秒(<code>MICROSECONDS</code>，千分之一毫秒) 和 纳秒(<code>NANOSECONDS</code>，千分之一微秒)</li>
+</ul>
+<h5 id="5-2-5-workQueue（缓存队列）"><a href="#5-2-5-workQueue（缓存队列）" class="headerlink" title="5.2.5 workQueue（缓存队列）"></a>5.2.5 workQueue（缓存队列）</h5><ul>
+<li>存储待执行任务的阻塞队列，这些任务必须是<code>Runnable</code>的对象（如果是Callable对象，会在submit内部转换为Runnable对象） </li>
+<li>当请求的线程数大于<code>maximumPoolSize</code>时,线程进入<code>BlockingQueue</code>.</li>
+<li>可以选择以下几个阻塞队列:<ul>
+<li><code>LinkedBlockingQueue</code>:一个基于链表结构的阻塞队列,此队列按FIFO排序元素,吞吐量通常要高于<code>ArrayBlockingQueue</code>.静态工厂方法<code>Executors.newFixedThreadPool()</code>使用了这个队列</li>
+<li><code>SynchronousQueue</code>:一个不存储元素的阻塞队列.每个插入操作必须等到另一个线程调用移除操作,否则插入操作一直处于阻塞状态,吞吐量通常要高于<code>LinkedBlockingQueue</code>,静态工厂方法<code>Executors.newCachedThreadPoo</code>l使用了这个队列</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-2-6-threadFactory-（线程工厂）"><a href="#5-2-6-threadFactory-（线程工厂）" class="headerlink" title="5.2.6 threadFactory （线程工厂）"></a>5.2.6 threadFactory （线程工厂）</h5><ul>
+<li>用于设置创建线程的工厂;</li>
+<li>线程池的命名是通过增加组名前缀来实现的，可以通过线程工厂给每个创建出来的线程设置更有意义的名字</li>
+<li>在虚拟机栈分析时,就可以知道线程任务是由哪个线程工厂产生的.</li>
+</ul>
+<h5 id="5-2-7-RejectedExecutionHandler（拒绝策略）"><a href="#5-2-7-RejectedExecutionHandler（拒绝策略）" class="headerlink" title="5.2.7 RejectedExecutionHandler（拒绝策略）"></a>5.2.7 RejectedExecutionHandler（拒绝策略）</h5><ul>
+<li>当队列和线程池都满,说明线程池饱和,必须采取一种策略处理提交的新任务；策略默认<strong>AbortPolicy</strong>,表无法处理新任务时抛出异常</li>
+<li>当超过参数workQueue的任务缓存区上限的时候,就可以通过该策略处理请求,这是一种简单的限流保护.</li>
+<li>友好的拒绝策略可以是如下三种:<ol>
+<li>保存到数据库进行削峰填谷;在空闲时再提取出来执行</li>
+<li>转向某个提示页面</li>
+<li>打印日志</li>
+</ol>
+</li>
+<li><code>AbortPolicy</code>：丢弃任务，抛出<code>RejectedExecutionException</code></li>
+<li><code>CallerRunsPolicy</code>：只用调用者所在线程来运行任务,有反馈机制，使任务提交的速度变慢）。</li>
+<li><code>DiscardOldestPolicy</code>：若没有发生shutdown,尝试丢弃队列里最近的一个任务,并执行当前任务, 丢弃任务缓存队列中最老的任务，并且尝试重新提交新的任务</li>
+<li><code>DiscardPolicy</code>:不处理,丢弃掉, 拒绝执行，不抛异常 </li>
+<li>当然,也可以根据应用场景需要来实现<code>RejectedExecutionHandler</code>接口自定义策略.如记录日志或持久化存储不能处理的任务</li>
+</ul>
+<h4 id="5-3-自定义一个ThreadPoolExecutor线程池"><a href="#5-3-自定义一个ThreadPoolExecutor线程池" class="headerlink" title="5.3 自定义一个ThreadPoolExecutor线程池"></a>5.3 自定义一个ThreadPoolExecutor线程池</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">ThreadPoolExecutor pool = <span class="keyword">new</span> ThreadPoolExecutor(</span><br><span class="line">    <span class="number">5</span>, <span class="comment">//核心线程数</span></span><br><span class="line">    Runtime.getRuntime().availableProcessors() * <span class="number">2</span>,<span class="comment">//最大线程数</span></span><br><span class="line">    <span class="number">60</span>,<span class="comment">//线程空闲时间</span></span><br><span class="line">    TimeUnit.SECONDS,</span><br><span class="line">    <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">200</span>),</span><br><span class="line">    <span class="keyword">new</span> ThreadFactory() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Thread <span class="title">newThread</span><span class="params">(Runnable r)</span> </span>&#123;</span><br><span class="line">            Thread t = <span class="keyword">new</span> Thread(r);</span><br><span class="line">            t.setName(<span class="string">"order-thread"</span>);<span class="comment">//设置有意义的线程名字</span></span><br><span class="line">            <span class="keyword">if</span>(t.isDaemon()) &#123;<span class="comment">//若是守护线程将其释放</span></span><br><span class="line">                t.setDaemon(<span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(Thread.NORM_PRIORITY != t.getPriority()) &#123;</span><br><span class="line">                <span class="comment">//恢复线程优先级</span></span><br><span class="line">                t.setPriority(Thread.NORM_PRIORITY);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="keyword">new</span> RejectedExecutionHandler() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rejectedExecution</span><span class="params">(Runnable r, ThreadPoolExecutor executor)</span> </span>&#123;</span><br><span class="line">            System.err.println(<span class="string">"拒绝策略:"</span> + r);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> );</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-3-1-线程池执行流程"><a href="#5-3-1-线程池执行流程" class="headerlink" title="5.3.1 线程池执行流程"></a>5.3.1 线程池执行流程</h4><ul>
+<li>要求 线程池有上限，使用有限队列</li>
+</ul>
+<ol>
+<li>当线程池核心线程数量用完，先扔进队列</li>
+<li>队列也用完后，看最大线程数量</li>
+<li>最大线程数量用完后，走拒绝策略</li>
+<li>拒绝策略可以打印一些日志，做一些补偿</li>
+<li>线程池用完一定要优雅的关闭</li>
+</ol>
+<blockquote>
+<p>线程池要统一管理，不要用Executors工厂类，要用ThreadPoolExecutor自定义线程池</p>
+</blockquote>
+<h4 id="5-3-2-线程池配置-核心线程数量"><a href="#5-3-2-线程池配置-核心线程数量" class="headerlink" title="5.3.2 线程池配置-核心线程数量"></a>5.3.2 线程池配置-核心线程数量</h4><p>线程CPU时间所占比例越高，需要越少线程(CPU密集)。线程等待时间所占比例越高，需要越多线程(IO密集)。</p>
+<ol>
+<li>CPU密集型：内存运算、不涉及IO操作等<ul>
+<li>设置线程数为：<code>CPU核数+1</code> </li>
+</ul>
+</li>
+<li>IO密集型：数据读取、存取、数据库操作、持久化操作等<ul>
+<li>最佳线程数目：<code>CPU核数/(1-阻塞系数)</code> 这个阻塞系数一般为0.8~0.9之间，也可以取0.8或者0.9。</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>java.lang.Runtime.availableProcessors() 方法返回到Java虚拟机的可用的处理器数量(CPU核数)。此值可能会改变在一个特定的虚拟机调用。应用程序可用处理器的数量是敏感的，因此偶尔查询该属性，并适当地调整自己的资源使用情况.</p>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> 并发编程 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 后端开发 </tag>
+            
+            <tag> java </tag>
+            
+            <tag> 并发编程 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[【并发编程】AQS框架 与 锁框架（JUC.locks）]]></title>
+      <url>http://chaooo.github.io/article/20191010.html</url>
+      <content type="html"><![CDATA[<h3 id="1-AQS（队列同步器）"><a href="#1-AQS（队列同步器）" class="headerlink" title="1. AQS（队列同步器）"></a>1. AQS（队列同步器）</h3><p><code>AbstractQueuedSynchronizer</code>：队列同步器，简称AQS。</p>
+<ul>
+<li><code>AQS</code>维护了一个<code>volatile int</code><strong><code>state</code></strong>(代表资源共享变量) 和一个<strong>FIFO线程等待队列</strong>(多线程争用资源被阻塞时会进入此队列)。</li>
+<li><code>AQS</code>定义了两种资源共享方式：<code>Exclusive</code>(独占)，<code>Share</code>(共享)<a id="more"></a></li>
+<li><code>isHeldExclusively</code>方法：该线程是否正在独占资源</li>
+<li><code>tryAcquire</code>/<code>tryRelease</code>：独占的方式尝试获取和释放资源</li>
+<li><code>tryAcquireShared</code>/<code>tryReleaseShared</code>：共享的方式尝试获取和释放资源</li>
+</ul>
+<p>整个框架的核心就是<strong>如何管理线程阻塞队列</strong>，该队列是严格的FIFO队列，因此不支持线程优先级的同步。</p>
+<ul>
+<li>AQS只有一个同步队列，可以有多个条件队列。<ul>
+<li>同步队列的最佳选择是自身没有使用底层锁来构造的非阻塞数据结构，同步队列选择了<strong>CLH</strong>作为实现的基础。</li>
+<li>条件队列：AQS框架提供了一个ConditionObject类，给维护独占同步的类以及实现Lock接口的类使用。</li>
+</ul>
+</li>
+<li>使用Node实现<strong>FIFO双向队列</strong>，可以用于构建锁 或 其他同步装置的基础框架</li>
+<li>内部有一个int变量表示的<strong><code>同步状态</code></strong>(同步状态通过<strong>getState</strong>、<strong>setState</strong>、<strong>compareAndSetState</strong>来维护，同时这三个方法能够保证线程安全)</li>
+<li>AQS是个<strong>抽象类</strong>（但没有抽象方法），同步组件一般通过维护AQS的<strong>继承子类来实现</strong>。</li>
+<li>AQS<strong>既</strong>支持独占地获取同步状态(<strong>排它锁</strong>)，<strong>又</strong>支持共享地获取同步状态(<strong>共享锁</strong>)，从而实现不同类型的组件。</li>
+<li>AQS是<strong>基于模板方法</strong>，同步组件需要继承同步器并重写指定的方法，随后将同步器组合在自定义同步组件的实现中，并调用同步器提供的模板方法，而这些模板方法将会调用使用者重写的方法。</li>
+</ul>
+<blockquote>
+<p>Synchronizer(同步器)：是一个对象，它根据本身的状态调节线程的控制流。常见类型的Synchronizer包括信号量、关卡和闭锁。</p>
+</blockquote>
+<h3 id="2-CountDownLatch（倒计时闭锁）"><a href="#2-CountDownLatch（倒计时闭锁）" class="headerlink" title="2. CountDownLatch（倒计时闭锁）"></a>2. CountDownLatch（倒计时闭锁）</h3><ul>
+<li>闭锁(latch)是一种Synchronizer，它可以延迟线程的进度直到线程达到<strong>终止状态</strong>。</li>
+<li><strong>CountDownLatch</strong>(倒计时闭锁)是一个灵活的闭锁实现。</li>
+<li>CountDownLatch是一个同步工具类，它允许一个或多个线程一直等待，直到其他线程执行完后再执行。</li>
+<li>CountDownLatch<strong>原理</strong>：是通过一个计数器来实现的，计数器的初始化值为线程的数量。每当一个线程完成了自己的任务后，计数器的值就相应得减1。当计数器到达0时，表示所有的线程都已完成任务，然后在闭锁上等待的线程就可以恢复执行任务。<ul>
+<li>await()，阻塞程序继续执行</li>
+<li>countDown()，计数器的值减1，当计数器值减至零时，所有因调用await()方法而处于等待状态的线程就会继续往下执行。</li>
+</ul>
+</li>
+<li>计数器不能被重置，如果业务上需要一个可以重置计数次数的版本，可以考虑使用CycliBarrier</li>
+</ul>
+<blockquote>
+<p>CountDownLatch使用场景：应用初始化</p>
+</blockquote>
+<h3 id="3-Semaphore（信号量）"><a href="#3-Semaphore（信号量）" class="headerlink" title="3. Semaphore（信号量）"></a>3. Semaphore（信号量）</h3><ul>
+<li><strong>Semaphore</strong>(信号量)：用来<strong>控制同时访问</strong>特定资源的线程<strong>数量</strong>，它通过协调各个线程，以保证合理的使用公共资源。</li>
+<li>Semaphore<strong>原理</strong>：线程需要通过acquire()方法获取许可，而release()释放许可。如果许可数达到最大活动数，那么调用acquire()之后，便进入等待队列，等待已获得许可的线程释放许可，从而使得多线程能够合理的运行。<ul>
+<li>acquire()：获取权限，其底层实现与CountDownLatch.countdown()类似;</li>
+<li>release()：释放权限，其底层实现与acquire()是一个互逆的过程。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Semaphore可以用于做流量控制，特别公用资源有限的应用场景，比如数据库连接。</p>
+</blockquote>
+<h3 id="4-CyclicBarrier（同步屏障）"><a href="#4-CyclicBarrier（同步屏障）" class="headerlink" title="4. CyclicBarrier（同步屏障）"></a>4. CyclicBarrier（同步屏障）</h3><ul>
+<li><strong>CyclicBarrier</strong>(同步屏障)：可以让一组线程达到一个屏障时被阻塞，直到最后一个线程达到屏障时，所有被阻塞的线程才能继续执行。</li>
+<li>CyclicBarrier类似于CountDownLatch，它也是通过计数器来实现的。但是相比于CountDownLatch功能更加强大。</li>
+<li>CyclicBarrier<strong>原理</strong>：当某个线程调用await方法时，该线程进入等待状态，且计数器加1，当计数器的值达到设置的初始值时，所有因调用await进入等待状态的线程被唤醒，继续执行后续操作。因为CycliBarrier在释放等待线程后可以重用，所以称为循环barrier。</li>
+</ul>
+<h4 id="4-1-CountDownLatch-和-CyclicBarrier-对比"><a href="#4-1-CountDownLatch-和-CyclicBarrier-对比" class="headerlink" title="4.1 CountDownLatch 和 CyclicBarrier 对比"></a>4.1 CountDownLatch 和 CyclicBarrier 对比</h4><ol>
+<li>CountDownLatch描述的是线程(1个或多个)等待其他线程的关系；CyclicBarrier描述的是多个线程相互等待的关系。</li>
+<li>CountDownLatch的计数器只能使用一次。而CyclicBarrier的计数器可以使用reset()方法重置并复用。</li>
+<li>CountDownLatch方法比较少，操作比较简单，而CyclicBarrier提供的方法更多，比如：<ul>
+<li>getNumberWaiting()：获取阻塞的线程数量。</li>
+<li>isBroken()：获取阻塞线程的状态，被中断返回true，否则返回false。</li>
+<li>CyclicBarrier的构造方法可以传入barrierAction，指定当所有线程都到达时执行的业务功能；</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>CyclicBarrier可以用于多线程计算数据，最后合并计算结果的应用场景</p>
+</blockquote>
+<h3 id="5-JUC-locks-锁框架"><a href="#5-JUC-locks-锁框架" class="headerlink" title="5. JUC.locks 锁框架"></a>5. JUC.locks 锁框架</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">java.util.concurrent.locks</span><br><span class="line">    |———— Lock接口</span><br><span class="line">        |———— ReentrantLock类</span><br><span class="line">            |———— ReentrantReadWriteLock.ReadLock内部类</span><br><span class="line">            |———— ReentrantReadWriteLock.WriteLock内部类</span><br><span class="line">    |———— Condition接口</span><br><span class="line">    |———— ReadWriteLock接口</span><br><span class="line">        |———— ReentrantReadWriteLock类</span><br><span class="line">    |———— LockSupport类</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Lock接口</strong>核心方法：lock()，unlock()，lockInterruptibly()，newCondition()，tryClock()<ul>
+<li>lock()方法类似于使用synchronized关键字加锁，如果锁不可用，出于线程调度目的，将禁用当前线程，并且在获得锁之前，该线程将一直处于休眠状态。</li>
+<li>lockInterruptibly()方法顾名思义，就是如果锁不可用，那么当前正在等待的线程是可以被中断的，这比synchronized关键字更加灵活。</li>
+</ul>
+</li>
+<li><strong>Condition接口</strong>核心方法：awit()，signal()，signalAll()<ul>
+<li>可以看做是Obejct类的wait()、notify()、notifyAll()方法的替代品，与Lock配合使用</li>
+</ul>
+</li>
+<li><strong>ReadWriteLock接口</strong>核心方法：readLock()，writeLock()<ul>
+<li>获取读锁和写锁，注意除非使用Java8新锁，否则读读不互斥，读写是互斥的</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-ReentrantLock（可重入锁）"><a href="#6-ReentrantLock（可重入锁）" class="headerlink" title="6. ReentrantLock（可重入锁）"></a>6. ReentrantLock（可重入锁）</h3><p><strong><code>ReentrantLock</code>重入锁</strong>使用<strong>AQS同步状态</strong>来保存锁重复持有的次数</p>
+<ul>
+<li>底层代码分析：<ul>
+<li><strong><code>state</code></strong>初始化为0，表示未锁定状态</li>
+<li>A线程lock()时，会调用tryAcquire()独占该锁并将<strong><code>state+1</code></strong></li>
+<li>此后，其他线程再tryAcquire()时就会失败，直到A线程unlock()到state=0(即释放锁)为止，其他线程才有机会获取该锁</li>
+<li>当然，锁释放之前，A线程自己是可以重复获取此锁的(state会累加)，这就是可重入的概念</li>
+</ul>
+</li>
+</ul>
+<p>synchronized实现的锁的重入依赖于JVM，是一种重量级锁。<br>ReentrantLock实现了在内存语义上的synchronized，使用<strong>AQS同步状态</strong>来保存锁重复持有的次数。当锁被一个线程获取时，ReentrantLock也会记录下当前获得锁的线程标识，以便检查是否是重复获取，以及当错误的线程试图进行解锁操作时检测是否存在非法状态异常。</p>
+<ul>
+<li>公平锁和非公平锁<ul>
+<li>公平锁还是非公平锁取决于ReentrantLock的构造方法，<strong>默认</strong>无参为<strong>非公平锁</strong>(NonfairSync)；含参构造方法，入参true为FairSync，入参false为NonfairSync。</li>
+</ul>
+</li>
+<li>非公平锁中，抢到AQS的同步状态的未必是同步队列的首节点，只要线程通过CAS抢到了同步状态或者在acquire中抢到同步状态，就优先占有锁（插队），而相对同步队列这个严格的FIFO队列来说，所以会被认为是非公平锁。</li>
+<li>公平锁的实现直接调用AQS的acquire方法，acquire中调用tryAcquire。和非公平锁相比，这里不会执行一次CAS，接下来在tryAcquire去抢占锁的时候，也会先调用hasQueuedPredecessors看看前面是否有节点已经在等待获取锁了，如果存在则同步队列的前驱节点优先（排队FIFO）。</li>
+</ul>
+<blockquote>
+<p>虽然公平锁看起来在公平性上比非公平锁好，但是公平锁为此付出了大量线程切换的代价，而非公平锁在锁的获取上不能保证公平，就有可能出现锁饥饿，即有的线程多次获取锁而有的线程获取不到锁，没有大量的线程切换保证了非公平锁的吞吐量。</p>
+</blockquote>
+<h3 id="7-读写锁RRW（ReentrantReadWriteLock）"><a href="#7-读写锁RRW（ReentrantReadWriteLock）" class="headerlink" title="7. 读写锁RRW（ReentrantReadWriteLock）"></a>7. 读写锁RRW（ReentrantReadWriteLock）</h3><p>ReentrantLock是独占锁，ReentrantReadWriteLock是读写锁。</p>
+<ul>
+<li>独占锁通过state变量的0和1两个状态来控制是否有线程占有锁，共享锁通过state变量0或者非0来控制多个线程访问。</li>
+<li>读写锁定义为：一个资源能够被多个读线程访问，或者被一个写线程访问，但是不能同时存在读写线程。</li>
+<li>ReentrantReadWriteLock的特殊之处其实就是用一个int值表示两种不同的状态（低16位表示写锁的重入次数，高16位表示读锁的使用次数），并通过两个内部类同时实现了AQS的两套API，核心部分与共享/独占锁并无什么区别。</li>
+</ul>
+<blockquote>
+<p>ReentrantReadWriteLock也会发生<strong>写请求饥饿</strong>的情况，因为写请求一样会排队，不管是公平锁还是非公平锁，在有读锁的情况下，都<strong>不能保证写锁</strong>一定能获取到，这样只要读锁一直占用，就会发生写饥饿的情况。JDK8中新增的改进读写锁StampedLock可解决饥饿问题</p>
+</blockquote>
+<h3 id="8-LockSupport工具类"><a href="#8-LockSupport工具类" class="headerlink" title="8. LockSupport工具类"></a>8. LockSupport工具类</h3><p>归根结底，LockSupport调用的Unsafe中的native代码：park()，unpark()；</p>
+<ul>
+<li>park函数是将当前Thread阻塞，而unpark函数则是将另一个Thread唤醒。</li>
+<li>与Object类的wait/notify机制相比，park/unpark有两个优点：<ol>
+<li>以thread为操作对象更符合阻塞线程的直观定义；</li>
+<li>操作更精准，可以准确地唤醒某一个线程（Object类的notify随机唤醒一个线程，notifyAll唤醒所有等待的线程），增加了灵活性</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>park方法的调用一般要在方法一个循环判断体里面。之所以这样做，是为了防止线程被唤醒后，不进行判断而意外继续向下执行，这其实是一种的多线程设计模式-Guarded Suspension。</p>
+</blockquote>
+<h3 id="9-StampedLock（Java8新型锁）"><a href="#9-StampedLock（Java8新型锁）" class="headerlink" title="9. StampedLock（Java8新型锁）"></a>9. StampedLock（Java8新型锁）</h3><p>ReentrantReadWriteLock锁具有读写锁，问题在于ReentrantReadWriteLock使得多个读线程同时持有读锁（只要写锁未被占用），而写锁是独占的 ，很容易造成写锁获取不到资源(写请求饥饿)。</p>
+<ul>
+<li>Java 8 引入了一个新的读写锁叫StampedLock. 不仅这个锁更快，而且它提供强大的乐观锁API。这种乐观策略的锁非常类似于无锁的操作，使得乐观锁完全不会阻塞写线程。</li>
+<li>StampedLock的主要特点：<ol>
+<li>所有<strong>获取锁</strong>的方法，都返回一个邮戳（Stamp），Stamp为0表示获取失败，其余都表示成功；</li>
+<li>所有<strong>释放锁</strong>的方法，都需要一个邮戳（Stamp），这个Stamp必须是和成功获取锁时得到的Stamp一致；</li>
+<li>StampedLock是<strong>不可重入</strong>的；（如果一个线程已经持有了写锁，再去获取写锁的话就会造成死锁）</li>
+<li>StampedLock有<strong>三种访问模式</strong>：<ul>
+<li>Reading（读模式）：功能和ReentrantReadWriteLock的读锁类似</li>
+<li>Writing（写模式）：功能和ReentrantReadWriteLock的写锁类似</li>
+<li>Optimistic reading（乐观读模式）：这是一种优化的读模式。</li>
+</ul>
+</li>
+<li>StampedLock支持读锁和写锁的相互转换</li>
+<li>RRW(ReentrantReadWriteLock)中，当线程获取到写锁后，可以降级为读锁，但是读锁是不能直接升级为写锁的；StampedLock提供了读锁和写锁相互转换的功能，使得该类支持更多的应用场景。</li>
+<li>无论写锁还是读锁，都不支持Conditon等待</li>
+</ol>
+</li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> 并发编程 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 后端开发 </tag>
+            
+            <tag> java </tag>
+            
+            <tag> 并发编程 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[【并发编程】JUC并发容器类]]></title>
+      <url>http://chaooo.github.io/article/20191006.html</url>
+      <content type="html"><![CDATA[<p>在java.util.concurrent包中，提供了两种类型的并发集合：一种是阻塞式，另一种是非阻塞式。</p>
+<ul>
+<li>阻塞式集合：当集合已满或为空时，被调用的添加（满）、移除（空）方法就不能立即被执行，调用这个方法的线程将被阻塞，一直等到该方法可以被成功执行</li>
+<li>非阻塞式集合：当集合已满或为空时，被调用的添加（满）、移除（空）方法就不能立即被执行，调用这个方法的线程不会被阻塞，而是直接则返回null或抛出异常。<a id="more"></a></li>
+</ul>
+<h3 id="1-线程安全相关容器"><a href="#1-线程安全相关容器" class="headerlink" title="1. 线程安全相关容器"></a>1. 线程安全相关容器</h3><h4 id="1-1-线程安全-同步容器："><a href="#1-1-线程安全-同步容器：" class="headerlink" title="1.1 线程安全-同步容器："></a>1.1 线程安全-同步容器：</h4><ol>
+<li>ArrayList –&gt; Vector,Stack</li>
+<li>HashMap –&gt; HashTable(key、value不能为null)</li>
+<li>Collections.synchronizedXXX(List/Set/Map) //本质是对相应的容器进行包装，通过在方法中加synchronized同步锁来实现</li>
+</ol>
+<ul>
+<li>同步容器的同步原理就是在方法上用 synchronized 修饰。<strong>性能开销大</strong>。</li>
+<li>在<strong>单独</strong>使用里面的方法的时候，可以保证线程安全，但是，<strong>复合操作需要额外加锁</strong>来保证线程安全。</li>
+</ul>
+<h4 id="1-2-线程安全-并发容器："><a href="#1-2-线程安全-并发容器：" class="headerlink" title="1.2 线程安全-并发容器："></a>1.2 线程安全-并发容器：</h4><ol>
+<li>ArrayList –&gt; <strong><code>CopyOnWriteArrayList</code></strong>：保证<strong>最终一致性</strong>，写时复制，适用于<strong>读多写少</strong>的并发场景</li>
+<li>HashSet、TreeSet –&gt; CopyOnWriteArraySet、ConcurrentSkipListSet：</li>
+<li>HashMap、TreeMap –&gt; <strong><code>ConcurrentHashMap</code></strong>、ConcurrentSkipListMap：</li>
+</ol>
+<h4 id="1-3-安全共享对象策略"><a href="#1-3-安全共享对象策略" class="headerlink" title="1.3 安全共享对象策略"></a>1.3 安全共享对象策略</h4><ol>
+<li>线程限制：一个被线程限制的对象，由线程独占，并且只能被占有者修改</li>
+<li>共享只读：一个共享只读的对象，在没有额外同步的情况下，可以被多个线程并发访问，但不能修改</li>
+<li>线程安全对象：一个线程安全的对象或者容器，在内部通过同步机制来保证线程安全，其他线程无需额外的同步就可以通过公共接口随意访问它</li>
+<li>被守护对象：被守护对象只能通过获取特定的锁来访问</li>
+</ol>
+<h3 id="2-CopyOnWrite机制"><a href="#2-CopyOnWrite机制" class="headerlink" title="2. CopyOnWrite机制"></a>2. CopyOnWrite机制</h3><p>CopyOnWrite（简称COW），是计算机程序设计领域中的一种优化策略，也是一种思想–即<strong>写入时复制思想</strong>。</p>
+<ul>
+<li>在CopyOnWrite中，对容器的修改操作加锁后，通过copy一个新的容器副本来进行修改，修改完毕后将容器替换为新的容器即可。<ul>
+<li>这种方式的好处显而易见：通过copy一个新的容器来进行修改，这样读操作就不需要加锁，可以并发读，因为在读的过程中是采用的旧的容器，即使新容器做了修改对旧容器也没有影响，同时也很好的解决了迭代过程中其他线程修改导致的并发问题。</li>
+</ul>
+</li>
+<li>从JDK1.5开始，java.util.concurrent包中提供了两个CopyOnWrite机制容器，分别为<strong>CopyOnWriteArrayList</strong>和<strong>CopyOnWriteArraySet</strong></li>
+<li>CopyOnWriteArrayList通过使用<strong>ReentrantLock锁</strong>来实现线程安全：<ul>
+<li>在添加、获取元素时，使用getArray（）获取底层数组对象，获取此时集合中的数组对象；使用setArray（）设置底层数组，将原有数组对象指针指向新的数组对象—-实以此来实现CopyOnWrite副本概念</li>
+<li><strong>添加元素</strong>: 在添加元素之前进行加锁操作，保证数据的原子性。在添加过程中，进行数组复制，修改操作，再将新生成的数组复制给集合中的array属性。最后，释放锁；<ul>
+<li>由于array属性被volatile修饰，所以当添加完成后，其他线程就可以立刻查看到被修改的内容。</li>
+</ul>
+</li>
+<li><strong>获取元素</strong>：在获取元素时，由于array属性被volatile修饰，所以每当获取线程执行时，都会拿到最新的数据。此外，添加线程在进行添加元素时，会将新的数组赋值给array属性，所以在获取线程中并不会因为元素的添加而导致本线程的执行异常。因为获取线程中的array和被添加后的array指向了不同的内存区域。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>在执行add()时，为什么还要在加锁的同时又copy了一分新的数组对象?</p>
+<ul>
+<li>因为，在add()时候加了锁，首先不会有多个线程同时进到add中去，这一点保证了数组的安全。当在一个线程执行add时，又进行了数组的复制操作，生成了一个新的数组对象，在add后又将新数组对象的指针指向了旧的数组对象指针，注意此时是指针的替换，原来旧的数组对象还存在。这样就实现了，添加方法无论如何操作数组对象，获取方法在获取到集合后，都不会受到其他线程添加元素的影响。</li>
+</ul>
+</blockquote>
+<ul>
+<li>CopyOnWrite机制的优缺点<ul>
+<li>优点: CopyOnWriteArrayList保证了数据在多线程操作时的<strong>最终一致性</strong>。</li>
+<li>缺点: 缺点也同样显著，那就是内存空间的浪费：因为在写操作时，进行数组复制，在内存中产生了两份相同的数组。如果数组对象比较大，那么就会造成频繁的GC操作，进而影响到系统的性能；</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>适用场景：<strong>读多写少</strong>的并发场景</p>
+</blockquote>
+<h3 id="3-ConcurrentHashMap"><a href="#3-ConcurrentHashMap" class="headerlink" title="3. ConcurrentHashMap"></a>3. ConcurrentHashMap</h3><p>ConcurrentHashMap容器相较于CopyOnWrite容器在并发加锁粒度上有了更大一步的优化，它通过修改对<strong>单个hash桶元素加锁</strong>的达到了更细粒度的并发控制。</p>
+<ul>
+<li>在底层数据结构上，ConcurrentHashMap和HashMap都使用了数组+链表+红黑树的方式，只是在HashMap的基础上添加了并发相关的一些控制。</li>
+<li>JDK1.8中取消了segment分段锁，而采用CAS和synchronized来保证并发安全。synchronized只锁定当前链表或红黑二叉树的首节点，这样只要hash不冲突，就不会产生并发，效率又提升N倍。并且初始化操作大大简化，修改为lazy-load形式。</li>
+<li>put方法(调用putVal)过程<ol>
+<li>判断Node[]数组是否初始化，没有则进行初始化操作</li>
+<li>通过hash定位Node[]数组的索引坐标，是否有Node节点，如果没有则使用CAS进行添加（链表的头结点），添加失败则进入下次循环。</li>
+<li>检查到内部正在扩容，如果正在扩容，就帮助它一块扩容。</li>
+<li>如果f!=null，则使用synchronized锁住f元素（链表/红黑二叉树的头元素）<ul>
+<li>如果是Node(链表结构)则执行链表的添加操作。</li>
+<li>如果是TreeNode(树型结果)则执行树添加操作。</li>
+</ul>
+</li>
+<li>判断链表长度已经达到临界值8 就需要把链表转换为树结构。</li>
+</ol>
+</li>
+</ul>
+<h4 id="3-1-put方法过程"><a href="#3-1-put方法过程" class="headerlink" title="3.1 put方法过程"></a>3.1 put方法过程</h4><p>put方法内部是一个 <code>putVal</code> 的调用：</p>
+<ol>
+<li>判断键值是否为null，为null抛出异常</li>
+<li>调用spread()方法计算key的hashCode()获得哈希地址</li>
+<li>判断Node[]数组(table)是否为空，若空则进行初始化操作<ul>
+<li>需要注意的是这里并没有加<code>synchronized</code>，也就是允许多个线程去<strong>尝试</strong>初始化table，但是在初始化函数里面使用了<code>CAS</code>保证只有一个线程去执行初始化过程</li>
+</ul>
+</li>
+<li>使用 (容量大小-1 &amp; 哈希地址) 计算下标，如果没有碰撞，使用CAS原子性操作放入桶中；插入失败(被别的线程抢先插入了)则进入下次循环。</li>
+<li>如果该下标上的节点(头节点)的哈希地址为-1，代表需要扩容，该线程执行helpTransfer()方法协助扩容。</li>
+<li>如果碰撞了(bucket不为空)且又不需要扩容，则进入到bucket中，且锁住该bucket，其他bucket不影响。</li>
+<li>进入到bucket里面，首先判断这个bucket存储的是红黑树(哈希地址小于0)还是链表。</li>
+<li>如果是链表，则遍历链表，若节点已经存在(key相同)就覆盖旧值，没有找到相同的节点就将新增的节点插入到链表尾部。如果是红黑树，则将节点插入。到这里释放锁。</li>
+<li>判断该bucket上的链表长度是否链表长度超过阀值（TREEIFY_THRESHOLD==8），大于则调用treeifyBin()方法将链表转成红黑树。</li>
+<li>调用addCount()方法，作用是将ConcurrentHashMap的键值对数量+1，还有另一个作用是检查ConcurrentHashMap是否需要扩容。</li>
+</ol>
+<blockquote>
+<p>总结：</p>
+<ul>
+<li>JDK8中的实现也是锁分离的思想，它把锁分的比segment（JDK1.5）更细一些，只要hash不冲突，就不会出现并发获得锁的情况。它首先使用无锁操作CAS插入头结点，如果插入失败，说明已经有别的线程插入头结点了，再次循环进行操作。如果头结点已经存在，则通过synchronized获得头结点锁，进行后续的操作。性能比segment分段锁又再次提升。</li>
+</ul>
+</blockquote>
+<h4 id="3-2-ConcurrentHashMap多线程环境下扩容"><a href="#3-2-ConcurrentHashMap多线程环境下扩容" class="headerlink" title="3.2 ConcurrentHashMap多线程环境下扩容"></a>3.2 ConcurrentHashMap多线程环境下扩容</h4><ul>
+<li><code>transfer()</code>方法为<code>ConcurrentHashMap</code>扩容操作的核心方法。由于<code>ConcurrentHashMap</code>支持<strong>多线程扩容</strong>，而且也<strong>没有进行加锁</strong>，所以实现会变得有点儿复杂。整个扩容操作分为两步：<ul>
+<li>构建一个nextTable，其大小为原来大小的两倍，这个步骤是在单线程环境下完成的</li>
+<li>将原来table里面的内容复制到nextTable中，这个步骤是允许多线程操作的，所以性能得到提升，减少了扩容的时间消耗。</li>
+</ul>
+</li>
+<li>扩容的时机：<ol>
+<li>如果新增节点之后，所在链表的元素个数达到了阈值 8，则会调用treeifyBin方法把链表转换成红黑树，不过在结构转换之前，会对数组长度进行判断：<ul>
+<li>如果数组长度n小于阈值MIN_TREEIFY_CAPACITY，默认是64，则会调用tryPresize方法把数组长度扩大到原来的两倍，并触发transfer方法，重新调整节点的位置。</li>
+</ul>
+</li>
+<li>新增节点之后，会调用addCount方法记录元素个数，并检查是否需要进行扩容，当数组元素个数达到阈值时，会触发transfer方法，重新调整节点的位置。</li>
+</ol>
+</li>
+<li>JDK8的源码里面就引入了一个<strong>ForwardingNode</strong>类，在一个线程发起扩容的时候，就会改变<code>sizeCtl</code>这个值，其含义如下： <ul>
+<li>sizeCtl ：默认为0，用来控制table的初始化和扩容操作，具体应用在后续会体现出来。</li>
+<li>-1 代表table正在初始化</li>
+<li>-N 表示有N-1个线程正在进行扩容操作</li>
+<li>其余情况：  <ol>
+<li>如果table未初始化，表示table需要初始化的大小。  </li>
+<li>如果table初始化完成，表示table的容量，默认是table大小的0.75倍</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>扩容时候会判断<code>sizeCtl</code>的值，如果超过阈值就要扩容，首先根据运算得到需要遍历的次数i，然后利用tabAt方法获得i位置的元素f，初始化一个forwardNode实例fwd，如果f == null，则在table中的i位置放入fwd，否则采用头插法的方式把当前旧table数组的指定任务范围的数据给迁移到新的数组中，然后给旧table原位置赋值fwd。直到遍历过所有的节点以后就完成了复制工作，把table指向nextTable，并更新sizeCtl为新数组大小的0.75倍 ，扩容完成。在此期间如果其他线程的有读写操作都会判断head节点是否为forwardNode节点，如果是就<strong>帮助扩容</strong>。</li>
+<li>在<strong>扩容时读写操作</strong>如何进行<ol>
+<li>对于get读操作，如果当前节点有数据，还没迁移完成，此时不影响读，能够正常进行。如果当前链表已经迁移完成，那么头节点会被设置成fwd节点，此时get线程会帮助扩容。</li>
+<li>对于put/remove写操作，如果当前链表已经迁移完成，那么头节点会被设置成fwd节点，此时写线程会帮助扩容，如果扩容没有完成，当前链表的头节点会被锁住，所以写线程会被阻塞，直到扩容完成。 </li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>总结: ConcurrentHashMap扩容的原理是新生成原来2倍的数组，然后拷贝旧数组数据到新的数组里面，在多线程情况下，这里面如果注意线程安全问题，在解决安全问题的同时，我们也要关注其效率，这才是并发容器类的最出色的地方。 </p>
+</blockquote>
+<h4 id="3-3-size、mappingCount方法"><a href="#3-3-size、mappingCount方法" class="headerlink" title="3.3 size、mappingCount方法"></a>3.3 size、mappingCount方法</h4><ul>
+<li>size和mappingCount方法都是用来统计table的size的</li>
+<li>这两者不同的地方在size返回的是一个int类型，即可以表示size的范围是[-2^31，2^31-1]，超过这个范围就返回int能表示的最大值</li>
+<li>mappingCount返回的是一个long类型，即可以表示size的范围是[-2^63，2^63-1]。</li>
+<li>这两个方法都是调用的sumCount()方法实现统计。</li>
+<li><strong>对于size和迭代器是弱一致性</strong><ul>
+<li>volatile修饰的数组引用是强可见的，但是其元素却不一定，所以，这导致size的根据sumCount的方法<strong>并不准确</strong>。</li>
+<li>同理Iteritor的迭代器也一样，并不能准确反映最新的实际情况 </li>
+</ul>
+</li>
+</ul>
+<h3 id="4-ConcurrentSkipListMap"><a href="#4-ConcurrentSkipListMap" class="headerlink" title="4. ConcurrentSkipListMap"></a>4. ConcurrentSkipListMap</h3><p>ConcurrentSkipListMap内部使用<strong>跳表（SkipList）</strong>这种数据结构来实现，他的结构相对红黑树来说非常简单理解，实现起来也相对简单，而且在理论上它的查找、插入、删除时间复杂度都为log(n)。在并发上，ConcurrentSkipListMap采用无锁的<strong>CAS+自旋</strong>来控制。</p>
+<ul>
+<li>跳表简单来说就是一个多层的链表，底层是一个普通的链表，然后逐层减少，通常通过一个简单的算法实现每一层元素是下一层的元素的二分之一，这样当搜索元素时从最顶层开始搜索，可以说是另一种形式的二分查找。</li>
+<li>ConcurrentSkipListMap的<strong><code>put</code></strong>(插入)：<ul>
+<li>调用<code>doPut()</code>方法，可以分为3大步来理解：</li>
+<li>第一步获取前继节点后通过CAS来插入节点；</li>
+<li>第二步对level层数进行判断，如果大于最大层数，则插入一层；</li>
+<li>第三步插入对应层的数据。整个插入过程全部通过CAS自旋的方式保证并发情况下的数据正确性。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-volatile-amp-Atmoic-amp-UnSafe"><a href="#5-volatile-amp-Atmoic-amp-UnSafe" class="headerlink" title="5. volatile &amp; Atmoic &amp; UnSafe"></a>5. volatile &amp; Atmoic &amp; UnSafe</h3><ul>
+<li><strong>volatile</strong>作用：①多线程间的可见性、②阻止指令重排序</li>
+<li><strong>Atmoic系列类</strong>提供了原子性操作，保障多线程下的安全</li>
+<li><strong>UnSafe类</strong>的作用：①内存操作、②字段的定位与修改(底层)、③线程挂起与恢复、④CAS操作(乐观锁)</li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> 并发编程 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 后端开发 </tag>
+            
+            <tag> java </tag>
+            
+            <tag> 并发编程 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[【Java知识梳理】常见集合类 的 数据结构]]></title>
       <url>http://chaooo.github.io/article/20191003.html</url>
       <content type="html"><![CDATA[<h3 id="集合-Collection-Map"><a href="#集合-Collection-Map" class="headerlink" title="集合(Collection/Map)"></a>集合(Collection/Map)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Collection接口</span><br><span class="line">    |———— List接口</span><br><span class="line">        |———— ArrayList类</span><br><span class="line">        |———— Vector类</span><br><span class="line">        |———— LinkedList类</span><br><span class="line">        |———— Stack类</span><br><span class="line">    |———— Set接口</span><br><span class="line">        |———— HashSet类</span><br><span class="line">        |———— TreeSet类</span><br><span class="line">        |———— LinkedHashSet类</span><br><span class="line">    |———— Queue接口</span><br><span class="line">        |———— LinkedList类</span><br><span class="line">Map接口</span><br><span class="line">    |———— HashMap类</span><br><span class="line">    |———— TreeMap类</span><br><span class="line">    |———— LinkedHashMap类</span><br><span class="line">    |———— Hashtable类</span><br></pre></td></tr></table></figure>
@@ -293,7 +955,7 @@
     </entry>
     
     <entry>
-      <title><![CDATA[【并发】Redis穿透、击穿、雪崩和数据一致性]]></title>
+      <title><![CDATA[【Redis】Redis穿透、击穿、雪崩和数据一致性]]></title>
       <url>http://chaooo.github.io/article/20190927.html</url>
       <content type="html"><![CDATA[<h3 id="1-缓存穿透"><a href="#1-缓存穿透" class="headerlink" title="1. 缓存穿透"></a>1. 缓存穿透</h3><p>访问一个不存在的key，缓存不起作用，请求会穿透到DB，流量大时DB会挂掉。</p>
 <ul>
@@ -369,7 +1031,7 @@
       
         <categories>
             
-            <category> 并发 </category>
+            <category> Redis </category>
             
         </categories>
         
@@ -378,8 +1040,6 @@
             
             <tag> 后端开发 </tag>
             
-            <tag> 并发 </tag>
-            
             <tag> Redis </tag>
             
         </tags>
@@ -387,7 +1047,7 @@
     </entry>
     
     <entry>
-      <title><![CDATA[【并发】深入学习Redis及集群]]></title>
+      <title><![CDATA[【Redis】深入学习Redis及集群]]></title>
       <url>http://chaooo.github.io/article/20190920.html</url>
       <content type="html"><![CDATA[<p>Redis本质上是一个Key-Value类型的<strong>内存数据库</strong>，整个数据库统统加载在内存当中进行操作，定期通过异步操作把数据库数据flush到硬盘上进行保存。因为是纯内存操作，Redis的性能非常出色，每秒可以处理超过10万次读写操作，是已知性能最快的Key-Value DB。<a id="more"></a>Redis的出色之处不仅仅是性能，Redis最大的魅力是支持保存多种数据结构，此外单个value的最大限制是1GB。另外Redis也可以对存入的Key-Value设置expire时间。 Redis的主要缺点是数据库容量受到物理内存的限制，不能用作海量数据的高性能读写，因此Redis适合的场景主要局限在较小数据量的高性能操作和运算上。</p>
 <h3 id="1-Redis数据结构及命令操作"><a href="#1-Redis数据结构及命令操作" class="headerlink" title="1. Redis数据结构及命令操作"></a>1. Redis数据结构及命令操作</h3><h4 id="1-1-基本概念及操作"><a href="#1-1-基本概念及操作" class="headerlink" title="1.1 基本概念及操作"></a>1.1 基本概念及操作</h4><ul>
@@ -529,7 +1189,7 @@
       
         <categories>
             
-            <category> 并发 </category>
+            <category> Redis </category>
             
         </categories>
         
@@ -537,8 +1197,6 @@
         <tags>
             
             <tag> 后端开发 </tag>
-            
-            <tag> 并发 </tag>
             
             <tag> Redis </tag>
             
@@ -550,7 +1208,7 @@
       <title><![CDATA[【数据库优化】MySQL事务处理与并发控制]]></title>
       <url>http://chaooo.github.io/article/20190907.html</url>
       <content type="html"><![CDATA[<h3 id="1-MySQL事务"><a href="#1-MySQL事务" class="headerlink" title="1. MySQL事务"></a>1. MySQL事务</h3><ol>
-<li>事务: 数据库操作的最小工作单元，是作为单个逻辑工作单元执行的一系列操作；事务是一组不可再分割的操作集合(工作逻辑单元)；</li>
+<li>事务: 数据库操作的最小工作单元，是作为单个逻辑工作单元执行的一系列操作；事务是一组不可再分割的操作集合(工作逻辑单元)；<a id="more"></a></li>
 <li>事务的特性(ACID)：<ul>
 <li><strong>原子性</strong>（Atomicity，或称不可分割性）：最小的工作单元，整个工作单元要么一起提交成功，要么全部失败回滚</li>
 <li><strong>一致性</strong>（Consistency）：事务中操作的数据及状态改变是一致的，即写入资料的结果必须完全符合预设的规则， 不会因为出现系统意外等原因导致状态的不一致</li>
@@ -1123,7 +1781,7 @@
       <url>http://chaooo.github.io/article/20190901.html</url>
       <content type="html"><![CDATA[<h3 id="1-MySQL基础操作"><a href="#1-MySQL基础操作" class="headerlink" title="1. MySQL基础操作"></a>1. MySQL基础操作</h3><h4 id="1-1-MySQL备份与恢复"><a href="#1-1-MySQL备份与恢复" class="headerlink" title="1.1 MySQL备份与恢复"></a>1.1 MySQL备份与恢复</h4><ol>
 <li>备份：在mysql的安装目录的bin目录下有<strong>mysqldump命令</strong>，可以完成对数据库的备份。 <ul>
-<li>语法：<code>mysqldump -u 用户名 -p 数据库名&gt; 磁盘SQL文件路径</code> </li>
+<li>语法：<code>mysqldump -u 用户名 -p 数据库名&gt; 磁盘SQL文件路径</code> <a id="more"></a></li>
 <li>由于mysqldump命令不是sql命令，需要在<strong>dos窗口下使用</strong>。</li>
 <li>仅仅只会备份数据库中的表和数据，恢复时需要先手动创建数据库。</li>
 </ul>
