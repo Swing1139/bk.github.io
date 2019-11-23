@@ -151,7 +151,7 @@
 
 </li>
 </ol>
-<h3 id="5-Elasticsearch-Logstash-Beats-Kibana基础整合"><a href="#5-Elasticsearch-Logstash-Beats-Kibana基础整合" class="headerlink" title="5. Elasticsearch + Logstash + Beats + Kibana基础整合"></a>5. Elasticsearch + Logstash + Beats + Kibana基础整合</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">             读取                发送               写入                      读取</span><br><span class="line">【日志文件】&lt;-------【FileBeat】-------&gt;【Logstash】-------&gt;【Elasticsearch】&lt;-------【Kibana】</span><br></pre></td></tr></table></figure>
+<h3 id="5-Elasticsearch-Logstash-Beats-Kibana基础整合"><a href="#5-Elasticsearch-Logstash-Beats-Kibana基础整合" class="headerlink" title="5. Elasticsearch + Logstash + Beats + Kibana基础整合"></a>5. Elasticsearch + Logstash + Beats + Kibana基础整合</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">           (读取)          (发送)           (写入)                (读取)</span><br><span class="line">【日志文件】&lt;----【FileBeat】----&gt;【Logstash】----&gt;【Elasticsearch】&lt;----【Kibana】</span><br></pre></td></tr></table></figure>
 
 <ol>
 <li><p><code>Filebeat</code>配置与启动：</p>
