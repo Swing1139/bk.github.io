@@ -9,10 +9,11 @@
       <content type="html"><![CDATA[<h3 id="SETNX命令简介"><a href="#SETNX命令简介" class="headerlink" title="SETNX命令简介"></a>SETNX命令简介</h3><ul>
 <li><code>SETNX key value</code>返回(<code>1:key</code>的值被设置，<code>0:key</code>的值没被设置)，将<code>key</code>的值设为<code>value</code>，并且仅当<code>key</code>不存在。</li>
 <li>锁的<code>key</code>为目标数据的唯一键，<code>value</code>为锁的期望超时时间点；</li>
-<li>基于<code>Redis</code>实现的分布式锁，主要基于<code>redis</code>的<code>setnx（set if not exist）</code>命令；</li>
-</ul>
+<li>基于<code>Redis</code>实现的分布式锁，主要基于<code>redis</code>的<code>setnx（set if not exist）</code>命令；<a id="more"></a>
 <h3 id="1-jedis实现分布式锁"><a href="#1-jedis实现分布式锁" class="headerlink" title="1. jedis实现分布式锁"></a>1. jedis实现分布式锁</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.0.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
+</li>
+</ul>
 <h4 id="1-1-实现示例"><a href="#1-1-实现示例" class="headerlink" title="1.1 实现示例:"></a>1.1 实现示例:</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">correctGetLock</span><span class="params">(String lockKey, String requestId, <span class="keyword">int</span> expireTime)</span> </span>&#123;</span><br><span class="line">    String result = jedis.set(lockKey, requestId, <span class="string">"NX"</span>, <span class="string">"PX"</span>, expireTime);</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"OK"</span>.equals(result)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><code>jedis.set(String key, String value, String nxxx, String expx, int time)</code><br>    - <strong><code>key</code></strong>：保证唯一，用来当锁（<code>redis</code>记录的<code>key</code>）<br>    - <strong><code>value</code></strong>：<code>redis</code>记录的<code>value</code>，目的是为了标志锁的所有者（竞争锁的客户端），保证解锁时只能解自己加的锁。<code>requestId</code>可以使用<code>UUID.randomUUID().toString()</code>方法生成<br>    - <strong><code>nxxx</code></strong>：<code>&quot;NX&quot;</code>意思是<code>SET IF NOT EXIST</code>，即当<code>key</code>不存在时，我们进行<code>set</code>操作，若<code>key</code>已经存在，则不做任何操作<br>    - <strong><code>expx</code></strong>：<code>&quot;PX&quot;</code>意思是要给这个<code>key</code>加一个过期的设置（单位毫秒），过期时间由第五个参数决定<br>    - <strong><code>time</code></strong>：<code>expx</code>设置为<code>&quot;PX&quot;</code>时，<code>redis key</code>的过期时间</p>
@@ -94,9 +95,9 @@
 <li><strong><code>Beats</code></strong>：数据采集</li>
 <li><strong><code>LogStash</code></strong>: 数据处理</li>
 <li><strong><code>ElasticSearch</code></strong>(核心引擎): 数据存储、查询和分析</li>
-<li><strong><code>Kibana</code></strong>: 数据探索与可视化分析</li>
+<li><strong><code>Kibana</code></strong>: 数据探索与可视化分析<a id="more"></a>
+<img src="http://cdn.chaooo.top/Java/elastic-stream.jpg" alt></li>
 </ol>
-<p><img src="http://cdn.chaooo.top/Java/elastic-stream.jpg" alt></p>
 <h3 id="2-Filebeat"><a href="#2-Filebeat" class="headerlink" title="2. Filebeat"></a>2. Filebeat</h3><p><code>Filebeat</code>是本地文件的轻量型日志数据采集器。<br><code>Beats</code>可以直接（或者通过<code>Logstash</code>）将数据发送到<code>Elasticsearch</code>，在那里你可以进一步处理和增强数据，然后在<code>Kibana</code>中将其可视化。</p>
 <h4 id="2-1-Filebeat工作原理"><a href="#2-1-Filebeat工作原理" class="headerlink" title="2.1 Filebeat工作原理"></a>2.1 Filebeat工作原理</h4><p>Filebeat由两个主要组件组成：<code>prospector</code>和<code>harvester</code>。这些组件一起工作来读取文件（tail file）并将事件数据发送到您指定的输出</p>
 <ul>
@@ -294,7 +295,7 @@
 <li><strong><code>Metric</code></strong>: 指标分析类型，如：计算最值，平均值等；</li>
 <li><strong><code>Bucket</code></strong>: 分桶类型，类似于<code>group by</code>语法，根据一定规则划分为若干个桶分类；</li>
 <li><strong><code>Pipeline</code></strong>: 管道分析类型，基于上一级的聚合分析结果进行再分析；</li>
-<li><code>Matrix</code>: 矩阵分析类型。</li>
+<li><code>Matrix</code>: 矩阵分析类型。<a id="more"></a></li>
 </ol>
 </li>
 </ul>
@@ -615,12 +616,13 @@
 </li>
 <li><code>ES</code>集群由多个<code>ES实例</code>构成。<ul>
 <li>不同集群通过<strong>集群名字</strong>来区分，通过配置文件<code>elasticsearch.yml</code>中的<code>cluster.name</code>可以修改，默认为<code>elasticsearch</code></li>
-<li>每个<code>ES实例</code>的本质，其实是一个<code>JVM进程</code>，且有自己的名字，通过配置文件中的<code>node.name</code>可以修改。</li>
+<li>每个<code>ES实例</code>的本质，其实是一个<code>JVM进程</code>，且有自己的名字，通过配置文件中的<code>node.name</code>可以修改。<a id="more"></a>
+<h4 id="1-2-构建ES集群"><a href="#1-2-构建ES集群" class="headerlink" title="1.2 构建ES集群"></a>1.2 构建ES集群</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个本地化集群my_cluster</span><br><span class="line">bin/elasticsearch -Epath.data=node1 -Ecluster.name=my_cluster -Enode.name=node1 -d</span><br><span class="line">bin/elasticsearch -Ehttp.port=8200 -Epath.data=node2 -Ecluster.name=my_cluster -Enode.name=node2 -d</span><br><span class="line">bin/elasticsearch -Ehttp.port=7200 -Epath.data=node3 -Ecluster.name=my_cluster -Enode.name=node3 -d</span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
 </li>
 </ol>
-<h4 id="1-2-构建ES集群"><a href="#1-2-构建ES集群" class="headerlink" title="1.2 构建ES集群"></a>1.2 构建ES集群</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个本地化集群my_cluster</span><br><span class="line">bin/elasticsearch -Epath.data=node1 -Ecluster.name=my_cluster -Enode.name=node1 -d</span><br><span class="line">bin/elasticsearch -Ehttp.port=8200 -Epath.data=node2 -Ecluster.name=my_cluster -Enode.name=node2 -d</span><br><span class="line">bin/elasticsearch -Ehttp.port=7200 -Epath.data=node3 -Ecluster.name=my_cluster -Enode.name=node3 -d</span><br></pre></td></tr></table></figure>
-
 <blockquote>
 <p>可以通过cerebro插件可以看到，集群<code>my_cluster</code>中存在三个节点，分别为：<code>node1</code>、<code>node2</code>、<code>node3</code></p>
 </blockquote>
@@ -927,7 +929,7 @@
 </ol>
 <h4 id="2-5-ES集群监控"><a href="#2-5-ES集群监控" class="headerlink" title="2.5 ES集群监控"></a>2.5 ES集群监控</h4><p>使用官方免费插件<code>X-pack</code>。</p>
 <ol>
-<li>安装与启动：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> X-pack的安装</span></span><br><span class="line">cd ~/elasticsearch-6.1.1</span><br><span class="line">bin/elasticsearch-plugin install x-pack</span><br><span class="line"><span class="meta">#</span><span class="bash"> </span></span><br><span class="line">cd ~/kibana-6.1.1</span><br><span class="line">bin/kibana-plugin indtall x-pack</span><br></pre></td></tr></table></figure>
+<li>安装与启动：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> X-pack的安装</span><br><span class="line">cd ~/elasticsearch-6.1.1</span><br><span class="line">bin/elasticsearch-plugin install x-pack</span><br><span class="line"><span class="meta">#</span> </span><br><span class="line">cd ~/kibana-6.1.1</span><br><span class="line">bin/kibana-plugin indtall x-pack</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
@@ -1111,13 +1113,12 @@
       <content type="html"><![CDATA[<h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h3><h4 id="1-1-ElasticStack特点"><a href="#1-1-ElasticStack特点" class="headerlink" title="1.1 ElasticStack特点"></a>1.1 ElasticStack特点</h4><ol>
 <li>使用门槛低，开发周期短，上线快</li>
 <li>性能好，查询快，实时展示结果</li>
-<li>扩容方便，快速支撑增长迅猛的数据</li>
-</ol>
-<h4 id="1-2-ElasticStack各组件作用"><a href="#1-2-ElasticStack各组件作用" class="headerlink" title="1.2 ElasticStack各组件作用"></a>1.2 ElasticStack各组件作用</h4><ol>
+<li>扩容方便，快速支撑增长迅猛的数据<a id="more"></a>
+<h4 id="1-2-ElasticStack各组件作用"><a href="#1-2-ElasticStack各组件作用" class="headerlink" title="1.2 ElasticStack各组件作用"></a>1.2 ElasticStack各组件作用</h4></li>
 <li><strong><code>Beats</code></strong>：数据采集</li>
 <li><strong><code>LogStash</code></strong>: 数据处理</li>
 <li><strong><code>ElasticSearch</code></strong>(核心引擎): 数据存储、查询和分析</li>
-<li><strong><code>Kibana</code></strong>: 数据探索与可视化分析<a id="more"></a></li>
+<li><strong><code>Kibana</code></strong>: 数据探索与可视化分析<!-- more --></li>
 </ol>
 <h4 id="1-3-ElasticStack使用场景"><a href="#1-3-ElasticStack使用场景" class="headerlink" title="1.3 ElasticStack使用场景"></a>1.3 ElasticStack使用场景</h4><ul>
 <li>搜索引擎、日志分析、指标分析</li>

@@ -6,12 +6,13 @@
 </li>
 <li><code>ES</code>集群由多个<code>ES实例</code>构成。<ul>
 <li>不同集群通过<strong>集群名字</strong>来区分，通过配置文件<code>elasticsearch.yml</code>中的<code>cluster.name</code>可以修改，默认为<code>elasticsearch</code></li>
-<li>每个<code>ES实例</code>的本质，其实是一个<code>JVM进程</code>，且有自己的名字，通过配置文件中的<code>node.name</code>可以修改。</li>
+<li>每个<code>ES实例</code>的本质，其实是一个<code>JVM进程</code>，且有自己的名字，通过配置文件中的<code>node.name</code>可以修改。<a id="more"></a>
+<h4 id="1-2-构建ES集群"><a href="#1-2-构建ES集群" class="headerlink" title="1.2 构建ES集群"></a>1.2 构建ES集群</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个本地化集群my_cluster</span><br><span class="line">bin/elasticsearch -Epath.data=node1 -Ecluster.name=my_cluster -Enode.name=node1 -d</span><br><span class="line">bin/elasticsearch -Ehttp.port=8200 -Epath.data=node2 -Ecluster.name=my_cluster -Enode.name=node2 -d</span><br><span class="line">bin/elasticsearch -Ehttp.port=7200 -Epath.data=node3 -Ecluster.name=my_cluster -Enode.name=node3 -d</span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
 </li>
 </ol>
-<h4 id="1-2-构建ES集群"><a href="#1-2-构建ES集群" class="headerlink" title="1.2 构建ES集群"></a>1.2 构建ES集群</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个本地化集群my_cluster</span><br><span class="line">bin/elasticsearch -Epath.data=node1 -Ecluster.name=my_cluster -Enode.name=node1 -d</span><br><span class="line">bin/elasticsearch -Ehttp.port=8200 -Epath.data=node2 -Ecluster.name=my_cluster -Enode.name=node2 -d</span><br><span class="line">bin/elasticsearch -Ehttp.port=7200 -Epath.data=node3 -Ecluster.name=my_cluster -Enode.name=node3 -d</span><br></pre></td></tr></table></figure>
-
 <blockquote>
 <p>可以通过cerebro插件可以看到，集群<code>my_cluster</code>中存在三个节点，分别为：<code>node1</code>、<code>node2</code>、<code>node3</code></p>
 </blockquote>
@@ -318,7 +319,7 @@
 </ol>
 <h4 id="2-5-ES集群监控"><a href="#2-5-ES集群监控" class="headerlink" title="2.5 ES集群监控"></a>2.5 ES集群监控</h4><p>使用官方免费插件<code>X-pack</code>。</p>
 <ol>
-<li>安装与启动：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> X-pack的安装</span></span><br><span class="line">cd ~/elasticsearch-6.1.1</span><br><span class="line">bin/elasticsearch-plugin install x-pack</span><br><span class="line"><span class="meta">#</span><span class="bash"> </span></span><br><span class="line">cd ~/kibana-6.1.1</span><br><span class="line">bin/kibana-plugin indtall x-pack</span><br></pre></td></tr></table></figure>
+<li>安装与启动：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> X-pack的安装</span><br><span class="line">cd ~/elasticsearch-6.1.1</span><br><span class="line">bin/elasticsearch-plugin install x-pack</span><br><span class="line"><span class="meta">#</span> </span><br><span class="line">cd ~/kibana-6.1.1</span><br><span class="line">bin/kibana-plugin indtall x-pack</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
