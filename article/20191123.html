@@ -3,8 +3,10 @@
 <li><strong><code>LogStash</code></strong>: 数据处理</li>
 <li><strong><code>ElasticSearch</code></strong>(核心引擎): 数据存储、查询和分析</li>
 <li><strong><code>Kibana</code></strong>: 数据探索与可视化分析<a id="more"></a>
-<img src="http://cdn.chaooo.top/Java/elastic-stream.jpg" alt></li>
+
+</li>
 </ol>
+<p><img src="http://cdn.chaooo.top/Java/elastic-stream.jpg" alt></p>
 <h3 id="2-Filebeat"><a href="#2-Filebeat" class="headerlink" title="2. Filebeat"></a>2. Filebeat</h3><p><code>Filebeat</code>是本地文件的轻量型日志数据采集器。<br><code>Beats</code>可以直接（或者通过<code>Logstash</code>）将数据发送到<code>Elasticsearch</code>，在那里你可以进一步处理和增强数据，然后在<code>Kibana</code>中将其可视化。</p>
 <h4 id="2-1-Filebeat工作原理"><a href="#2-1-Filebeat工作原理" class="headerlink" title="2.1 Filebeat工作原理"></a>2.1 Filebeat工作原理</h4><p>Filebeat由两个主要组件组成：<code>prospector</code>和<code>harvester</code>。这些组件一起工作来读取文件（tail file）并将事件数据发送到您指定的输出</p>
 <ul>
