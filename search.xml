@@ -5,7 +5,7 @@
     
     <entry>
       <title><![CDATA[【安全认证】基于Shiro前后端分离的认证与授权(二.授权篇)]]></title>
-      <url>http://chaooo.github.io/article/20200120.html</url>
+      <url>http://chaooo.github.io/article/20200121.html</url>
       <content type="html"><![CDATA[<p>前面我们整合了<code>SpringBoot+Shiro+JWT</code>实现了登录认证，但还没有实现权限控制，这是接下来的工作。<a id="more"></a></p>
 <h3 id="1-JWT的Token续签"><a href="#1-JWT的Token续签" class="headerlink" title="1. JWT的Token续签"></a>1. JWT的Token续签</h3><h4 id="1-1-续签思路"><a href="#1-1-续签思路" class="headerlink" title="1.1 续签思路"></a>1.1 续签思路</h4><ol>
 <li>业务逻辑：<ul>
